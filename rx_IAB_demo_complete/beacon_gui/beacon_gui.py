@@ -14,7 +14,7 @@ class MyFrame(wx.Frame):
         # begin wxGlade: MyFrame.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
-        self.bitmap_button_1 = wx.BitmapButton(self, -1, wx.Bitmap("/home/aryoung/Desktop/rx_IAB_demo/ACR-2848-EPIRB.jpg", wx.BITMAP_TYPE_ANY))
+        self.bitmap_button_1 = wx.BitmapButton(self, -1, wx.Bitmap("./ACR-2848-EPIRB.jpg", wx.BITMAP_TYPE_ANY))
         self.button_1 = wx.Button(self, -1, "Start")
 
         self.Bind(wx.EVT_BUTTON, self.change_words, id=self.button_1.GetId())
