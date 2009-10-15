@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=Radio Registration
+Type=Application
+Terminal=false
+Icon[en_US]=gnome-modem-monitor-applet
+Name[en_US]=Radio Registration
+Exec=python /home/aryoung/Desktop/rx_IAB_demo/register_radio_gui/register_radio_gui_test.py
+Icon=gnome-modem-monitor-applet
+GenericName[en_US]=

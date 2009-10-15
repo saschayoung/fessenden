@@ -1,0 +1,11 @@
+      <ScreenOverlay>
+        <name>ECE</name>
+        <visibility>0</visibility>
+        <Icon>
+          <href>http://www.ece.vt.edu/images/banner07172009p.png</href>
+        </Icon>
+        <overlayXY x="0" y="1" xunits="fraction" yunits="fraction"/>
+        <screenXY x="0" y="1" xunits="fraction" yunits="fraction"/>
+        <rotationXY x="0" y="0" xunits="fraction" yunits="fraction"/>
+        <size x="335" y="77" xunits="pixels" yunits="pixels"/>
+      </ScreenOverlay>

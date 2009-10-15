@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <Style id="fire-helmet">
+      <IconStyle>
+        <scale>2</scale>
+        <Icon>
+          <href>/home/aryoung/Desktop/rx_IAB_demo/fire-helmet-1.png</href>
+        </Icon>
+      </IconStyle>
+      <LineStyle>
+        <width>2</width>
+      </LineStyle>
+    </Style>
+    <Style id="fire-truck">
+      <IconStyle>
+        <scale>2</scale>
+        <Icon>
+          <href>/home/aryoung/Desktop/rx_IAB_demo/fire-truck1.png</href>
+        </Icon>
+      </IconStyle>
+      <LineStyle>
+        <width>2</width>
+      </LineStyle>
+    </Style>
+    <Style id="hand-radio">
+      <IconStyle>
+        <scale>2</scale>
+        <Icon>
+          <href>/home/aryoung/Desktop/rx_IAB_demo/Hand-Held-Radio-1.png</href>
+        </Icon>
+      </IconStyle>
+      <LineStyle>
+        <width>2</width>
+      </LineStyle>
+    </Style>
+    <Style id="plb">
+      <IconStyle>
+        <scale>2.8</scale>
+        <Icon>
+          <href>/home/aryoung/Desktop/rx_IAB_demo/plb-1.png</href>
+        </Icon>
+      </IconStyle>
+      <LineStyle>
+        <width>2</width>
+      </LineStyle>
+    </Style>
+    <Style id="k9-unit">
+      <IconStyle>
+        <scale>2</scale>
+        <Icon>
+          <href>/home/aryoung/Desktop/rx_IAB_demo/dog_icon.png</href>
+        </Icon>
+      </IconStyle>
+      <LineStyle>
+        <width>2</width>
+      </LineStyle>
+    </Style>
+    <Placemark>
+      <name>Search Team 1</name>
+      <description>&lt;![CDATA[Search Team 1&lt;br&gt;Frequency: 461 MHz&lt;br&gt;&lt;br&gt;</description>
+      <styleUrl>#hand-radio</styleUrl>
+      <Point>
+        <extrude>1</extrude>
+        <altitudeMode>relativeToGround</altitudeMode>
+        <coordinates>-80.386043542763431,37.228076147111025,50</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Search Team 2</name>
+      <description>&lt;![CDATA[Search Team 2&lt;br&gt;Frequency: 467 MHz&lt;br&gt;&lt;br&gt;</description>
+      <styleUrl>#hand-radio</styleUrl>
+      <Point>
+        <extrude>1</extrude>
+        <altitudeMode>relativeToGround</altitudeMode>
+        <coordinates>-80.38484411908432,37.227559550449662,50</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Search Team 3</name>
+      <description>&lt;![CDATA[Search Team 3&lt;br&gt;Frequency: 462 MHz&lt;br&gt;&lt;br&gt;</description>
+      <styleUrl>#hand-radio</styleUrl>
+      <Point>
+        <extrude>1</extrude>
+        <altitudeMode>relativeToGround</altitudeMode>
+        <coordinates>-80.396232337846939,37.229773778403725,50</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Search Team 4</name>
+      <description>&lt;![CDATA[Search Team 4&lt;br&gt;Frequency: 460 MHz&lt;br&gt;&lt;br&gt;</description>
+      <styleUrl>#hand-radio</styleUrl>
+      <Point>
+        <extrude>1</extrude>
+        <altitudeMode>relativeToGround</altitudeMode>
+        <coordinates>-80.39127355261526,37.22770090455473,50</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Fire House 9</name>
+      <description>&lt;![CDATA[Fire Fighters&lt;br&gt;Standard Fire Engine</description>
+      <styleUrl>#fire-truck</styleUrl>
+      <Point>
+        <extrude>1</extrude>
+        <altitudeMode>relativeToGround</altitudeMode>
+        <coordinates>-80.41451340175786,37.22984292113826,50</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Fire Team 1</name>
+      <description>&lt;![CDATA[Local Fire Rescue Team</description>
+      <styleUrl>#fire-helmet</styleUrl>
+      <Point>
+        <extrude>1</extrude>
+        <altitudeMode>relativeToGround</altitudeMode>
+        <coordinates>-80.40111104756072,37.23731288400135,50</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Fire Team 2</name>
+      <description>&lt;![CDATA[Blacksburg Fire and Rescue</description>
+      <styleUrl>#fire-helmet</styleUrl>
+      <Point>
+        <extrude>1</extrude>
+        <altitudeMode>relativeToGround</altitudeMode>
+        <coordinates>-80.42610463514606,37.2240839458946,50</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>K9 Unit 1</name>
+      <description>&lt;![CDATA[K9 Search Team</description>
+      <styleUrl>#k9-unit</styleUrl>
+      <Point>
+        <extrude>1</extrude>
+        <altitudeMode>relativeToGround</altitudeMode>
+        <coordinates>-80.383231189509758,37.229388705550136,50</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>K9 Unit 2</name>
+      <description>&lt;![CDATA[K9 Search Team</description>
+      <styleUrl>#k9-unit</styleUrl>
+      <Point>
+        <extrude>1</extrude>
+        <altitudeMode>relativeToGround</altitudeMode>
+        <coordinates>-80.388934629850652,37.23009572730119,50</coordinates>
+      </Point>
+    </Placemark>
+  </Document>
+</kml>

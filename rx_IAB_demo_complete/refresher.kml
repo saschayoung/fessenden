@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.0">
+<NetworkLink>
+  <name>WDSS-II</name>
+  <Url>
+    <href>random.kml</href>
+    <refreshMode>onInterval</refreshMode>
+    <refreshInterval>5</refreshInterval>
+    <viewRefreshMode>onRequest</viewRefreshMode>
+  </Url>
+</NetworkLink>
+</kml>

@@ -1,0 +1,11 @@
+
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Terminal=false
+Icon[en_US]=apport
+Name[en_US]=Shutdown HQ System
+Exec=/home/aryoung/Desktop/rx_IAB_demo/shutdown_hq.sh
+Name=Shutdown HQ System
+Icon=apport

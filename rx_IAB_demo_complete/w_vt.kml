@@ -1,0 +1,11 @@
+      <ScreenOverlay>
+        <name>Wireless@VT</name>
+        <visibility>0</visibility>
+        <Icon>
+          <href>http://3.bp.blogspot.com/_mJtcX6ai8To/SbpzX4tHU_I/AAAAAAAAABY/L20cRxLoOxk/S660/W+at+vt+and+ictas.png</href>
+        </Icon>
+        <overlayXY x="0" y="0" xunits="fraction" yunits="fraction"/>
+        <screenXY x="0" y="0" xunits="fraction" yunits="fraction"/>
+        <rotationXY x="0" y="0" xunits="fraction" yunits="fraction"/>
+        <size x="330" y="81" xunits="pixels" yunits="pixels"/>
+      </ScreenOverlay>

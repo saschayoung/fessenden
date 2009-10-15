@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <Style id="command-center">
+      <IconStyle>
+        <scale>2.2</scale>
+        <Icon>
+          <href>/home/aryoung/Desktop/rx_IAB_demo/command-center1.png</href>
+        </Icon>
+      </IconStyle>
+      <LineStyle>
+        <width>2</width>
+      </LineStyle>
+    </Style>
+    <Style id="fire-helmet">
+      <IconStyle>
+        <scale>2</scale>
+        <Icon>
+          <href>/home/aryoung/Desktop/rx_IAB_demo/fire-helmet-1.png</href>
+        </Icon>
+      </IconStyle>
+      <LineStyle>
+        <width>2</width>
+      </LineStyle>
+    </Style>
+    <Style id="fire-truck">
+      <IconStyle>
+        <scale>2</scale>
+        <Icon>
+          <href>/home/aryoung/Desktop/rx_IAB_demo/fire-truck1.png</href>
+        </Icon>
+      </IconStyle>
+      <LineStyle>
+        <width>2</width>
+      </LineStyle>
+    </Style>
+    <Style id="hand-radio">
+      <IconStyle>
+        <scale>2</scale>
+        <Icon>
+          <href>/home/aryoung/Desktop/rx_IAB_demo/Hand-Held-Radio-1.png</href>
+        </Icon>
+      </IconStyle>
+      <LineStyle>
+        <width>2</width>
+      </LineStyle>
+    </Style>
+    <Style id="plb">
+      <IconStyle>
+        <scale>2.8</scale>
+        <Icon>
+          <href>/home/aryoung/Desktop/rx_IAB_demo/plb-1.png</href>
+        </Icon>
+      </IconStyle>
+      <LineStyle>
+        <width>2</width>
+      </LineStyle>
+    </Style>
+    <Style id="k9-unit">
+      <IconStyle>
+        <scale>2</scale>
+        <Icon>
+          <href>/home/aryoung/Desktop/rx_IAB_demo/dog_icon.png</href>
+        </Icon>
+      </IconStyle>
+      <LineStyle>
+        <width>2</width>
+      </LineStyle>
+    </Style>
+    <Placemark>
+      <name>Command Center</name>
+      <description>&lt;![CDATA[Mobile Command&lt;br&gt; Registered Teams: Blacksburg Rescue&lt;br&gt; Freq in Use: 468 MHz&lt;br&gt;</description>
+      <styleUrl>#command-center</styleUrl>
+      <Point>
+        <extrude>1</extrude>
+        <altitudeMode>relativeToGround</altitudeMode>
+        <coordinates>-80.42451235968072,37.23096190882968,50</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Lost Person</name>
+      <description>Object of the Search</description>
+      <styleUrl>#plb</styleUrl>
+      <Point>
+        <extrude>1</extrude>
+        <altitudeMode>relativeToGround</altitudeMode>
+        <coordinates>-80.393566509895493,37.225598053495297,50</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Search Team</name>
+      <description>&lt;![CDATA[Blacksburg Rescue&lt;br&gt;Frequency: 468 MHz&lt;br&gt;&lt;br&gt;</description>
+      <styleUrl>#hand-radio</styleUrl>
+      <Point>
+        <extrude>1</extrude>
+        <altitudeMode>relativeToGround</altitudeMode>
+        <coordinates>-80.388581181821195,37.228843646687451,50</coordinates>
+      </Point>
+    </Placemark>
+  </Document>
+</kml>
