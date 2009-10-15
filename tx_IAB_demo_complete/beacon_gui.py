@@ -14,7 +14,7 @@ class MyFrame(wx.Frame):
         # begin wxGlade: MyFrame.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, None, -1, 'Beacon', size=(1000,700))
-        self.bitmap_button_1 = wx.StaticBitmap(self, -1, wx.Bitmap("/home/hedieh/Desktop/tx_IAB_demo/ACR-2848-EPIRB.jpg", wx.BITMAP_TYPE_ANY), size=(600,600))
+        self.bitmap_button_1 = wx.StaticBitmap(self, -1, wx.Bitmap("./ACR-2848-EPIRB.jpg", wx.BITMAP_TYPE_ANY), size=(600,600))
         self.button_1 = wx.Button(self, -1, "Start",size = (300,75))
 
         self.button_1.SetFont(wx.Font(22,wx.DECORATIVE, wx.NORMAL,wx.BOLD))
