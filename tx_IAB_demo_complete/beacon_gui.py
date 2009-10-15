@@ -17,6 +17,9 @@ class MyFrame(wx.Frame):
         self.bitmap_button_1 = wx.StaticBitmap(self, -1, wx.Bitmap("./ACR-2848-EPIRB.jpg", wx.BITMAP_TYPE_ANY), size=(600,600))
         self.button_1 = wx.Button(self, -1, "Start",size = (300,75))
 
+        self.tag = wx.StaticText(self, -1, "Beacon ID: ")
+        self.id_ctrl = wx.TextCtrl(self, -1, "42")
+
         self.button_1.SetFont(wx.Font(22,wx.DECORATIVE, wx.NORMAL,wx.BOLD))
 
         self.Bind(wx.EVT_BUTTON, self.change_words, id=self.button_1.GetId())
@@ -46,6 +49,12 @@ class MyFrame(wx.Frame):
     def change_words(self, event):
         if (self.button_1.GetLabel() == 'Start') and (not(self.button_locked)):
             self.button_1.SetLabel('Don\'t Panic')
+            beacon_id = self.id_ctrl.GetValue()
+            
+            f = open('beacon_id', 'w')
+            f.write(beacon_id)
+            f.close()
+
             self.button_locked = True
 
             os.system('sudo ./beacon_IAB_demo.py -f 450M -r 125k -M 3M --tx-amplitude=0.125 &')
@@ -53,29 +62,26 @@ class MyFrame(wx.Frame):
     def __set_properties(self):
         # begin wxGlade: MyFrame.__set_properties
         self.SetTitle("Beacon")
+        self.id_ctrl.SetFont(wx.Font(14, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.tag.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
 #        self.bitmap_button_1.SetSize(self.bitmap_button_1.GetBestSize())
         # end wxGlade
 
     def __do_layout(self):
         # begin wxGlade: MyFrame.__do_layout
         sizer_2 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_3 = wx.BoxSizer(wx.VERTICAL)
-        sizer_6 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_4 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_5 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_1 = wx.BoxSizer(wx.HORIZONTAL)
         awesome_sizer = wx.BoxSizer(wx.VERTICAL)
+        id_sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        
         sizer_2.Add(self.bitmap_button_1, 2, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, 10)
-#        sizer_1.Add((100, 60), 0, 0, 0)
- #       sizer_3.Add(sizer_1, 1, wx.EXPAND, 0)
- #       sizer_5.Add((100, 60), 0, 0, 0)
-  #      sizer_3.Add(sizer_5, 1, wx.EXPAND, 0)
         awesome_sizer.Add(self.light, 1, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_TOP, 5)
+
+        id_sizer.Add(self.tag, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
+        id_sizer.Add(self.id_ctrl, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
+        awesome_sizer.Add(id_sizer, 1, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_TOP, 5)
+
         awesome_sizer.Add(self.button_1, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_TOP, 10)
- #       sizer_4.Add(awesome_sizer, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, 0)
-#        sizer_3.Add(sizer_4, 1, wx.EXPAND, 0)
-   #     sizer_6.Add((100, 60), 0, 0, 0)
-    #    sizer_3.Add(sizer_6, 1, wx.EXPAND, 0)
         sizer_2.Add(awesome_sizer, 1, wx.EXPAND, 0)
         self.SetSizer(sizer_2)
         sizer_2.Fit(self)

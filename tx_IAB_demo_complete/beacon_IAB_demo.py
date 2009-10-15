@@ -106,7 +106,16 @@ def main():
     tb.start()                       # start flow graph
         
     # generate and send packets
-    beacon_ID = 42
+
+    f = open.('beacon_id', 'r')
+    lines = f.readlines()
+    f.close()
+    if not(len(lines) == 0):
+        item = lines.pop(0)
+        beacon_ID = int(item.strip('[]\n'))
+    else:
+        beacon_ID = 909
+
     nbytes = int(1e6 * options.megabytes)
     n = 0
     pktno = 0
