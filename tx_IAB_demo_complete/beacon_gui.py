@@ -49,8 +49,10 @@ class MyFrame(wx.Frame):
     def change_words(self, event):
         if (self.button_1.GetLabel() == 'Start') and (not(self.button_locked)):
             self.button_1.SetLabel('Don\'t Panic')
+
             beacon_id = self.id_ctrl.GetValue()
-            
+            beacon_id.SetEditable(False)
+
             f = open('beacon_id', 'w')
             f.write(beacon_id)
             f.close()
