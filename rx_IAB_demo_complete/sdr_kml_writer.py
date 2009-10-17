@@ -103,7 +103,7 @@ class kml_writer():
 
         document_el = etree.SubElement(kml_el, 'Document')
 
-        picture_folder = '/home/aryoung/Desktop/rx_IAB_demo/'
+        picture_folder = './'
         command_lo = picture_folder + 'command-center1.png'
         helmet_lo = picture_folder + 'fire-helmet-1.png'
         truck_lo = picture_folder + 'fire-truck1.png'
