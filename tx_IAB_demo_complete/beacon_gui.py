@@ -32,6 +32,7 @@ class MyFrame(wx.Frame):
         self.timer.Start(100)
 
         self.button_locked = False
+        self.counter = 0
         self.__set_properties()
         self.__do_layout()
         # end wxGlade
@@ -47,26 +48,27 @@ class MyFrame(wx.Frame):
 
 
     def change_words(self, event):
+        self.counter += 1
         if (self.button_1.GetLabel() == 'Start') and (not(self.button_locked)):
             self.button_1.SetLabel('Don\'t Panic')
-
             beacon_id = self.id_ctrl.GetValue()
-            beacon_id.SetEditable(False)
-
+            self.id_ctrl.SetEditable(False)
             f = open('beacon_id', 'w')
-            f.write(beacon_id)
+            f.write(str(beacon_id))
             f.close()
-
             self.button_locked = True
-
             os.system('sudo ./beacon_IAB_demo.py -f 450M -r 125k -M 3M --tx-amplitude=0.125 &')
+        elif self.counter == 6:
+            self.button_1.SetLabel('Just Relax')
+            self.counter = 0
+        elif self.button_1.GetLabel() == 'Just Relax':
+            self.button_1.SetLabel('Don\'t Panic')
 
     def __set_properties(self):
         # begin wxGlade: MyFrame.__set_properties
         self.SetTitle("Beacon")
         self.id_ctrl.SetFont(wx.Font(14, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
         self.tag.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-#        self.bitmap_button_1.SetSize(self.bitmap_button_1.GetBestSize())
         # end wxGlade
 
     def __do_layout(self):
