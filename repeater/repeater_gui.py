@@ -14,7 +14,7 @@ class repeater_gui(wx.Frame):
         # begin wxGlade: MyFrame1.__init__
 #        kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, parent, id, title)
-        self.picture = wx.StaticBitmap(self, -1, wx.Bitmap("./12-02-09a.jpg", wx.BITMAP_TYPE_ANY))
+        self.picture = wx.StaticBitmap(self, -1, wx.Bitmap("./heli_hang.jpg", wx.BITMAP_TYPE_ANY))
         self.lat_label = wx.StaticText(self, -1, "Latitude", style=wx.ALIGN_RIGHT)
         self.lat_ctrl = wx.TextCtrl(self, -1, "")
         self.lon_label = wx.StaticText(self, -1, "Longitude", style=wx.ALIGN_RIGHT)
