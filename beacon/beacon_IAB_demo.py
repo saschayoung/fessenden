@@ -122,8 +122,9 @@ def main():
     pkt_size = int(options.size)
 
     while n < nbytes:
+        #6 is new, old value was 4
         if options.from_file is None:
-            data = (pkt_size - 4) * chr(pktno & 0xff) 
+            data = (pkt_size - 6) * chr(pktno & 0xff) 
         else:
             data = source_file.read(pkt_size - 2)
             if data == '':
@@ -131,7 +132,12 @@ def main():
 
         payload1 = struct.pack('!H', pktno & 0xffff)
         payload2 = struct.pack('!H', beacon_ID & 0xffff)
-        payload = payload1 + payload2 + data
+
+        #newly added
+        payload3 = struct.pack('!H', time.time() & 0xffff)
+
+        #payload 3 added here as well
+        payload = payload1 + payload2 + payload3 + data
         send_pkt(payload)
         n += len(payload)
         sys.stderr.write('.')

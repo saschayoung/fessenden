@@ -30,6 +30,7 @@ import random
 import struct
 import sys
 import os
+import time
 
 # from current dir
 import usrp_receive_path
@@ -65,6 +66,14 @@ def main():
         global n_rcvd, n_right
         (pktno,) = struct.unpack('!H', payload[0:2])
         (beacon_ID,) = struct.unpack('!H', payload[2:4])
+
+        #Added to catch t.o.d. from modified beacon
+        (tod,) = struct.unpack('!H', payload[4:6])
+        #Added to identify team in file
+        team_id = 1
+        #Added to collect time of arrival
+        toa = time.time()
+
         n_rcvd += 1
         if ok:
             n_right += 1
@@ -75,6 +84,15 @@ def main():
         f = open('gui_beacon_data', 'w')
         f.write(str(pktno))
         f.close()
+
+        #new data string action
+        #beacon_pktno:beacon_ID:t.o.d.:field_team_ID:t.o.a.
+        data_string = pktno+':'+beacon_ID+':'+tod+':'+team_id+':'+toa+'\n'
+
+        #brand new file writing action
+        f1 = open('geolocation_data_'+team_id, 'a')
+        f1.write(data_string)
+        f1.close()
 
     demods = modulation_utils.type_1_demods()
 

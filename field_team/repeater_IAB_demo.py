@@ -63,32 +63,46 @@ def main():
     n = 0
     m = 0
 
+
+#receiver start for Geoloaction data collection
+    print ""
+    print "starting reciever"
+    os.system('sudo ./receive.sh') 
+
     for n in range(0,1000):
 
         # rx side
         #############################################
-        print ""
-        print "receiving..."
-        # start receiver
-        os.system('sudo ./receive.sh')
+#only start reciever once for Geoloaction data collection
+#         print ""
+#         print "receiving..."
+#         # start receiver
+
+#         os.system('sudo ./receive.sh') 
+
 #        if os.path.exists('gui_beacon_data'):
 #             f = open('gui_becon_data')
 #             beacon_pktno = f.readlines()
 #             beacon_pktno = beacon_pktno[0]
 #             shm.push('B' + beacon_pktno)
         time.sleep(5)
+   
+#RX shutdown commented out for Geoloaction data collection
+'''
         print "shutting down receiver..."
         # stop receiver
         status = os.system('sudo kill -9 `ps ax | grep benchmark | grep rx | grep -v grep | awk {\'print $1\'}`')
         if status:   #status==256 -> proc not killed
             print "failed to shutdown receiver"
         #############################################
-
+'''
 
 #        time.sleep(1)
 
 
 
+#TX side commented out for Geolocation data collection
+'''
 
         # tx side
         #############################################
@@ -121,8 +135,15 @@ def main():
             print "failed to shutdown transmitter"
         #############################################
 
-
+'''
     #endfor
+
+#stop receiver at end of for loop for Geolocation data collection
+        print "shutting down receiver..."
+        # stop receiver
+        status = os.system('sudo kill -9 `ps ax | grep benchmark | grep rx | grep -v grep | awk {\'print $1\'}`')
+        if status:   #status==256 -> proc not killed
+            print "failed to shutdown receiver"
     
 #    thread.join()
 
