@@ -107,7 +107,7 @@ def main():
         
     # generate and send packets
 
-    f = open.('beacon_id', 'r')
+    f = open('beacon_id', 'r')
     lines = f.readlines()
     f.close()
     if not(len(lines) == 0):
@@ -134,7 +134,7 @@ def main():
         payload2 = struct.pack('!H', beacon_ID & 0xffff)
 
         #newly added
-        payload3 = struct.pack('!H', time.time() & 0xffff)
+        payload3 = struct.pack('!H', str(time.time()) & 0xffff)
 
         #payload 3 added here as well
         payload = payload1 + payload2 + payload3 + data
