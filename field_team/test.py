@@ -71,79 +71,15 @@ def main():
 
     for n in range(0,1000):
 
-        # rx side
-        #############################################
-#only start reciever once for Geoloaction data collection
-#         print ""
-#         print "receiving..."
-#         # start receiver
-
-#         os.system('sudo ./receive.sh') 
-
-#        if os.path.exists('gui_beacon_data'):
-#             f = open('gui_becon_data')
-#             beacon_pktno = f.readlines()
-#             beacon_pktno = beacon_pktno[0]
-#             shm.push('B' + beacon_pktno)
         time.sleep(5)
    
-#RX shutdown commented out for Geoloaction data collection
-        '''
-        print "shutting down receiver..."
-        # stop receiver
-        status = os.system('sudo kill -9 `ps ax | grep benchmark | grep rx | grep -v grep | awk {\'print $1\'}`')
-        if status:   #status==256 -> proc not killed
-            print "failed to shutdown receiver"
-        #############################################
-        '''
-
-#        time.sleep(1)
-
-
-
-#TX side commented out for Geolocation data collection
-        '''
-
-        # tx side
-        #############################################
-        print ""
-        print "transmitting..."
-        # start transmitter
-        if os.path.exists('last_location'):
-            f = open('last_location','r')
-            location = f.readlines()
-            location = location[0]
-        else:
-            location = None
-#        shm.push('L' + location)
-        location = random_move(location)
-        os.system('sudo ./transmit.sh ' + location)
-        time.sleep(2)
-        print "\nshutting down transmitter..."
-        # stop transmitter
-
-
-        # these two lines are needed on fessenden, but not on gretsky
-        # fessenden is faster, and so the following check is used
-#         not_running = os.system('ps ax | grep benchmark | grep tx | grep -v grep | awk {\'print $1\'} 1> /dev/null 2> /dev/null')
-#         if not_running:
- 
-        # if the two lines above are used (uncommented)
-        # indent the following two line appropriately
-        status = os.system('sudo kill -9 `ps ax | grep benchmark | grep tx | grep -v grep | awk {\'print $1\'}`')
-        if status:   #status==256 -> proc not killed
-            print "failed to shutdown transmitter"
-        #############################################
-
-        '''
-    #endfor
 
 #stop receiver at end of for loop for Geolocation data collection
-print "shutting down receiver..."
+    print "shutting down receiver..."
     # stop receiver
-status = os.system('sudo kill -9 `ps ax | grep benchmark | grep rx | grep -v grep | awk {\'print $1\'}`')
-if status:   #status==256 -> proc not killed
-    print "failed to shutdown receiver"
+    status = os.system('sudo kill -9 `ps ax | grep benchmark | grep rx | grep -v grep | awk {\'print $1\'}`')
+    if status:   #status==256 -> proc not killed
+        print "failed to shutdown receiver"
     
 #    thread.join()
 
@@ -151,7 +87,12 @@ if __name__ == '__main__':
     try:
         main()
     except KeyboardInterrupt:
-        pass
+        print "shutting down receiver..."
+        # stop receiver
+        status = os.system('sudo kill -9 `ps ax | grep benchmark | grep rx | grep -v grep | awk {\'print $1\'}`')
+        if status:   #status==256 -> proc not killed
+            print "failed to shutdown receiver"
+
 
 
 
