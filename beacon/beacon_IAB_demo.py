@@ -122,9 +122,9 @@ def main():
     pkt_size = int(options.size)
 
     while n < nbytes:
-        #12 is new, old value was 4
+        #18 is new, old value was 4
         if options.from_file is None:
-            data = (pkt_size - 12) * chr(pktno & 0xff) 
+            data = (pkt_size - 18) * chr(pktno & 0xff) 
         else:
             data = source_file.read(pkt_size - 2)
             if data == '':
@@ -133,11 +133,24 @@ def main():
         payload1 = struct.pack('!H', pktno & 0xffff)
         payload2 = struct.pack('!H', beacon_ID & 0xffff)
 
-        #newly added
-        payload3 = struct.pack('!L', int(time.time()*1e7) & 0xffffffffffff)
+        #time magic
+        t = "%.15f" % time.time()
+        t = t.split('.')
+        t_mant = t[0]
+        t_frac = t[1]
+        
+        payload3 = struct.pack('!H', int(t_mant[0:4]) & 0xffff)
+        payload4 = struct.pack('!H', int(t_mant[4:8]) & 0xffff)
+        payload5 = struct.pack('!H', int(t_mant[8:len(t_mant)]) & 0xffff)
 
-        #payload 3 added here as well
-        payload = payload1 + payload2 + payload3 + data
+        payload6 = struct.pack('!H', int(t_frac[0:4]) & 0xffff)
+        payload7 = struct.pack('!H', int(t_frac[4:8]) & 0xffff)
+        payload8 = struct.pack('!H', int(t_frac[8:12]) & 0xffff)
+        payload9 = struct.pack('!H', int(t_frac[12:len(t_frac)]) & 0xffff)
+
+        #payloads added here as well
+        payload = (payload1 + payload2 + payload3 + payload4 + payload5 + 
+                   payload6 + payload7 + payload8 + payload9 + data)
         send_pkt(payload)
         n += len(payload)
         sys.stderr.write('.')
