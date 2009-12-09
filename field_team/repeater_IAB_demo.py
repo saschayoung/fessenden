@@ -89,7 +89,7 @@ def main():
    
 #RX shutdown commented out for Geoloaction data collection
         '''
-        print "shutting down receiver..."
+n        print "shutting down receiver..."
         # stop receiver
         status = os.system('sudo kill -9 `ps ax | grep benchmark | grep rx | grep -v grep | awk {\'print $1\'}`')
         if status:   #status==256 -> proc not killed
@@ -139,11 +139,11 @@ def main():
     #endfor
 
 #stop receiver at end of for loop for Geolocation data collection
-print "shutting down receiver..."
+        print "shutting down receiver..."
     # stop receiver
-status = os.system('sudo kill -9 `ps ax | grep benchmark | grep rx | grep -v grep | awk {\'print $1\'}`')
-if status:   #status==256 -> proc not killed
-    print "failed to shutdown receiver"
+        status = os.system('sudo kill -9 `ps ax | grep benchmark | grep rx | grep -v grep | awk {\'print $1\'}`')
+        if status:   #status==256 -> proc not killed
+            print "failed to shutdown receiver"
     
 #    thread.join()
 

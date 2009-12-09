@@ -87,10 +87,10 @@ def main():
 
         #new data string action
         #beacon_pktno:beacon_ID:t.o.d.:field_team_ID:t.o.a.
-        data_string = pktno+':'+beacon_ID+':'+tod+':'+team_id+':'+toa+'\n'
+        data_string = str(pktno)+':'+str(beacon_ID)+':'+str(tod)+':'+str(team_id)+':'+str(toa)+'\n'
 
         #brand new file writing action
-        f1 = open('geolocation_data_'+team_id, 'a')
+        f1 = open('geolocation_data_'+str(team_id), 'a')
         f1.write(data_string)
         f1.close()
 
