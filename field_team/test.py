@@ -63,7 +63,9 @@ def main():
     n = 0
     m = 0
 
-
+    f = open('geolocation_data', 'a')
+    f.write('######################################')
+    f.close()
 #receiver start for Geoloaction data collection
     print ""
     print "starting reciever"

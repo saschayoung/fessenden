@@ -68,17 +68,17 @@ def main():
         (beacon_ID,) = struct.unpack('!H', payload[2:4])
 
         #Added to catch t.o.d. from modified beacon
-        t_mant1 = struct.unpack('!H', payload[4:6])
-        t_mant2 = struct.unpack('!H', payload[6:8])
-        t_mant3 = struct.unpack('!H', payload[8:10])
+        (t_mant1,) = struct.unpack('!H', payload[4:6])
+        (t_mant2,) = struct.unpack('!H', payload[6:8])
+        (t_mant3,) = struct.unpack('!H', payload[8:10])
 
-        t_frac1 = struct.unpack('!H', payload[10:12])
-        t_frac2 = struct.unpack('!H', payload[12:14])
-        t_frac3 = struct.unpack('!H', payload[14:16])
-        t_frac4 = struct.unpack('!H', payload[16:18])
+        (t_frac1,) = struct.unpack('!H', payload[10:12])
+        (t_frac2,) = struct.unpack('!H', payload[12:14])
+        (t_frac3,) = struct.unpack('!H', payload[14:16])
+        (t_frac4,) = struct.unpack('!H', payload[16:18])
 
-        t_str = (str(t_mant1)+str(t_mant2)+str(t_mant3)+'.'+t_frac1+t_frac2+
-                 t_frac3+t_frac4)
+        t_str = (str(t_mant1)+str(t_mant2)+str(t_mant3)+'.'+str(t_frac1)+
+                 str(t_frac2)+str(t_frac3)+str(t_frac4))
         #Added to identify team in file
         team_id = 1
         #Added to collect time of arrival
@@ -98,10 +98,10 @@ def main():
         #new data string action
         #beacon_pktno:beacon_ID:t.o.d.:field_team_ID:t.o.a.
         data_string = (str(pktno)+':'+str(beacon_ID)+':'+t_str+
-                       ':'+str(team_id)+':'+str(toa)+'\n')
+                       ':'+str(team_id)+':'+("%.15f"%toa)+'\n')
 
         #brand new file writing action
-        f1 = open('geolocation_data_'+str(team_id), 'a')
+        f1 = open('geolocation_data', 'a')
         f1.write(data_string)
         f1.close()
 
