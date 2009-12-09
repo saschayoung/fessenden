@@ -134,7 +134,7 @@ def main():
         payload2 = struct.pack('!H', beacon_ID & 0xffff)
 
         #newly added
-        payload3 = struct.pack('!H', int(time.time()*1e7) & 0xffffffffffff)
+        payload3 = struct.pack('!L', int(time.time()*1e7) & 0xffffffffffff)
 
         #payload 3 added here as well
         payload = payload1 + payload2 + payload3 + data

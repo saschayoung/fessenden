@@ -68,7 +68,7 @@ def main():
         (beacon_ID,) = struct.unpack('!H', payload[2:4])
 
         #Added to catch t.o.d. from modified beacon
-        (tod,) = struct.unpack('!H', payload[4:12])
+        (tod,) = struct.unpack('!L', payload[4:12])
         #Added to identify team in file
         team_id = 1
         #Added to collect time of arrival
