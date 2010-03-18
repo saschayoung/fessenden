@@ -95,10 +95,11 @@ def pack_time(t):
 
     if t_m[0] == '0':
         print "warning!! fractional part of time has leading zero!!"
-        print ""
-        print t_m
-        print "^"
-        print ""
+        t_m = '-1'+t_m[1:]
+#         print ""
+#         print t_m
+#         print "^"
+#         print ""
 
     t1 = struct.pack('!L', int(t_c) & 0xffffffff)
     t2 = struct.pack('!Q', int(t_m) & 0xffffffffffffffff)
@@ -112,7 +113,12 @@ def pack_time(t):
 def unpack_time(payload):
     (t_c,) = struct.unpack('!L', payload[0:4])
     (t_m,) = struct.unpack('!Q', payload[4:12])
-    s = repr(t_c) + '.' + repr(t_m).zfill(10)
+#     s = repr(t_c) + '.' + repr(t_m).zfill(10)
+
+    time = repr(t_m).zfill(10)
+    if time[0:2] == '-1':
+        time = '0' + time[2:]
+    s = repr(t_c) + '.' + time
 
     print "unpack_time:"
     print "s = repr(t_c) + '.' + repr(t_m).zfill(10): ", repr(s)
@@ -129,11 +135,11 @@ if __name__=='__main__':
     import time
     import test_coords
 
-    tx_loc = test_coords.get_tx_coords()
-    print tx_loc
-    tx_loc_p = pack_loc(tx_loc)
-    tx_loc_unp = unpack_loc(tx_loc_p)
-    print tx_loc_unp
+#     tx_loc = test_coords.get_tx_coords()
+#     print tx_loc
+#     tx_loc_p = pack_loc(tx_loc)
+#     tx_loc_unp = unpack_loc(tx_loc_p)
+#     print tx_loc_unp
     
 
     
