@@ -250,7 +250,7 @@ class simulation:
 if __name__=='__main__':
     main = simulation()
     main.init_sim(3)
-    for i in range(20):
+    for i in range(200):
         main.rx_beacon_packet()
         main.receiver_chain()
 #         print main

@@ -22,6 +22,9 @@ class beacon:
         self.packet_number += 1
 
     def tx_packet(self):
+        rand_delay = random.randint(0,5)
+        print 'random backoff %d seconds' % rand_delay
+        time.sleep(rand_delay)
         return self.packet
     
     def run(self):
