@@ -19,6 +19,7 @@ class db_blob2data:
         self.passwd = 'sdrc_pass'
 
         self.state = 1
+        self.loop_escape = 0
 
         self.old_idx_min = 1
         self.old_idx_max = 1
@@ -59,6 +60,7 @@ class db_blob2data:
         self.cur.execute("SELECT MAX(idx) FROM %s;" %(self.t1,))
         (result,) = self.cur.fetchone()
         self.new_idx_max = result
+        #self.new_idx_max = 10
         if self.DEBUG:
             print 'result: ', result
 
@@ -115,6 +117,7 @@ class db_blob2data:
 
 
         while True:
+            
 
             # check db status
             if self.state == 1:
@@ -128,7 +131,13 @@ class db_blob2data:
 
                 # db has no new data
                 if not (self.new_idx_max > self.old_idx_max):
+                    self.loop_escape += 1
                     print "no new data"
+                    print "print loop_escape: ", self.loop_escape
+                    if (self.loop_escape == 100):
+                        print "no new data for 1000 iterations"
+                        print "ending program"
+                        break
                     self.state = 2
                     continue
 
@@ -147,18 +156,18 @@ class db_blob2data:
 
             # get data
             if self.state == 3:
-                self.get_blob(1)
-                self.parse_blob()
-                self.write_data()
-                # for i in range(self.old_idx_max,self.new_idx_max):
-                #     print "i: ", range(self.old_idx_max,self.new_idx_max)
-                #     self.get_blob(i)
-                #     self.parse_blob()
-                #     self.write_data()
-                # self.old_idx_max = self.new_idx_max
-                # self.state = 1
-                # #continue
-                break
+                # self.get_blob(1)
+                # self.parse_blob()
+                # self.write_data()
+                for i in range(self.old_idx_max,self.new_idx_max):
+                    print "i: ", range(self.old_idx_max,self.new_idx_max)
+                    self.get_blob(i)
+                    self.parse_blob()
+                    self.write_data()
+                self.old_idx_max = self.new_idx_max
+                self.state = 1
+                continue
+                
 
 
             # ??

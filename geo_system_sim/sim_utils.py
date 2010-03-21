@@ -75,9 +75,10 @@ def unpack_loc(loc):
     lon = np.float64(repr(lon1) + '.' + repr(lon2).zfill(15))
     lat = np.float64(repr(lat1) + '.' + repr(lat2).zfill(15))
 
-
-    return [lon,lat]
-
+    
+    return (lon,lat)
+    # s = repr(lon) + ' ' + repr(lat)
+    # return s
     
 
 
@@ -116,6 +117,7 @@ def unpack_time(payload):
 #     s = repr(t_c) + '.' + repr(t_m).zfill(10)
 
     time = repr(t_m).zfill(10)
+    time = time.strip('L')
     if time[0:2] == '-1':
         time = '0' + time[2:]
     s = repr(t_c) + '.' + time

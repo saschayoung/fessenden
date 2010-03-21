@@ -159,58 +159,58 @@ class simulation:
         
         
 
-    # don't use if using sockets above
-    def write_to_db(self):
+    # # don't use if using sockets above
+    # def write_to_db(self):
         
-        data = self.data.get_rpt_packet()
+    #     data = self.data.get_rpt_packet()
 
-        print 'conn = MySQLdb.connect'
-        db = MySQLdb.connect (host = "localhost",
-                              user = "sdrc_user",
-                              passwd = "sdrc_pass",
-                              db = "test01")
-        print 'cursor = conn.cursor ()'
-        cursor = db.cursor ()
+    #     print 'conn = MySQLdb.connect'
+    #     db = MySQLdb.connect (host = "localhost",
+    #                           user = "sdrc_user",
+    #                           passwd = "sdrc_pass",
+    #                           db = "test01")
+    #     print 'cursor = conn.cursor ()'
+    #     cursor = db.cursor ()
 
-        table = 'test01_table'
-        fields = '(rpt_pkt_num, rpt_team_id, rpt_location, rpt_timestamp, beacon_id, beacon_pkt_num)'
+    #     table = 'test01_table'
+    #     fields = '(rpt_pkt_num, rpt_team_id, rpt_location, rpt_timestamp, beacon_id, beacon_pkt_num)'
 
-        # reset database
-        cursor.execute("""DELETE FROM %s""" %(table,))
+    #     # reset database
+    #     cursor.execute("""DELETE FROM %s""" %(table,))
         
 
-        for i in range(len(data)):
-            sql = """ """
-            print "loop: ",i
-            payload = data[i]
-            (rpt_packet_num,) = struct.unpack('!H',payload[0:2])
-            (rpt_team_id,) = struct.unpack('!H',payload[2:4])
-            rpt_location = sim_utils.unpack_loc(payload[4:24])
-            rpt_timestamp = sim_utils.unpack_time(payload[24:36])
-            (beacon_packet_num,) = struct.unpack('!H',payload[36:38])
-            (beacon_id,) = struct.unpack('!H',payload[38:40])
+    #     for i in range(len(data)):
+    #         sql = """ """
+    #         print "loop: ",i
+    #         payload = data[i]
+    #         (rpt_packet_num,) = struct.unpack('!H',payload[0:2])
+    #         (rpt_team_id,) = struct.unpack('!H',payload[2:4])
+    #         rpt_location = sim_utils.unpack_loc(payload[4:24])
+    #         rpt_timestamp = sim_utils.unpack_time(payload[24:36])
+    #         (beacon_packet_num,) = struct.unpack('!H',payload[36:38])
+    #         (beacon_id,) = struct.unpack('!H',payload[38:40])
 
 
-            print type(beacon_id)
+    #         print type(beacon_id)
 
 
 
-            sql = """INSERT INTO %s %s VALUES (\'%d\', \'%d\', \'%s\', \'%s\', \'%d\', \'%d\')""" %(table,fields,rpt_packet_num,
-                                                                                        rpt_team_id,str(rpt_location),
-                                                                                        repr(rpt_timestamp),beacon_id,
-                                                                                        beacon_packet_num)
+    #         sql = """INSERT INTO %s %s VALUES (\'%d\', \'%d\', \'%s\', \'%s\', \'%d\', \'%d\')""" %(table,fields,rpt_packet_num,
+    #                                                                                     rpt_team_id,str(rpt_location),
+    #                                                                                     repr(rpt_timestamp),beacon_id,
+    #                                                                                     beacon_packet_num)
 
-            print sql
+    #         print sql
 
-            print 'cursor.execute(sql)'
-            cursor.execute(sql)
+    #         print 'cursor.execute(sql)'
+    #         cursor.execute(sql)
 
-            print 'db.commit()'
-            db.commit()
+    #         print 'db.commit()'
+    #         db.commit()
 
 
-        print 'db.close()'
-        db.close()
+    #     print 'db.close()'
+    #     db.close()
 
 
 
@@ -272,6 +272,15 @@ if __name__=='__main__':
     for i in range(20):
         main.rx_beacon_packet()
         main.receiver_chain()
+
+
+
+
+
+
+
+
+
 #         print main
 #    main.write_to_db()
     
