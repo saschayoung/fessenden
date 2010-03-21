@@ -2,7 +2,7 @@
 
 import time, random, struct
 import numpy as np
-import MySQLdb
+import psycopg2
 
 import sim_utils
 
@@ -25,8 +25,8 @@ class db_blob2data:
         self.new_idx_min = 1
         self.new_idx_max = 1
 
-        self.db_host = 'localhost'
-        self.db = 'blob_test'
+        self.db_host = '192.168.42.200'
+        self.db = 'sdrc_db'
         self.t1 = 'blob_table'
         self.t1_fields = '(field_1)'
         
@@ -36,11 +36,11 @@ class db_blob2data:
 
         
     def init_db(self):
-        self.db = MySQLdb.connect (host = self.db_host,
-                                   user = self.user,
-                                   passwd = self.passwd,
-                                   db = self.db)
-        self.cursor = self.db.cursor ()
+        self.conn = psycopg2.connect(host = self.db_host,
+                                     user = self.user,
+                                     password = self.passwd,
+                                     database = self.db)
+        self.cur = self.conn.cursor ()
         
     def db_sleep(self):
         t = self.t_sleep
@@ -50,25 +50,22 @@ class db_blob2data:
         
 
     def close_cursor(self):
-        self.cursor.close()
+        self.cur.close()
 
     def close_db(self):
-        self.db.close()
+        self.conn.close()
 
     def get_max_idx(self):
-        s = "SELECT MAX(idx) FROM %s" %self.t1
-        self.cursor.execute(s)
-        (result,) = self.cursor.fetchone( )
+        self.cur.execute("SELECT MAX(idx) FROM %s;" %(self.t1,))
+        (result,) = self.cur.fetchone()
         self.new_idx_max = result
-
         if self.DEBUG:
             print 'result: ', result
 
     def get_blob(self,n):
-
-        sql = "SELECT %s FROM %s WHERE idx = %d" %(self.t1_fields,self.t1, n)
-        self.cursor.execute(sql)
-        (self.blob,) = self.cursor.fetchone()
+        self.cur.execute("SELECT %s FROM %s WHERE idx = %s;" %(self.t1_fields,self.t1, n))
+        (self.blob,) = self.cur.fetchone()
+        print "blob: ", self.blob
 #             if (len(self.blob) == 40):
 #                 break
 #             else:
@@ -83,6 +80,7 @@ class db_blob2data:
         self.rpt_location = sim_utils.unpack_loc(self.blob[4:24])
         self.rpt_timestamp = sim_utils.unpack_time(self.blob[24:36])
         (self.beacon_packet_num,) = struct.unpack('!H',self.blob[36:38])
+
         (self.beacon_id,) = struct.unpack('!H',self.blob[38:40])
 
         if self.DEBUG:
@@ -97,18 +95,16 @@ class db_blob2data:
 
 
     def write_data(self):
-
-        sql = """INSERT INTO %s %s VALUES (\'%d\', \'%d\', \'%s\', \'%s\', \'%d\', \'%d\')""" %(
-            self.t2,self.t2_fields,
-            self.rpt_packet_num,
-            self.rpt_team_id,str(self.rpt_location),
-            repr(self.rpt_timestamp),self.beacon_id,
-            self.beacon_packet_num)
-
-        if self.DEBUG:
-            print sql
-        self.cursor.execute(sql)
-        self.db.commit()
+        self.cur.execute("""INSERT INTO %s %s VALUES (%s, %s, %s, %s, %s, %s);""" %(
+                self.t2,
+                self.t2_fields,
+                self.rpt_packet_num,
+                self.rpt_team_id,
+                str(self.rpt_location),
+                repr(self.rpt_timestamp),
+                self.beacon_id,
+                self.beacon_packet_num))
+        self.conn.commit()
 
 
 
@@ -151,20 +147,29 @@ class db_blob2data:
 
             # get data
             if self.state == 3:
-                for i in range(self.old_idx_max,self.new_idx_max):
-                    print "i: ", range(self.old_idx_max,self.new_idx_max)
-                    self.get_blob(i)
-                    self.parse_blob()
-                    self.write_data()
-                self.old_idx_max = self.new_idx_max
-                self.state = 1
-                continue
+                self.get_blob(1)
+                self.parse_blob()
+                self.write_data()
+                # for i in range(self.old_idx_max,self.new_idx_max):
+                #     print "i: ", range(self.old_idx_max,self.new_idx_max)
+                #     self.get_blob(i)
+                #     self.parse_blob()
+                #     self.write_data()
+                # self.old_idx_max = self.new_idx_max
+                # self.state = 1
+                # #continue
+                break
 
 
             # ??
             if self.state not in [1,2,3]:
                 print "error!! unreachable state!!"
                 continue
+
+        
+        self.conn.commit()
+        self.cur.close() 
+        self.conn.close()
 
             
                 

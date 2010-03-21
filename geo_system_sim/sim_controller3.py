@@ -3,7 +3,7 @@
 import numpy as np
 import time, random
 import sys, os, struct, socket
-import MySQLdb
+import psycopg2
 
 import test_coords
 import alex_random
@@ -126,30 +126,23 @@ class simulation:
                        payload3 + payload4 +
                        payload5 + payload6)
 
-
-            db = MySQLdb.connect (host = "localhost",
-                                  user = "sdrc_user",
-                                  passwd = "sdrc_pass",
-                                  db = "blob_test")
-
-            cursor = db.cursor ()
-
-            table = 'blob_table'
-            fields = '(field_1)'
+            conn = psycopg2.connect(host = "192.168.42.200",
+                                    user = "sdrc_user",
+                                    password = "sdrc_pass",
+                                    database = "sdrc_db")
 
 
+            cur = conn.cursor()
 
-            sql = """INSERT INTO %s %s VALUES (\'%\r')""" %(table,fields,payload)
 
-            print str(sql)
+            cur.execute("INSERT INTO blob_table (field_1) VALUES (%s)", (psycopg2.Binary(payload),))
 
-            print 'cursor.execute(sql)'
-            cursor.execute(sql)
 
-            print 'db.commit()'
-            db.commit()
+            conn.commit()
+            cur.close() 
+            conn.close()
 
-            db.close()
+
 
             # don't use, adbapi can't handle too many db connections...
 #             #self.data.set_rpt_packet(payload)
@@ -319,3 +312,23 @@ if __name__=='__main__':
 #             db.rollback()
 
 #         # disconnect from server
+
+
+            # cursor = db.cursor ()
+
+            # table = 'blob_table'
+            # fields = '(field_1)'
+
+
+
+            # sql = """INSERT INTO %s %s VALUES (\'%\r')""" %(table,fields,payload)
+
+            # print str(sql)
+
+            # print 'cursor.execute(sql)'
+            # cursor.execute(sql)
+
+            # print 'db.commit()'
+            # db.commit()
+
+            # db.close()
