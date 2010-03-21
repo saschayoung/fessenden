@@ -139,8 +139,9 @@ class simulation:
 
 
 
-            sql = """INSERT INTO %s %s VALUES (\'%s\')""" %(table,fields,payload)
+            sql = """INSERT INTO %s %s VALUES (\'%\r')""" %(table,fields,payload)
 
+            print str(sql)
 
             print 'cursor.execute(sql)'
             cursor.execute(sql)

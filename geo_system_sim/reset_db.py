@@ -9,32 +9,55 @@ class reset_db:
 
 
     def run(self):
-        db = MySQLdb.connect(host = "128.173.90.70",
+        db = MySQLdb.connect(host = "localhost",
                              user = "sdrc_user",
                              passwd = "sdrc_pass",
-                             db = "test01")
+                             #db = "test01")
+                             db = "blob_test")
 
 
-        print 'table = test01_table'
-        table = 'test01_table'
+        table1 = 'blob_table'
+        table2 = 'data_table'
 
-        print 'cursor = db.cursor()'
         cursor = db.cursor()
-        sql1 = "DROP TABLE IF EXISTS %s" % table
-        cursor.execute (sql1)
+
+        sql = "DROP TABLE IF EXISTS %s" % table1
+        cursor.execute (sql)
+
+        sql = "DROP TABLE IF EXISTS %s" % table2
+
+        cursor.execute (sql)
 
 
+        sql = """CREATE TABLE %s (idx INT NOT NULL AUTO_INCREMENT, field_1 BINARY(128), INDEX (idx))"""  % table1
+        cursor.execute (sql)
 
-        sql2 = """CREATE TABLE %s (idx INT, rpt_pkt_num INT, 
+        sql = """CREATE TABLE %s (idx INT NOT NULL AUTO_INCREMENT, rpt_pkt_num INT, 
                                    rpt_team_id INT, rpt_location CHAR(50), 
-                                   rpt_timestamp CHAR(50), beaon_id INT, 
-                                   beacon_pkt_num INT)""" % table
-        cursor.execute (sql2)
+                                   rpt_timestamp CHAR(50), beacon_id INT, 
+                                   beacon_pkt_num INT, INDEX (idx))""" % table2
+        cursor.execute (sql)
 
 
-        cursor = db.cursor()
-        sql3 = """CREATE INDEX idx ON %s(idx)""" % table
-        cursor.execute (sql3)
+#         sql3 = """CREATE INDEX idx ON %s(idx)""" % table
+#         cursor.execute (sql3)
+
+
+
+
+#         table = 'test01_table'
+
+#         cursor = db.cursor()
+#         sql1 = "DROP TABLE IF EXISTS %s" % table
+#         cursor.execute (sql1)
+
+
+
+
+
+
+#         sql3 = """CREATE INDEX idx ON %s(idx)""" % table
+#         cursor.execute (sql3)
 
 
         cursor.close () 
