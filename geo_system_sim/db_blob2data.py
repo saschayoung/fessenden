@@ -21,9 +21,9 @@ class db_blob2data:
         self.state = 1
         self.loop_escape = 0
 
-        self.old_idx_min = 1
+        #self.old_idx_min = 1
         self.old_idx_max = 1
-        self.new_idx_min = 1
+        #self.new_idx_min = 1
         self.new_idx_max = 1
 
         self.db_host = '192.168.42.200'
@@ -46,7 +46,7 @@ class db_blob2data:
     def db_sleep(self):
         t = self.t_sleep
         print 'db sleep %f seconds' % t
-        time.sleep(t/10)
+        time.sleep(t)
         self.t_sleep = random.random()
         
 
@@ -135,7 +135,7 @@ class db_blob2data:
                     print "no new data"
                     print "print loop_escape: ", self.loop_escape
                     if (self.loop_escape == 100):
-                        print "no new data for 1000 iterations"
+                        print "no new data for 100 iterations"
                         print "ending program"
                         break
                     self.state = 2
@@ -160,7 +160,8 @@ class db_blob2data:
                 # self.parse_blob()
                 # self.write_data()
                 for i in range(self.old_idx_max,self.new_idx_max):
-                    print "i: ", range(self.old_idx_max,self.new_idx_max)
+                    print "i in range: ", (i,range(self.old_idx_max,self.new_idx_max))
+                    
                     self.get_blob(i)
                     self.parse_blob()
                     self.write_data()

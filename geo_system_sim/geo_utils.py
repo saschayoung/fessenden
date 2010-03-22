@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 import sys,os
 
@@ -82,6 +83,13 @@ class geo_utils:
         return:
                (x1,y1,x2,y2)   x & y coordinates of asymptotes 1 & 2
         '''
+
+        print "p1: ", p1
+        print "p2: ", p2
+        print "toa1: ", repr(toa1)
+        print "toa2: ", repr(toa2)
+        print "type(toa1): ", type(toa1)
+        print "type(toa2): ", type(toa2)
         x1 = p1[0]
         y1 = p1[1]
 
@@ -111,6 +119,7 @@ class geo_utils:
         dd = self.speed_of_light*((toa1 - toa2))/(60*1852)
         if x1 < x2:
             print "x1 < x2"
+            print "dd: ", dd
             if dd < 0:
                 print "dd < 0"
                 x_hyperbola = -a*np.cosh(t)
@@ -121,6 +130,7 @@ class geo_utils:
                 y_hyperbola = b*np.sinh(t)
         if x1 > x2:
             print "x1 > x2"
+            print "dd: ", dd
             if dd > 0:
                 print "dd > 0"
                 x_hyperbola = -a*np.cosh(t)
@@ -133,6 +143,9 @@ class geo_utils:
         
         x_hyperbola_p = x_hyperbola*np.cos(alpha) - y_hyperbola*np.sin(alpha)+x_0
         y_hyperbola_p = x_hyperbola*np.sin(alpha) + y_hyperbola*np.cos(alpha)+y_0
+        
+        #plt.plot(x_hyperbola_p,y_hyperbola_p)
+
         return (x_hyperbola_p,y_hyperbola_p)
 
 
@@ -165,7 +178,7 @@ class geo_utils:
         for num in y2:
             f.write(str(num)+'\n')
         f.close()
-        string = 'matlab -nojvm -nodesktop -nosplash -nodisplay -r \"intersections()\"'
+        string = 'sudo -u aryoung matlab -nojvm -nodesktop -nosplash -nodisplay -r \"intersections()\"'
         os.system(string)
 
         f = open('intersect.txt','r')

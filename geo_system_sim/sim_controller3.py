@@ -26,7 +26,7 @@ class simulation:
         self.DEBUG = True
         self.rx_number = 4
         self.packet_number = 0
-
+        self.beacon = beacon()
 
 
 
@@ -42,13 +42,16 @@ class simulation:
         
         self.data.set_rx_number(n)
 
-        self.beacon = beacon()
+
 
         tx_loc = test_coords.get_tx_coords()
         self.data.set_tx_location(tx_loc)
+        self.data.reset_rx_location()
 
         for i in range(n):
             rx_loc = alex_random.get_random_coord()
+            print "\n\n\n\n\n\nstore location: ", rx_loc
+            print '\n\n\n\n\n\n'
             self.data.set_rx_location(rx_loc)
 
             tof = self.geo_utils.time_of_flight(rx_loc,tx_loc)
@@ -89,6 +92,9 @@ class simulation:
         # lists containing data for all current teams
         team_id = self.data.get_rx_team_id()
         location = self.data.get_rx_location()
+        print "\n\n\n\n\n\nretrieve location: ", location
+        print '\n\n\n\n\n\n'
+        
         tof = self.data.get_rx_time_delay()
         print "type(tof): ", type(tof)
 
@@ -96,6 +102,13 @@ class simulation:
         HOST = 'localhost'    # The remote host
         PORT = 1079           # The same port as used by the server
 
+        conn = psycopg2.connect(host = "192.168.42.200",
+                                user = "sdrc_user",
+                                password = "sdrc_pass",
+                                database = "sdrc_db")
+
+
+        cur = conn.cursor()
 
         for i in range(n):
 
@@ -126,21 +139,32 @@ class simulation:
                        payload3 + payload4 +
                        payload5 + payload6)
 
-            conn = psycopg2.connect(host = "192.168.42.200",
-                                    user = "sdrc_user",
-                                    password = "sdrc_pass",
-                                    database = "sdrc_db")
-
-
-            cur = conn.cursor()
 
 
             cur.execute("INSERT INTO blob_table (field_1) VALUES (%s)", (psycopg2.Binary(payload),))
 
 
-            conn.commit()
-            cur.close() 
-            conn.close()
+        conn.commit()
+        cur.close() 
+        conn.close()
+
+
+
+        self.packet_number += 1
+        
+
+
+
+
+
+if __name__=='__main__':
+    main = simulation()
+
+    for i in range(10):
+        main.init_sim(3)
+        main.rx_beacon_packet()
+        main.receiver_chain()
+
 
 
 
@@ -155,8 +179,8 @@ class simulation:
 #             sys.stdout.write("  Done\n")
 #             sock.close()
 
-        self.packet_number += 1
-        
+
+
         
 
     # # don't use if using sockets above
@@ -217,11 +241,11 @@ class simulation:
 
 
 
-    def send_rpt_packet(self):
-        """
-        transmit repeater packets
-        """
-        pass
+    # def send_rpt_packet(self):
+    #     """
+    #     transmit repeater packets
+    #     """
+    #     pass
 
 
 
@@ -234,46 +258,31 @@ class simulation:
                 
 
 
-    def run(self):
-        """
-        run.
-        """
-        pass
+    # def run(self):
+    #     """
+    #     run.
+    #     """
+    #     pass
 
-    def work(self):
-        """
-        work function.
-        """
-        pass
+    # def work(self):
+    #     """
+    #     work function.
+    #     """
+    #     pass
 
-    def __str__(self):
-        """
-        Print data in class: simulation
-        """
-        string = '\n########\nSimulation START\n'
-        string += 'tx_location: ' + repr(self.data.get_tx_location()) + '\n'
-        string += 'rx_location: ' + repr(self.data.get_rx_location()) + '\n'
-        string += 'rx_time_delay: ' + repr(self.data.get_rx_time_delay()) + '\n'
-        string += 'rx_team_id: ' + str(self.data.get_rx_team_id()) + '\n'
-        string += 'rpt_packet: ' + str(self.data.get_rpt_packet())
-        string += '########\nSimulation END\n'
-        return string
+    # def __str__(self):
+    #     """
+    #     Print data in class: simulation
+    #     """
+    #     string = '\n########\nSimulation START\n'
+    #     string += 'tx_location: ' + repr(self.data.get_tx_location()) + '\n'
+    #     string += 'rx_location: ' + repr(self.data.get_rx_location()) + '\n'
+    #     string += 'rx_time_delay: ' + repr(self.data.get_rx_time_delay()) + '\n'
+    #     string += 'rx_team_id: ' + str(self.data.get_rx_team_id()) + '\n'
+    #     string += 'rpt_packet: ' + str(self.data.get_rpt_packet())
+    #     string += '########\nSimulation END\n'
+    #     return string
         
-
-
-
-
-
-
-
-if __name__=='__main__':
-    main = simulation()
-    main.init_sim(3)
-    for i in range(20):
-        main.rx_beacon_packet()
-        main.receiver_chain()
-
-
 
 
 

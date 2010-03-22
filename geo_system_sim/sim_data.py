@@ -9,6 +9,8 @@ class data_utils:
         self.rpt_packet = []
 
 
+    def reset_rx_location(self):
+        self.rx_location = []
 
     # setters
     ###########################################################################
