@@ -8,10 +8,16 @@ import psycopg2
 import test_coords
 import alex_random
 import sim_utils
+import sdr_kml_writer
 
 from geo_utils import geo_utils
 from beacon import beacon
 from sim_data import data_utils
+
+ENABLE_JITTER = True
+ENABLE_DROPPED_PACKETS = True
+ENABLE_LOCATION_HISTORY = True
+ENABLE_BEACON_DELAY = False
 
 
 class simulation:
@@ -21,12 +27,15 @@ class simulation:
 
         self.geo_utils = geo_utils()
         
-        self.data = data_utils()
+        
         
         self.DEBUG = True
         self.rx_number = 4
         self.packet_number = 0
-        self.beacon = beacon()
+
+        self.iterator = 1
+        self.packet_error_rate = 0.1
+        self.all_locations = []
 
 
 
@@ -34,6 +43,10 @@ class simulation:
         """
         initialize simulation for n receivers.
         """
+        self.beacon = beacon(ENABLE_BEACON_DELAY)
+        self.data = data_utils(n)
+        random.seed()
+
         if n < 3:
             print 'Number of receivers %i is less than three.' %n
             print 'Simulation controller will not run.'
@@ -46,13 +59,14 @@ class simulation:
 
         tx_loc = test_coords.get_tx_coords()
         self.data.set_tx_location(tx_loc)
-        self.data.reset_rx_location()
+        # self.data.reset_rx_location()
 
         for i in range(n):
             rx_loc = alex_random.get_random_coord()
-            print "\n\n\n\n\n\nstore location: ", rx_loc
-            print '\n\n\n\n\n\n'
-            self.data.set_rx_location(rx_loc)
+            if self.DEBUG:
+                print "\n\n\n\n\n\nstore location: ", rx_loc
+                print '\n\n\n\n\n\n'
+            self.data.set_rx_location(i,rx_loc)
 
             tof = self.geo_utils.time_of_flight(rx_loc,tx_loc)
             self.data.set_rx_time_delay(tof)
@@ -75,7 +89,8 @@ class simulation:
         self.beacon.make_packet()
         rx_packet = self.beacon.tx_packet()
         rx_time = np.float128('%.20f'%(time.time()))
-        print 'rx_time: ', repr(rx_time)
+        if self.DEBUG:
+            print 'rx_time: ', repr(rx_time)
 
         self.data.set_timestamp_base(rx_time)
         self.data.set_beacon_packet(rx_packet)
@@ -92,11 +107,14 @@ class simulation:
         # lists containing data for all current teams
         team_id = self.data.get_rx_team_id()
         location = self.data.get_rx_location()
-        print "\n\n\n\n\n\nretrieve location: ", location
-        print '\n\n\n\n\n\n'
-        
+        if ENABLE_LOCATION_HISTORY:
+            self.record_location_history(location)
         tof = self.data.get_rx_time_delay()
-        print "type(tof): ", type(tof)
+
+        if self.DEBUG:
+            print "\n\n\n\n\n\nretrieve location: ", location
+            print ''
+            print "type(tof): ", type(tof)
 
 
         HOST = 'localhost'    # The remote host
@@ -107,40 +125,63 @@ class simulation:
                                 password = "sdrc_pass",
                                 database = "sdrc_db")
 
-
         cur = conn.cursor()
+
 
         for i in range(n):
 
+
             (rx_pktno,) = struct.unpack('!H', beacon_packet[0:2])
             (beacon_ID,) = struct.unpack('!H', beacon_packet[2:4])
-            
+
+            # packet number
             payload1 = struct.pack('!H', self.packet_number & 0xffff)
 
+            # team id
             id = team_id[i]
             payload2 = struct.pack('!H', id & 0xffff)
 
-            loc = location[i]
+            # location
+            if (self.iterator == 1):
+                loc = location[i]
+            else:
+                old_loc = location[i]
+                loc = alex_random.random_move(old_loc)
+                self.data.set_rx_location(i,loc)
+            self.iterator += 1
             payload3 = sim_utils.pack_loc(loc)
-
-            t = tof[i]
-            print "t = tof[i]: ", repr(t)
-            print "type(t): ", type (t)
             
+
+            # toa
+            t = tof[i]
             toa = time_base + t
-            print "toa = time_base + t: ", repr(toa)
-            print "type(toa): ", type(toa)
+            if (ENABLE_JITTER):
+                jitter = self.random_timing_jitter()
+                toa = toa+jitter
+            else:
+                pass
+            if self.DEBUG:
+                print "t = tof[i]: ", repr(t)
+                print "type(t): ", type (t)
+                print "toa = time_base + t: ", repr(toa)
+                print "type(toa): ", type(toa)
             payload4 = sim_utils.pack_time(toa)
 
+            # beacon payload
             payload5 = struct.pack('!H', rx_pktno & 0xffff)
             payload6 = struct.pack('!H', beacon_ID & 0xffff)
 
-            payload = (payload1 + payload2 +
-                       payload3 + payload4 +
-                       payload5 + payload6)
+            # check if packet dropped
+            drop = self.drop_packet()
+            if (ENABLE_DROPPED_PACKETS and drop): # if drop == 'True'
+                payload = ''
+            else:    # if drop == 'False'
+                payload = (payload1 + payload2 +
+                           payload3 + payload4 +
+                           payload5 + payload6)
 
 
-
+            
             cur.execute("INSERT INTO blob_table (field_1) VALUES (%s)", (psycopg2.Binary(payload),))
 
 
@@ -148,22 +189,65 @@ class simulation:
         cur.close() 
         conn.close()
 
-
-
         self.packet_number += 1
         
 
+
+    def record_location_history(self,loc):
+        self.all_locations.append(loc)
+        if self.DEBUG:
+            print 'all locations:\n', self.all_locations
+
+    # def write_location_history(self):
+    #     # f = open('location_history','w+')
+    #     for i in self.all_locations:
+    #         print repr(i[0][0][0]), repr(i[0][0][1]))
+    #         # f.write(repr(i)+'\n')
+    #         print '\n\n\n\n\n\n\n'
+    #         print len(i)
+    #     # f.close()
+
+        # kml_write = sdr_kml_writer.kml_writer()
+
+        # for i in range(0,len(x_results)):
+        #     coord = str(x_results[i])+','+str(y_results[i])
+        #     kml_write.add_placemark('','',coord)
+        # kml_write.write_to_file('geoloc_kml_file.kml')        
+
+
+    def random_timing_jitter(self):
+        r = random.uniform(0,1)
+        jitter = r*1e-9
+        if self.DEBUG:
+            print 'Random timing jitter %f seconds' %(jitter)
+        return jitter
+
+
+
+    def drop_packet(self):
+        r = random.uniform(0,1)
+        if (r > self.packet_error_rate):
+            drop = 'False'
+        else:
+            drop = 'True'
+        if self.DEBUG:
+            print 'Probability of dropped packet: ', self.packet_error_rate
+            print 'Packet dropped?  ', drop
+        return drop
+        
+        
 
 
 
 
 if __name__=='__main__':
     main = simulation()
-
-    for i in range(200):
-        main.init_sim(3)
+    main.init_sim(3)
+    for i in range(5):
+        
         main.rx_beacon_packet()
         main.receiver_chain()
+    main.write_location_history()
 
 
 

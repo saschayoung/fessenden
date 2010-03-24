@@ -19,14 +19,8 @@ class reset_db:
 
         cur = conn.cursor()
 
-        t1 = 'blob_table'
-        cur.execute("SELECT MAX(id) FROM %s;" %(t1,))
 
-        (result,) = cur.fetchone()
-        
-
-
-        print 'result: ', result
+        #insert test code here
 
 
 

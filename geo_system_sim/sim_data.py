@@ -1,8 +1,9 @@
 class data_utils:
 
 
-    def __init__(self):
-        self.rx_location = []
+    def __init__(self,n):
+        self.rx_location = range(n)
+        print self.rx_location
         self.rx_time_delay = []
         self.rx_team_id = []
         self.rx_power = []
@@ -28,12 +29,12 @@ class data_utils:
         """        
         self.rx_number = n
 
-    def set_rx_location(self,coords):
+    def set_rx_location(self,i,coords):
         """
         set locations for n receivers at start of simulation.
         used at start of simulation.
         """
-        self.rx_location.append(coords)        
+        self.rx_location[i] = coords
 
     def set_timestamp_base(self,t):
         """
