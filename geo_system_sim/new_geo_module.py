@@ -3,13 +3,13 @@
 import time, random, struct
 import numpy as np
 import psycopg2
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import test_coords
 import alex_random
 
 from geo_utils import geo_utils
 from geolocation import geolocation
-
+import refine_results
 
 class geo_module:
 
@@ -20,12 +20,13 @@ class geo_module:
         self.geoloc = geolocation()
         self.method = 'tdoa'  # method {'tdoa'|'custom'}
 
-
+        
+        self.tdoa_iterator = 1
         self.t_sleep = 0.01
 
         self.user = 'sdrc_user'
         self.passwd = 'sdrc_pass'
-
+        self.kml_file_number = 1
         self.state = 1
         self.dead_loop = 0
         self.loop_escape = 5
@@ -137,12 +138,10 @@ class geo_module:
 
 
     def fsm(self):
+################################################################################
         self.init_db()
 
-
         while True:
-            
-
             # check db status
             ####################################################################
             if self.state == 1:
@@ -172,9 +171,9 @@ class geo_module:
                         print "print dead loop iteration: ", self.dead_loop
                     if (self.loop_escape == self.loop_escape):
                         print "no new data for %d iterations" %self.loop_escape
-                        print "ending program"
+                        print "checking for unresoved data before ending program"
                         break
-                    self.state = 2
+                    self.state = 5
                     continue
             ####################################################################
 
@@ -240,21 +239,44 @@ class geo_module:
                         if not (intersection == -1):
                             self.x_results += intersection[0]
                             self.y_results += intersection[1]
+                            self.state = 5
+                            self.tdoa_iterator += 1
                         else:
+                            self.state = 1
                             continue
+                    
                 else: # method = 'custom'
                     pass
                 # move the following line to the end of the file?
                 # self.write_results()
 
 
+                
+                continue
+            ####################################################################
+
+            # resolve data
+            ####################################################################
+            if self.state == 5:
+                if self.DEBUG:
+                    print 'tdoa iterator: ', self.tdoa_iterator
+                if ( ((self.tdoa_iterator%50)==0) or 
+                     (self.loop_escape == self.loop_escape) ):
+                    ret_code = refine_results.geo_hist(self.x_results,
+                                                       self.y_results,
+                                                       self.kml_file_number)
+                    self.kml_file_number += 1
+                    if not (ret_code == 0):
+                        print 'error in running 2d histograms: ', ret_code
+                else:
+                    pass
                 self.state = 1
                 continue
             ####################################################################
 
-
+            # error!!
             ####################################################################
-            if self.state not in [1,2,3,4]:
+            if self.state not in [1,2,3,4,5]:
                 print "error!! unreachable state!!"
                 continue
             ####################################################################
@@ -264,6 +286,7 @@ class geo_module:
         self.cur.close() 
         self.conn.close()
         self.write_results()
+################################################################################
 
 
 

@@ -160,11 +160,11 @@ class db_blob2data:
                 # self.parse_blob()
                 # self.write_data()
                 for i in range(self.old_idx_max,self.new_idx_max):
-                    print "i in range: ", (i,range(self.old_idx_max,self.new_idx_max))
-                    
+                    # print "i in range: ", (i,range(self.old_idx_max,self.new_idx_max))                    
                     self.get_blob(i)
-                    self.parse_blob()
-                    self.write_data()
+                    if not (len(self.blob) == 0):
+                        self.parse_blob()
+                        self.write_data()
                 self.old_idx_max = self.new_idx_max
                 self.state = 1
                 continue

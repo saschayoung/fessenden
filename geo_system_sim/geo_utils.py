@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 import sys,os
 
@@ -178,7 +178,7 @@ class geo_utils:
         for num in y2:
             f.write(str(num)+'\n')
         f.close()
-        string = 'sudo -u aryoung matlab -nojvm -nodesktop -nosplash -nodisplay -r \"intersections()\"'
+        string = 'matlab -nojvm -nodesktop -nosplash -nodisplay -r \"intersections()\"'
         os.system(string)
 
         f = open('intersect.txt','r')

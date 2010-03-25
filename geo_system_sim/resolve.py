@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+import matplotlib.cm as cm
+import matplotlib.pyplot as plt
 
 import numpy as np
 import sdr_kml_writer
@@ -8,6 +10,7 @@ import alex_random
 
 DEBUG = True
 ENABLE_PLOTTING = False
+
 
 
 def list_min(list):
@@ -31,13 +34,24 @@ def get_limits(x_list,y_list):
     xmax = list_max(x_list)
     ymin = list_min(y_list)
     ymax = list_max(y_list)
-    return (xmin,xmax,ymin,ymax)
+    return [xmin,xmax,ymin,ymax]
 
 
 def hist_2d(x_results, y_results):
     x_refined = []
     y_refined = []
+
     H, xedges, yedges = np.histogram2d(x_results, y_results)
+
+    print H.shape, xedges.shape, yedges.shape
+
+    extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
+    plt.figure()
+    plt.imshow(H, extent=extent)
+    # plt.figure() 
+    # extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
+    # plt.imshow(H, extent=extent)
+
     idx = np.unravel_index(np.argmax(H),H.shape)
     if idx == (0,0):
         return -1
@@ -56,22 +70,21 @@ def hist_2d(x_results, y_results):
             x_refined.append(x_results[i])
             y_refined.append(y_results[i])
         i +=1
-    return (x_refined,y_refined)
+    return [[x_refined],[y_refined]]
 
 
 def get_edges(x_results, y_results):
     H, xedges, yedges = np.histogram2d(x_results, y_results)
+
     idx = np.unravel_index(np.argmax(H),H.shape)
     x_lower = xedges[idx[0]]
     x_upper = xedges[idx[0]+1]
     y_lower = yedges[idx[1]]
     y_upper = yedges[idx[1]+1]
-    return (x_lower, x_upper, y_lower, y_upper)
+    return [x_lower, x_upper, y_lower, y_upper]
 
 
 def plot_hexbin(x_results, y_results):
-    import matplotlib.cm as cm
-    import matplotlib.pyplot as plt
 
     (xmin,xmax,ymin,ymax) = get_limits(x_results, y_results)
     fig = plt.figure()
@@ -89,11 +102,19 @@ def plot_hexbin(x_results, y_results):
         print 'ymax: ', ymax
     return 0
 
+def get_point(edges):
+    p_x = (0.5)*(edges[0] + edges[1])
+    p_y = (0.5)*(edges[2] + edges[3])
+    return [p_x,p_y]
 
-def resolve(x_results, y_results):
+def resolve_box(x_results, y_results):
+    # if DEBUG:
+    #     print 'x_results: ', x_results
+    #     print 'y_results: ', y_results
     result = hist_2d(x_results, y_results)
+    # print 'result: ', result
     i = 1
-    while (result == -1):
+    while not (result == -1):
         x1 = result[0]
         y1 = result[1]
         result = hist_2d(x1, y1)
@@ -103,18 +124,37 @@ def resolve(x_results, y_results):
     edges  = get_edges(x_results, y_results)
     return edges
 
+# def resolve_point(x_results, y_results):
+#     result = hist_2d(x_results, y_results)
+#     i = 1
+#     while (result == -1):
+#         x1 = result[0]
+#         y1 = result[1]
+#         result = hist_2d(x1, y1)
+#         i += 1
+#         if (i == 6):
+#             break
+#     edges  = get_edges(x_results, y_results)
+#     point = get_point(edges)
+#     return point
+
+
 
 
 if __name__=='__main__':
-    f = open('x_results','r')
+    # f = open('x_results','r')
+    f = open('/home/aryoung/prog/geolocation/geo_system_sim/x_results','r')
     a = f.readlines()
     f.close()
     a = [float(x.strip('\n')) for x in a]
 
-    f = open('y_results','r')
+    # f = open('y_results','r')
+    f = open('/home/aryoung/prog/geolocation/geo_system_sim/y_results','r')
     b = f.readlines()
     f.close()
     b = [float(x.strip('\n')) for x in b]
+
+
 
     x_results = []
     y_results = []
@@ -124,9 +164,16 @@ if __name__=='__main__':
         x_results.append(a[i])
         y_results.append(b[i])
         i +=1
+ 
 
-    answer = resolve(x_results,y_results)
-    print "answer: ", answer
+    # plt.figure()
+    # plt.plot(x_results,y_results,'.')
+    # plt.grid(True)
+    # plt.show()
+    box = resolve_box(x_results,y_results)
+    # point = resolve_point(x_results,y_results)
+    # print "bounding box: ", box
+    # print "\'center\' of box: ", point
 
 
     # if ENABLE_PLOTTING:
@@ -212,11 +259,6 @@ if __name__=='__main__':
 # #         kml_write.add_placemark('','',coord)
 # #     kml_write.write_to_file('geoloc_kml_file.kml')
 
-    # plt.figure()
-    # H, xedges, yedges = np.histogram2d(x_results, y_results)
-    # print H.shape, xedges.shape, yedges.shape
-    # extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
-    # plt.imshow(H, extent=extent)
 
 
     # print x_lower

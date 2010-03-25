@@ -14,7 +14,7 @@ from geo_utils import geo_utils
 from beacon import beacon
 from sim_data import data_utils
 
-ENABLE_JITTER = True
+ENABLE_JITTER = False
 ENABLE_DROPPED_PACKETS = True
 ENABLE_LOCATION_HISTORY = True
 ENABLE_BEACON_DELAY = False
@@ -173,8 +173,24 @@ class simulation:
 
             # check if packet dropped
             drop = self.drop_packet()
-            if (ENABLE_DROPPED_PACKETS and drop): # if drop == 'True'
-                payload = ''
+            # this if evaluates true even if drop == False
+            # if (ENABLE_DROPPED_PACKETS and drop): # if drop == 'True'
+            #     print 'ENABLE_DROPPED_PACKETS ', ENABLE_DROPPED_PACKETS
+            #     print 'drop ', drop
+            #     print (ENABLE_DROPPED_PACKETS and drop)
+            #     print 'packet dropped'
+            #     payload = ''
+            if ENABLE_DROPPED_PACKETS:
+                print 'ENABLE_DROPPED_PACKETS ', ENABLE_DROPPED_PACKETS
+                print 'drop ', drop
+                if drop: # if drop == 'True'
+                    print 'drop ', drop
+                    print 'packet dropped'
+                    payload = ''
+                else:    # if drop == 'False'
+                    payload = (payload1 + payload2 +
+                               payload3 + payload4 +
+                               payload5 + payload6)
             else:    # if drop == 'False'
                 payload = (payload1 + payload2 +
                            payload3 + payload4 +
@@ -226,10 +242,13 @@ class simulation:
 
     def drop_packet(self):
         r = random.uniform(0,1)
+        print 'random value: ', r
+        print 'error rate: ', self.packet_error_rate
         if (r > self.packet_error_rate):
-            drop = 'False'
+            
+            drop = False
         else:
-            drop = 'True'
+            drop = True
         if self.DEBUG:
             print 'Probability of dropped packet: ', self.packet_error_rate
             print 'Packet dropped?  ', drop
@@ -242,12 +261,12 @@ class simulation:
 
 if __name__=='__main__':
     main = simulation()
-    main.init_sim(3)
-    for i in range(5):
+    main.init_sim(5)
+    for i in range(20):
         
         main.rx_beacon_packet()
         main.receiver_chain()
-    main.write_location_history()
+#     main.write_location_history()
 
 
 
