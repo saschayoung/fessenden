@@ -57,6 +57,29 @@ def random_move(coordinates, direction = -1, magnitude = 0.0006):
     
     return result
 
+def directed_move(start, finish, magnitude = 0.0006):
+    delta_x = finish[0]-start[0]
+    delta_y = finish[1]-start[1]
+
+    angle = np.arctan2(delta_y,delta_x)
+
+    x_move = magnitude*np.cos(angle)
+    y_move = magnitude*np.sin(angle)
+
+    #random part
+    max_rand = magnitude/10
+
+    x_rand = range_random(-1*max_rand, max_rand)
+    y_rand = range_random(-1*max_rand, max_rand)
+
+    x_move += x_rand
+    y_move += y_rand
+
+    new_x = start[0] + x_rand + x_move
+    new_y = start[1] + y_rand + y_move
+
+    return [new_x, new_y]
+
 def get_random_coord():
     long_base = np.float64(-77.03784581934387)
     long_upper = np.float64(-77.13004625000904)
@@ -73,7 +96,9 @@ def get_random_coord():
 
 if __name__ == '__main__':
     start = get_random_coord()
+    finish = get_random_coord()
     print "Start:\t\t", start
-    moved = random_move(start,4)
+    print "Finish:\t\t", finish
+    moved = directed_move(start,finish)
     print "After Move:\t", moved
     

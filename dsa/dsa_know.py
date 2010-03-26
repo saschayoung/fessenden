@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import wx
-import threading
+import threading, dsa_timer
 
 
 
@@ -31,14 +31,14 @@ class component():
         
         self.channel_time = 10
         
-        self.time_thread = threading.Timer(10.0, self.age_channels)
+        self.time_thread = dsa_timer.ResettableTimer(10.0, self.age_channels, inc=1)
         
         self.lock = threading.Lock()
         
         self.time_thread.start()
 
     def __del__(self):
-        self.time_thread.join()
+        self.time_thread.kill()
 
     def age_channels(self):
         self.lock.acquire()
@@ -57,6 +57,7 @@ class component():
         acq = 0
         rel = 0
         add = 0
+        up = 0
 
         if not(self.to_acquire == None):
             if not([int,float].count(type(self.to_acquire[0])) == 0):
@@ -113,19 +114,37 @@ class component():
 
 
         if not(self.new_users == None):
+            key_list = ['name', 'id', 'location', 'skill', 'bitrate', 'bandwidth', 'modulation']
             if not([tuple,list].count(type(self.new_users)) == 0):
                 if type(self.new_users[0]) is str:
-                    add = self.add_user(self.new_users[0], self.new_users[1], self.new_users[2], 
-                                        self.new_users[3])
+                    input_len = len(self.new_users)
+
+                    tmp = {}
+                    for i in range(len(key_list)):
+                        if i < input_len:
+                            tmp[key_list[i]] = self.new_users[i]
+                        else:
+                            tmp[key_list[i]] = None
+
+                    add = self.add_user(tmp)
 
                 elif not([tuple,list].count(type(self.new_users[0])) == 0):
                     add = 0
                     for i in range(len(self.new_users)):
-                        if not(type(self.new_users[i]) is str):
-                            mini_add = self.add_user(self.new_users[i][0], self.new_users[i][1], 
-                                                     self.new_users[i][2], self.new_users[i][3])
+                        if not(type(self.new_users[i]) is list):
+                            input_len = len(self.new_users)
+
+                            tmp = {}
+                            for i in range(len(key_list)):
+                                if i < input_len:
+                                    tmp[key_list[i]] = self.new_users[i]
+                                else:
+                                    tmp[key_list[i]] = None
+
+                            mini_add = self.add_user(tmp)
+
                             if mini_add == 0:
-                                self.new_users[i] = ''
+                                self.new_users[i] = []
                             elif mini_add < add:
                                 add = mini_add
                                 
@@ -133,42 +152,67 @@ class component():
                     add = 0
                     for i in range(len(self.new_users)):
                         if not(type(self.new_users[i]) is str):
-                            mini_add = self.add_user(self.new_users[i]['name'], self.new_users[i]['id'],
-                                                     self.new_users[i]['location'], self.new_users[i]['skill'])
+                            user_keys = self.new_users[i].keys()
+                            
+                            diff_keys = list(set(key_list)-set(user_keys))
+
+                            tmp = self.new_users[i]
+                            
+                            for key in diff_keys:
+                                tmp[key] = None
+
+                            mini_add = self.add_user(tmp)
+
                             if mini_add == 0:
                                 self.new_users[i] = ''
                             elif mini_add < add:
                                 add = mini_add
 
             else:
-                add = self.add_user(self.new_users['name'], self.new_users['id'], self.new_users['location'],
-                                    self.new_users['skill'])
+                user_keys = self.new_users.keys()
+                
+                diff_keys = list(set(key_list)-set(user_keys))
+
+                tmp = self.new_users
+
+                for key in diff_keys:
+                    tmp[key] = None
+                add = self.add_user(tmp)
 
 
             if add == 0:
                 self.new_users = None
 
+        if not(self.user_up == None):
+            
+            up = self.update_user()
+
         acq *= -1
-        acq = acq << 8
+        acq = acq << 12
         
         rel *= -1 
-        rel = rel << 4
+        rel = rel << 8
         
         add *= -1
+        add = add << 4
+
+        up *= -1 
         
-        result = acq | rel | add
+        result = acq | rel | add | up
 
         return result
                                            
 
-    def input_data(self, acquire_freqs=None, release_freqs=None, new_users=None):
+    def input_data(self, acquire_freqs=None, release_freqs=None, new_users=None, user_up = None):
         acq = 0
         rel = 0
         use = 0
+        up = 0
 
         self.to_acquire = None
         self.to_release = None
         self.new_users = None
+        self.user_up = None
 
         if not(acquire_freqs == None):
             if not([tuple,list].count(type(acquire_freqs)) == 0):
@@ -178,6 +222,8 @@ class component():
                         recheck = False
                         if not([int,float,long].count(type(acquire_freqs[1])) == 0):
                             self.to_acquire = acquire_freqs
+                        else:
+                            acq = 1
                     else:
                         acq = 1
                         
@@ -247,7 +293,7 @@ class component():
         if not(new_users == None):
             if not([tuple,list].count(type(new_users)) == 0):
                 recheck = True
-                if len(new_users) == 4:
+                if len(new_users) >= 4:
                     if type(new_users[0]) is str:
                         recheck = False
                         if not([int,float].count(type(new_users[1])) == 0):
@@ -274,7 +320,7 @@ class component():
                                 use = 1
                                 break
 
-                            if not(len(item) == 4):
+                            if not(len(item) >= 4):
                                 use = 1
                                 break
                             elif not(type(item[0]) is str):
@@ -358,17 +404,26 @@ class component():
             else:
                 use = 1
 
+        if not(user_up == None):
+            if type(user_up) is dict:
+                keys = user_up.keys()
+                if (keys.count('name') == 0) and (keys.count('id') == 0):
+                    up = 1
+                else:
+                    self.user_up = user_up
+            else:
+                up = 1
                 
-        acq = acq << 8
-        rel = rel << 4
-        result = acq | rel | use
+        acq = acq << 12
+        rel = rel << 8
+        use = use << 4
+        result = acq | rel | use | up
 
         return result
 
     def release_freq(self, freq):
         freq_found = False
         freq_open = True
-        
         self.lock.acquire()
         for i in range(len(self.freqs)):
             if self.freqs[i][0] == freq:
@@ -419,6 +474,8 @@ class component():
             return -3
 
         if not(self.users[index]['freq'] == None):
+            print "Double Count"
+            print "User: ", self.users[index]
             return -1
 
         freq_found = False
@@ -428,10 +485,10 @@ class component():
         for i in range(len(self.freqs)):
             if self.freqs[i][0] == freq:
                 freq_found = True
-                if self.freqs[i][1] > 0:
-                    freq_open = True
-                    self.freqs[i][1] = -1*user_id
-                    self.freqs[i][2] = self.channel_time
+#                 if self.freqs[i][1] > 0:
+#                     freq_open = True
+                self.freqs[i][1] = -1*user_id
+                self.freqs[i][2] = self.channel_time
                 break
         self.lock.release()
 
@@ -440,29 +497,21 @@ class component():
             print "Request: ", freq
             print "Choices: ", self.freqs
             return -3
-        if not(freq_open):
-            return -2
+#         elif not(freq_open):
+#             return -2
         else:
             index = self.user_lookup(user_id)
             self.users[index]['freq'] = freq
             return 0
 
-    def add_user(self, name, id, location, skill):
-        if not([int,float].count(type(id)) == 0):
-            user_id = id
-        else:
-            print "DSA Know Error:  ID bad type"
-            print "Type: ", type(id)
-            print "ID: ", id
-            return -2
-        
+    def add_user(self,user):
+        if not(user['id']) or (user['id'] < 0):
+            user['id'] = self.auto_id()
 
-        if user_id < 1:
-            user_id = self.auto_id()
+        user['freq'] = None
 
-        tmp = {'name':name, 'id':user_id, 'location':location, 'freq':None, 'skill':skill}
-        if self.users.count(tmp) == 0:
-            self.users.append(tmp)
+        if self.users.count(user) == 0:
+            self.users.append(user)
             return 0
         else:
             return -1
@@ -470,7 +519,39 @@ class component():
 #     def del_user(self, user_info):
 #         if not(self.users.count(user_info) == 0):
 #             self.users.pop(self.users.index(user_info))
+
+
+    def update_user(self):
+        keys = self.user_up.keys()
+        
+        index = 0
+        recheck = True
+        if not(keys.count('id') == 0):
+            keys.remove('id')
+            if self.user_up['id']:
+                index = self.user_lookup(self.user_up['id'])
+                recheck = False
+
+        if recheck:
+            id = self.id_lookup(self.user_up['name'])
+            index = self.user_lookup(id)
             
+        if not(keys.count('name') == 0):
+            keys.remove('name')
+
+            
+        if index < 0:
+            return -1
+
+        old_keys = self.users[index].keys()
+        
+        for key in keys:
+            if not(old_keys.count(key) == 0):
+                self.users[index][key] = self.user_up[key]
+
+        self.user_up = None
+
+        return 0
 
     def user_lookup(self, id):
         index = -1
@@ -493,11 +574,11 @@ class component():
         loop = True
         while loop:
             loop = False
-            for user in self.users:
-                if id == user['id']:
-                    id += 1
-                    loop = True
-                    break
+            i = self.user_lookup(id)
+            if i > -1:
+                id += 1
+                loop = True
+
         return id
 
     def output_data(self):
@@ -528,7 +609,7 @@ class component():
         return string
         
     def get_current_values(self):
-        return [self.output_data()]
+        return [self.output_data(),self.users]
 
     def get_panel(self, parent):
         '''

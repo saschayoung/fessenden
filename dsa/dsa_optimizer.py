@@ -2,6 +2,8 @@
 
 import random
 import wx
+import geo_utils
+
 
 def range_random(base, upperbound):
     """
@@ -26,6 +28,9 @@ class component():
         self.users = None
         self.request = None
         
+        self.threshold_distance = 500
+        self.geo = geo_utils.geo_utils()
+
         self.panel = None
 
 
@@ -55,6 +60,26 @@ class component():
             result = -1
         else:
             result = self.freq_list[max_index][0]
+
+        if result == -1:
+            if (not(self.users == None)) and (not(self.request == None)):
+                for i in range(len(self.users)):
+                    if self.users[i]['id'] == self.request[0]:
+                        index = i
+                        break
+                
+                for user in self.users:
+                    distance = self.geo.distance(user['location'], self.users[index]['location'])
+                    print "Distance: ", distance
+                    print "Threshold: ", self.threshold_distance
+                    print "User: ", user
+                    print "Request: ", self.users[index]
+                    print
+                    if distance > self.threshold_distance:
+                        result = user['freq']
+                        break
+
+
 
         return result
     
