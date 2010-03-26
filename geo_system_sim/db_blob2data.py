@@ -26,7 +26,8 @@ class db_blob2data:
         #self.new_idx_min = 1
         self.new_idx_max = 1
 
-        self.db_host = '192.168.42.200'
+        # self.db_host = '192.168.42.200'
+        self.db_host = '128.173.90.67'
         self.db = 'sdrc_db'
         self.t1 = 'blob_table'
         self.t1_fields = '(field_1)'
@@ -37,10 +38,14 @@ class db_blob2data:
 
         
     def init_db(self):
-        self.conn = psycopg2.connect(host = self.db_host,
-                                     user = self.user,
-                                     password = self.passwd,
-                                     database = self.db)
+        self.conn = psycopg2.connect(host = "128.173.90.68",
+                             user = "sdrc_user",
+                             password = "sdrc_pass",
+                             database = "sdrc_db")
+        # self.conn = psycopg2.connect(host = self.db_host,
+        #                              user = self.user,
+        #                              password = self.passwd,
+        #                              database = self.db)
         self.cur = self.conn.cursor ()
         
     def db_sleep(self):

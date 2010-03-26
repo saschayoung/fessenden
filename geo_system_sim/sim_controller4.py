@@ -120,7 +120,12 @@ class simulation:
         HOST = 'localhost'    # The remote host
         PORT = 1079           # The same port as used by the server
 
-        conn = psycopg2.connect(host = "192.168.42.200",
+        # conn = psycopg2.connect(host = "192.168.42.200",
+        #                         user = "sdrc_user",
+        #                         password = "sdrc_pass",
+        #                         database = "sdrc_db")
+
+        conn = psycopg2.connect(host = "128.173.90.68",
                                 user = "sdrc_user",
                                 password = "sdrc_pass",
                                 database = "sdrc_db")
@@ -261,8 +266,8 @@ class simulation:
 
 if __name__=='__main__':
     main = simulation()
-    main.init_sim(5)
-    for i in range(20):
+    main.init_sim(10)
+    for i in range(200):
         
         main.rx_beacon_packet()
         main.receiver_chain()
