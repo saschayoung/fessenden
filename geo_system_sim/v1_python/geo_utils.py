@@ -114,7 +114,8 @@ class geo_utils:
 
 
         # hyperbolas
-        t = np.linspace(-3,3,100)
+        # t = np.linspace(-3,3,100)
+        t = np.linspace(-1.5,1.5,100)
 
         dd = self.speed_of_light*((toa1 - toa2))/(60*1852)
         if x1 < x2:
