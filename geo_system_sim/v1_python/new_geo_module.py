@@ -146,6 +146,7 @@ class geo_module:
     def fsm(self):
 ################################################################################
         self.init_db()
+        t_start = time.time()
 
         while True:
             # check db status
@@ -292,6 +293,10 @@ class geo_module:
         self.cur.close() 
         self.conn.close()
         self.write_results()
+        t_stop = time.time()
+        t_tot = t_stop - t_start
+        print ''
+        print 'total run time: %s seconds' %t_tot
 ################################################################################
 
 

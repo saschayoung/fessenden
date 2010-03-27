@@ -7,12 +7,12 @@ import sdr_kml_writer
 
 def main():
 
-    f = open('x_results','r')
+    f = open('../hq/x_results','r')
     a = f.readlines()
     f.close()
     a = [float(x.strip('\n')) for x in a]
 
-    f = open('y_results','r')
+    f = open('../hq/y_results','r')
     b = f.readlines()
     f.close()
     b = [float(x.strip('\n')) for x in b]

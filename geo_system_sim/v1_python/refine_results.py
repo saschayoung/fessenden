@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-
+import os, datetime
 import numpy as np
 # import matplotlib.cm as cm
 # import matplotlib.pyplot as plt
-import sdr_kml_writer
+# import sdr_kml_writer
 
 
 DEBUG = True
@@ -12,6 +12,13 @@ PLOT = False
 
 
 def geo_hist(x_results,y_results,num):
+    host = os.uname()[1]
+    date = str(datetime.date.today())
+    p = '/home/aryoung/batch_results/%s_%s' %(host, date)
+    if not os.path.exists(p)
+        os.makedirs(p)
+    
+                              
     print 'geo_hist file number: ', num
 
     # First pass
@@ -94,7 +101,8 @@ def geo_hist(x_results,y_results,num):
         print 'Second pass failed'
         print 'probably not enough data'
         results = [x_lower,x_upper,y_lower,y_upper]
-        write_kml(results,num,'first_pass')
+        # write_kml(results,num,'first_pass')
+        write_file(results,num,'first_pass')
         return -2
 
 
@@ -123,15 +131,30 @@ def geo_hist(x_results,y_results,num):
         print 'Third pass failed'
         print 'probably not enough data'
         results = [x_lower_p,x_upper_p,y_lower_p,y_upper_p]
-        write_kml(results,num,'second_pass')
+        # write_kml(results,num,'second_pass')
+        write_file(results,num,'second_pass')
         return -3
 
     else:
         results = [x_lower_pp,x_upper_pp,y_lower_pp,y_upper_pp]
-        write_kml(results,num,'third_pass')
+        # write_kml(results,num,'third_pass')
+        write_file(results,num,'third_pass')
         return 0
         
+def write_file(results,num,s):
+    p_x = (0.5)*(results[0] + results[1])
+    p_y = (0.5)*(results[2] + results[3])
+    filename = 'answer' + '_' + str(num)+ '_' + s
+    f = open('%s/%s' %(p, filename))
+    f.write('%s\n%s' %(p_x,p_y))
+    f.close
+            
+             
 
+
+    if DEBUG:
+        print p_x,p_y
+    f = open 
 
 def write_kml(results,num,s):
     p_x = (0.5)*(results[0] + results[1])
@@ -145,7 +168,7 @@ def write_kml(results,num,s):
     kml_write.add_placemark('','',coord)
     coord = str(p_x)+','+str(p_y)
     kml_write.add_placemark('','',coord)
-    filename = 'answer' + '_' + str(num)+ '_' + s
+    filename = 'answer' + '_' + str(num)+ '_' + s + '.kml'
     kml_write.write_to_file(filename)
 
 
