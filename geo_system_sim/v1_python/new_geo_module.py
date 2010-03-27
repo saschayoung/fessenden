@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import time, random, struct
+import os
 import numpy as np
 import psycopg2
 #import matplotlib.pyplot as plt
@@ -130,12 +131,18 @@ class geo_module:
 
             
     def write_results(self):
-        f = open('x_results','w+')
+        host = os.uname()[1]
+        d = time.localtime()
+        date = '%s-%s-%s' %(str(d[0]),str(d[1]),str(d[2]))
+        p = '/home/aryoung/batch_results/%s_%s' %(host, date)
+        if not os.path.exists(p):
+            os.makedirs(p)
+        f = open('%s/x_results' %p,'w+')
         for num in self.x_results:
             f.write(str(num)+'\n')
         f.close()
 
-        f = open('y_results','w+')
+        f = open('%s/y_results' %p,'w+')
         for num in self.y_results:
             f.write(str(num)+'\n')
         f.close()

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, datetime
+import os, time
 import numpy as np
 # import matplotlib.cm as cm
 # import matplotlib.pyplot as plt
@@ -13,9 +13,10 @@ PLOT = False
 
 def geo_hist(x_results,y_results,num):
     host = os.uname()[1]
-    date = str(datetime.date.today())
+    d = time.localtime()
+    date = '%s-%s-%s' %(str(d[0]),str(d[1]),str(d[2]))
     p = '/home/aryoung/batch_results/%s_%s' %(host, date)
-    if not os.path.exists(p)
+    if not os.path.exists(p):
         os.makedirs(p)
     
                               
