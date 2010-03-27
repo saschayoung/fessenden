@@ -146,7 +146,7 @@ def write_file(results,num,p,s):
     p_x = (0.5)*(results[0] + results[1])
     p_y = (0.5)*(results[2] + results[3])
     filename = 'answer' + '_' + str(num)+ '_' + s
-    f = open('%s/%s' %(p, filename))
+    f = open('%s/%s' %(p, filename),'w+')
     f.write('%s\n%s' %(p_x,p_y))
     f.close
             
