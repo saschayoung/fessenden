@@ -143,7 +143,7 @@ def geo_hist(x_results,y_results,num):
         return 0
         
 def write_file(results,num,p,s):
-    t = str(time.localtime()[3])+'-'+str(time.localtime()[4])+'-'str(time.localtime()[5])
+    t = str(time.localtime()[3])+'-'+str(time.localtime()[4])+'-'+str(time.localtime()[5])
     p_x = (0.5)*(results[0] + results[1])
     p_y = (0.5)*(results[2] + results[3])
     filename = 'answer' + '_' + str(num)+ '_' + s
