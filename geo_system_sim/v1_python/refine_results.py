@@ -103,7 +103,7 @@ def geo_hist(x_results,y_results,num):
         print 'probably not enough data'
         results = [x_lower,x_upper,y_lower,y_upper]
         # write_kml(results,num,'first_pass')
-        write_file(results,num,'first_pass')
+        write_file(results,num,p,'first_pass')
         return -2
 
 
@@ -133,16 +133,16 @@ def geo_hist(x_results,y_results,num):
         print 'probably not enough data'
         results = [x_lower_p,x_upper_p,y_lower_p,y_upper_p]
         # write_kml(results,num,'second_pass')
-        write_file(results,num,'second_pass')
+        write_file(results,num,p,'second_pass')
         return -3
 
     else:
         results = [x_lower_pp,x_upper_pp,y_lower_pp,y_upper_pp]
         # write_kml(results,num,'third_pass')
-        write_file(results,num,'third_pass')
+        write_file(results,num,p,'third_pass')
         return 0
         
-def write_file(results,num,s):
+def write_file(results,num,p,s):
     p_x = (0.5)*(results[0] + results[1])
     p_y = (0.5)*(results[2] + results[3])
     filename = 'answer' + '_' + str(num)+ '_' + s
