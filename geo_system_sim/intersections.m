@@ -276,7 +276,7 @@ else % non-robust option
     
 end
 
-fid = fopen('intersect.txt','w+');
+fid = fopen('intersect_results','w+');
 fprintf(fid, '%f\n%f\n', x0,y0);
 fclose(fid);
 

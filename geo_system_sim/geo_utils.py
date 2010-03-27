@@ -181,7 +181,7 @@ class geo_utils:
         string = 'matlab -nojvm -nodesktop -nosplash -nodisplay -r \"intersections()\"'
         os.system(string)
 
-        f = open('intersect.txt','r')
+        f = open('intersect_results','r')
         a = f.readlines()
         f.close()
 
