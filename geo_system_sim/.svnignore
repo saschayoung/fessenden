@@ -1,0 +1,11 @@
+*.kml
+*.png
+*.pyc
+*~
+x1
+x2
+y1
+y2
+x_results
+y_results
+location_history
