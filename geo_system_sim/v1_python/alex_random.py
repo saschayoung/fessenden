@@ -83,7 +83,7 @@ def directed_move(start, finish, magnitude = 0.0006):
 def get_random_coord():
     long_base = np.float64(-77.03784581934387)
     long_upper = np.float64(-77.13004625000904)
-    lat_base = np.float64(38.7928657357599)
+    lat_base = np.float64(38.7528657357599)
     lat_upper = np.float64(38.85000638965948)
     longitude = range_random(long_base, long_upper)
     latitude = range_random(lat_base, lat_upper)
@@ -102,3 +102,6 @@ if __name__ == '__main__':
     moved = directed_move(start,finish)
     print "After Move:\t", moved
     
+
+
+

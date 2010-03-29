@@ -11,7 +11,11 @@ class reset_db:
 
 
     def run(self):
-        conn = psycopg2.connect(host = "128.173.90.68",
+        # conn = psycopg2.connect(host = "128.173.90.68",
+        #                      user = "sdrc_user",
+        #                      password = "sdrc_pass",
+        #                      database = "sdrc_db")
+        conn = psycopg2.connect(host = "128.173.90.88",
                              user = "sdrc_user",
                              password = "sdrc_pass",
                              database = "sdrc_db")

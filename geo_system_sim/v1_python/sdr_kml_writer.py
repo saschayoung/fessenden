@@ -103,7 +103,8 @@ class kml_writer():
 
         document_el = etree.SubElement(kml_el, 'Document')
 
-#         picture_folder = './'
+        picture_folder = '/home/aryoung/Desktop/'
+        blue_dot = picture_folder + 'lt_blue_dot_transp_2.png'
 #         command_lo = picture_folder + 'command-center1.png'
 #         helmet_lo = picture_folder + 'fire-helmet-1.png'
 #         truck_lo = picture_folder + 'fire-truck1.png'
@@ -112,6 +113,7 @@ class kml_writer():
 #         dog_lo = picture_folder + 'dog_icon.png'
 
 
+        self.add_style('blue-point', blue_dot, '1.0')
 #         self.add_style('command-center', command_lo, '2.2')
 #         self.add_style('fire-helmet', helmet_lo, '2')
 #         self.add_style('fire-truck', truck_lo, '2')
@@ -128,7 +130,8 @@ class kml_writer():
         self.style_list.append(style_id)
 
 #     def add_placemark(self, name, description, coordinates, style='hand-radio'):
-    def add_placemark(self, name, description, coordinates, style='msn_ylw-pushpin'):
+    # def add_placemark(self, name, description, coordinates, style='msn_ylw-pushpin'):
+    def add_placemark(self, name, description, coordinates, style='blue-point'):
         node = self.page.find("Document")
 #         if not(len(coordinates) == 2):
 #             raise Exception("kml_writer::add_placemark-coordinates wrong length")

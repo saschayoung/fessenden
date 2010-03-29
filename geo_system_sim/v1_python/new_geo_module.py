@@ -14,7 +14,7 @@ import refine_results
 
 class geo_module:
 
-    def __init__(self):
+    def __init__(self,options):
         self.DEBUG = True
 
         self.geo_utils = geo_utils()
@@ -41,7 +41,7 @@ class geo_module:
 
         self.db_host = '192.168.42.200'
         self.db = 'sdrc_db'
-        self.t1 = 'data_table'
+        self.t1 = 'data_table'+options.number
         self.t1_fields = '(rpt_pkt_num, rpt_team_id, rpt_location, rpt_timestamp, beacon_id, beacon_pkt_num)'
         self.t1_field1 = '(rpt_location)'
         self.t1_field2 = '(rpt_timestamp)'
@@ -310,236 +310,28 @@ class geo_module:
 
 
 if __name__=='__main__':
-    main = geo_module()
+    from optparse import OptionParser
+    parser = OptionParser()
+    parser.add_option("-n", "--number", type="string", default="01",
+                      help="number of target machine in cluster")
+    # parser.add_option("-D", "--DROP", action="store_true", default=False,
+    #                   help="turn on dropped packets")
+    # parser.add_option("-d", "--drop", type="int", default=10
+    #                   help="percentage of dropped packets")
+    # parser.add_option("-J", "--JITTER", action="store_true", default=False,
+    #                   help="turn on clock jitter")
+    # parser.add_option("-j", "--jitter", type="float",default=1e-12,
+    #                   help="number of target machine in cluster")
+
+
+    (options, args) = parser.parse_args()
+    if len(args) != 0:
+        parser.print_help(sys.stderr)
+        sys.exit(1)
+
+
+    main = geo_module(options)
     main.fsm()
     
 
 
-    # tdoa
-    # ############################################################################
-    # def tdoa(self):
-    #     # tx = test_coords.get_tx_coords()
-    #     # loc0 = test_coords.get_boathouse_coords()
-    #     # loc1 = test_coords.get_uspto_coords()
-    #     # loc2 = test_coords.get_tcwhs_coords()
-    #     loc0 = self.loc[0]
-    #     loc1 = self.loc[1]
-    #     loc2 = self.loc[2]
-        
-    #     # toa0 = self.geo_utils.time_of_flight(tx,loc0)
-    #     # toa1 = self.geo_utils.time_of_flight(tx,loc1)
-    #     # toa2 = self.geo_utils.time_of_flight(tx,loc2)
-    #     print self.toa
-    #     toa0 = self.toa[0]
-    #     toa1 = self.toa[1]
-    #     toa2 = self.toa[2]
-    #     if ( (toa0 == toa1) and (toa0 == toa2) ):
-    #         print '\n\n\n\n\n\n\nerror!!!'
-    #         print "(toa0 == toa1) and (toa0 == toa2)!!"
-    #         print '\n\n\n\n\n\n\n'
-    #         self.errors +=1
-    #         self.err1 +=1
-    #         return -1
-    #     elif ( (toa0 == toa1) and not (toa0 == toa2) ):
-    #         (x_h1,y_h1) = self.geo_utils.hyperbola(loc2,loc1,toa2,toa1)
-    #         (x_h2,y_h2) = self.geo_utils.hyperbola(loc0,loc2,toa0,toa2)
-    #     elif ( not (toa0 == toa1) and  (toa0 == toa2) ):
-    #         (x_h1,y_h1) = self.geo_utils.hyperbola(loc0,loc1,toa0,toa1)
-    #         (x_h2,y_h2) = self.geo_utils.hyperbola(loc1,loc2,toa1,toa2)
-    #     else:
-    #         (x_h1,y_h1) = self.geo_utils.hyperbola(loc0,loc1,toa0,toa1)
-    #         (x_h2,y_h2) = self.geo_utils.hyperbola(loc0,loc2,toa0,toa2)
-            
-
-    #     if ( np.isnan(x_h1[0]) or np.isnan(y_h1[0]) ):
-    #         print '\n\n\n\n\n\n\n\n\n\n\n\n\nerror!!!'
-    #         print "np.isnan(x_h1[0]) or np.isnan(y_h1[0])!!"
-    #         print '\n\n\n\n\n\n\n\n\n\n\n\n\n'        
-    #         self.errors +=1
-    #         self.err2 +=1
-    #         return -1
-    #     if ( np.isnan(x_h2[0]) or np.isnan(y_h2[0]) ):
-    #         print '\n\n\n\n\n\n\n\n\n\n\n\n\nerror!!!'
-    #         print "np.isnan(x_h2[0]) or np.isnan(y_h2[0])!!"
-    #         print '\n\n\n\n\n\n\n\n\n\n\n\n\n'
-    #         self.errors +=1
-    #         self.err2 +=1
-    #         return -1
-        
-    #     (x_coords,y_coords) = self.geo_utils.intersections(x_h1,y_h1,x_h2,y_h2)
-    #     if ( (x_coords == -1) and (y_coords == -1) ):
-    #         print "intersection.m returns no data, return -1 to main"
-    #         self.errors +=1
-    #         self.err3 +=1
-    #         return -1
-        
-
-    #     if self.DEBUG:
-    #         print loc0
-    #         print loc1
-    #         print loc2
-
-    #         plt.figure()
-    #         plt.plot(loc0[0],loc0[1],'g^',
-    #                  loc1[0],loc1[1],'g^',
-    #                  loc2[0],loc2[1],'g^',
-    #                  x_h1,y_h1,'b',
-    #                  x_h2,y_h2,'g',
-    #                  x_coords,y_coords,'*',
-    #                  )
-    #         plt.grid(True)
-    #         plt.show()
-    #     return [x_coords, y_coords]
-
-
-
-
-
-
-        # (self.data,) = self.cur.fetchone()
-        # print "blob: ", self.blob
-#             if (len(self.blob) == 40):
-#                 break
-#             else:
-#                 pass
-
-#                    print "result == \'None\'"
-#                 print 'database table %s has no data' %self.t1
-#                 self.db_sleep()
-#             else:
-#                 print 'break'
-#                 break
-                # 
-                # if yes, sleep then repeat
-
-
-
-#             self.get_max_idx()
-#             if (self.db_idx == None):
-#                 print "result == \'None\'"
-#                 print 'database table %s has no data' %self.t1
-#                 self.db_sleep()
-#             else:
-#                 print 'break'
-#                 break
-
-#         print 'for i in range(self.db_idx):'
-#         for i in range(self.db_idx,self.db_idx_max):
-#             self.get_blob()
-#             self.parse_blob()
-#             self.write_data()
-
-
-#         self.close_cursor()
-#         self.close_db()
-            
-
-
-
-
-        
-        
-        # get max(idx) from t1
-        # if result == none
-        #   wait/backoff/sleep
-        #   repeat get max(idx) from t1
-        # for 1 to max(idx):
-        #   get blob(idx) from t1
-        #   parse blob
-        #   write data to t2
-        # update db_idx
-
-
-                # self.get_blob(1)
-                # self.parse_blob()
-                # self.write_data()
-                # for i in range(self.old_idx_max,self.new_idx_max):
-                #     print "i: ", range(self.old_idx_max,self.new_idx_max)
-                #     self.get_blob(i)
-                #     self.parse_blob()
-                #     self.write_data()
-                # self.old_idx_max = self.new_idx_max
-                # self.state = 1
-                # continue
-                
-
-
-            # ??
-
-
-
-# cursor.execute("SELECT MAX(idx) FROM test01_table")
-
-# result = cursor.fetchone ()
-
-# print "result: ", result
-
-# print 'cursor.close ()'
-# cursor.close ()
-
-# print 'db.close ()'
-# db.close ()
-
-
-
-#     def run(self):
-
-        
-#         db = MySQLdb.connect (host = "localhost",
-#                               user = "sdrc_user",
-#                               passwd = "sdrc_pass",
-#                               db = "blob_test")
-
-#         cursor = db.cursor ()
-
-#         table = 'blob_table'
-#         fields = '(field_1)'
-
-
-
-#         sql = """INSERT INTO %s %s VALUES (\'%s\')""" %(table,fields,payload)
-
-
-#         print 'cursor.execute(sql)'
-#         cursor.execute(sql)
-
-#         print 'db.commit()'
-#         db.commit()
-
-#         db.close()
-
-
-    # def parse_blob(self):
-    #     print '\n\n\n'
-    #     print "type(self.blob): ", type(self.blob)
-    #     print "len(blob): ", len(self.blob)
-    #     (self.rpt_packet_num,) = struct.unpack('!H',self.blob[0:2])        
-    #     (self.rpt_team_id,) = struct.unpack('!H',self.blob[2:4])
-    #     self.rpt_location = sim_utils.unpack_loc(self.blob[4:24])
-    #     self.rpt_timestamp = sim_utils.unpack_time(self.blob[24:36])
-    #     (self.beacon_packet_num,) = struct.unpack('!H',self.blob[36:38])
-
-    #     (self.beacon_id,) = struct.unpack('!H',self.blob[38:40])
-
-    #     if self.DEBUG:
-    #         print "rpt_packet_num: ", self.rpt_packet_num
-    #         print "rpt_team_id: ", self.rpt_team_id
-    #         print "rpt_location: ", self.rpt_location
-    #         print "rpt_timestamp: ", self.rpt_timestamp
-    #         print "beacon_packet_num: ", self.beacon_packet_num
-    #         print "beacon_id: ", self.beacon_id
-    #         print '\n\n\n'
-
-
-
-    # def write_data(self):
-    #     self.cur.execute("""INSERT INTO %s %s VALUES (%s, %s, %s, %s, %s, %s);""" %(
-    #             self.t2,
-    #             self.t2_fields,
-    #             self.rpt_packet_num,
-    #             self.rpt_team_id,
-    #             str(self.rpt_location),
-    #             repr(self.rpt_timestamp),
-    #             self.beacon_id,
-    #             self.beacon_packet_num))
-    #     self.conn.commit()

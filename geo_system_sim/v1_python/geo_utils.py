@@ -5,6 +5,8 @@ import numpy as np
 
 import sys,os
 
+DEBUG = False
+
 class geo_utils:
     
     '''
@@ -84,12 +86,13 @@ class geo_utils:
                (x1,y1,x2,y2)   x & y coordinates of asymptotes 1 & 2
         '''
 
-        print "p1: ", p1
-        print "p2: ", p2
-        print "toa1: ", repr(toa1)
-        print "toa2: ", repr(toa2)
-        print "type(toa1): ", type(toa1)
-        print "type(toa2): ", type(toa2)
+        if DEBUG:
+            print "p1: ", p1
+            print "p2: ", p2
+            print "toa1: ", repr(toa1)
+            print "toa2: ", repr(toa2)
+            print "type(toa1): ", type(toa1)
+            print "type(toa2): ", type(toa2)
         x1 = p1[0]
         y1 = p1[1]
 
@@ -98,7 +101,8 @@ class geo_utils:
 
         # angle between two locations and 'horizontal'
         alpha = np.arctan((y2-y1)/(x2-x1))
-        print "alpha: ", alpha
+        if DEBUG:
+            print "alpha: ", alpha
 
         # approx. midpoint between two locations
         midpoint = self.midpoint(p1,p2)
@@ -114,30 +118,36 @@ class geo_utils:
 
 
         # hyperbolas
-        # t = np.linspace(-3,3,100)
-        t = np.linspace(-1.5,1.5,100)
+        t = np.linspace(-3,3,100)
+        # t = np.linspace(-2,2,100)
 
         dd = self.speed_of_light*((toa1 - toa2))/(60*1852)
         if x1 < x2:
-            print "x1 < x2"
-            print "dd: ", dd
+            if DEBUG:
+                print "x1 < x2"
+                print "dd: ", dd
             if dd < 0:
-                print "dd < 0"
+                if DEBUG:
+                    print "dd < 0"
                 x_hyperbola = -a*np.cosh(t)
                 y_hyperbola = b*np.sinh(t)
             if dd > 0:
-                print "dd > 0"
+                if DEBUG:
+                    print "dd > 0"
                 x_hyperbola = a*np.cosh(t)
                 y_hyperbola = b*np.sinh(t)
         if x1 > x2:
-            print "x1 > x2"
-            print "dd: ", dd
+            if DEBUG:
+                print "x1 > x2"
+                print "dd: ", dd
             if dd > 0:
-                print "dd > 0"
+                if DEBUG:
+                    print "dd > 0"
                 x_hyperbola = -a*np.cosh(t)
                 y_hyperbola = b*np.sinh(t)
             if dd < 0:
-                print "dd < 0"
+                if DEBUG:
+                    print "dd < 0"
                 x_hyperbola = a*np.cosh(t)
                 y_hyperbola = b*np.sinh(t)
         

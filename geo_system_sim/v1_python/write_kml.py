@@ -31,7 +31,7 @@ def main():
     for i in range(0,len(x_results)):
         coord = str(x_results[i])+','+str(y_results[i])
         kml_write.add_placemark('','',coord)
-    kml_write.write_to_file('geoloc_kml_file.kml')
+    kml_write.write_to_file('/home/aryoung/Desktop/hyperbolas.kml')
 
 
 if __name__=='__main__':
