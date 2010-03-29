@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <Style id="blue-point">
+      <IconStyle>
+        <scale>1.0</scale>
+        <Icon>
+          <href>/home/aryoung/Desktop/lt_blue_dot_transp_2.png</href>
+        </Icon>
+      </IconStyle>
+      <LineStyle>
+        <width>2</width>
+      </LineStyle>
+    </Style>
+    <Placemark>
+      <name></name>
+      <description></description>
+      <styleUrl>#msn_ylw-pushpin</styleUrl>
+      <Point>
+        <extrude>1</extrude>
+        <altitudeMode>relativeToGround</altitudeMode>
+        <coordinates>-77.0648754581,38.807591232,0</coordinates>
+      </Point>
+    </Placemark>
+  </Document>
+</kml>
