@@ -16,6 +16,12 @@ class controller:
 
         self.kill_flag = None
 
+        self.acquired_freqs = []
+        self.released_freq_ids = []
+        
+        self.acquire_requests = []
+        self.release_requests = []
+
     def add_component(self, type, filename):
         keys = self.components.keys()
         if keys.count(type) == 0:
@@ -61,10 +67,17 @@ class controller:
         print "Check Geoloc"
 
     def __check_dsa(self):
-        print "Check DSA"
+        self.components['dsa'].input_data(self.release_requests, self.acquire_requests)
+        self.components['dsa'].work()
+        output = self.components['dsa'].output_data()
+        print "DSA out: ", output
+
+        self.acquired_freqs = output[0]
+        self.released_freq_ids = output[1]
 
     def __check_gui_data(self):
         print "Check GUI Data"
+
 
     def __update_user_info(self):
         print "Update User Info"
