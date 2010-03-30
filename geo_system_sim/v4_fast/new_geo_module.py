@@ -1,16 +1,22 @@
 #!/usr/bin/env python
 
 import time, random, struct
-import os
+import os, sys
 import numpy as np
 import psycopg2
 #import matplotlib.pyplot as plt
+
+
 import test_coords
 import alex_random
-
+import tdoa_stats
+import check_accuracy
 from geo_utils import geo_utils
 from geolocation import geolocation
-import tdoa_stats
+from hyperbola_writer import hyperbola_writer
+
+
+
 
 class geo_module:
 
@@ -31,6 +37,12 @@ class geo_module:
         # self.kml_file_number = 1
         self.state = 1
 
+        self.num_NaN = 0
+
+        self.h = hyperbola_writer()
+
+
+
         self.empty_loop_iterations = 0
         self.max_empty_loop_iterations = 5
         
@@ -50,12 +62,26 @@ class geo_module:
         self.t1_field1 = '(rpt_location)'
         self.t1_field2 = '(rpt_timestamp)'
 
+    def clean_exit(self):
+        print 'shutting down connections...'
+        self.conn.commit()
+        self.cur.close() 
+        self.conn.close()
+        self.write_results()
+        t_stop = time.time()
+        t_tot = t_stop - self.t_start
+        print ''
+        print 'total run time: %s seconds' %t_tot
+        print 'iterations lost to NaNs: ', self.num_NaN
+        print 'total number of iterations: ', self.hyp_iter
+
+
 
   
     # db code
     ############################################################################
     def init_db(self):
-        self.conn = psycopg2.connect(host = "128.173.90.68",
+        self.conn = psycopg2.connect(host = "128.173.90.88",
                                 user = "sdrc_user",
                                 password = "sdrc_pass",
                                 database = "sdrc_db")
@@ -157,7 +183,7 @@ class geo_module:
         if self.DEBUG:
             print 'rx1: ', rx1
             print 'type(rx1): ', type(rx1)
-            print 'x_h1: ', x_h1
+            print 'x_h1: ', repr(x_h1)
 
         return [x_h1,y_h1,x_h2,y_h2]
 
@@ -167,9 +193,10 @@ class geo_module:
     def fsm(self):
 ################################################################################
         self.init_db()
-        t_start = time.time()
+        self.t_start = time.time()
 
         while True:
+
             # check db status
             ####################################################################
             if self.state == 1:
@@ -272,21 +299,63 @@ class geo_module:
                 if self.method == 'tdoa':
 
 
+                    # for i in range(len(self.loc)):
+                    #     f = open('location_out.data','a')
+                    #     f.write(str(self.loc[i]) + '\n')
+                    #     f.close()
+
+                    #     f = open('time_out.data','a')
+                    #     f.write(str(self.toa[i]) + '\n')
+                    #     f.close()
+
                     for i in range(len(self.loc)-2):
+
                         if self.DEBUG:
                             print 'type self.loc[i]: ', type(self.loc[i])
                             print 'self.loc[i]: ', self.loc[i]
                             print 'self.loc: ', self.loc
+                        #fi
 
                         ans = self.tdoa(self.loc[i],self.loc[i+1],self.loc[i+2],
                                         self.toa[i],self.toa[i+1],self.toa[i+2])
-                        self.x_results = np.concatenate([self.x_results,ans[0]])
-                        self.x_results = np.concatenate([self.x_results,ans[2]])
-                        self.y_results = np.concatenate([self.y_results,ans[1]])
-                        self.y_results = np.concatenate([self.y_results,ans[3]])
+                        if (np.isnan(ans).any()):
+                            print 'answer containt NaN'
+                            print 'dropping array and continuing'
+                            self.num_NaN += 1
+                            self.state = 1
+                            continue
+                        else:
+                            self.x_results = np.concatenate([self.x_results,ans[0]])
+                            self.x_results = np.concatenate([self.x_results,ans[2]])
+                            self.y_results = np.concatenate([self.y_results,ans[1]])
+                            self.y_results = np.concatenate([self.y_results,ans[3]])
 
-                        if ( (self.hyp_iter % 25) == 0):
-                            tdoa_stats.three_pass(self.x_results,self.y_results)
+                            self.h.write_hyperbola(ans)
+
+                        if ( (self.hyp_iter % 10) == 0):
+                            # code = tdoa_stats.three_pass(self.x_results,self.y_results)
+                            # print 'code: ', code
+                            guess = tdoa_stats.three_pass(self.x_results,self.y_results)
+                            print 'guess: ', guess
+                            if (guess == (-1,-1)):
+                                print '(guess == (-1,-1)'
+                        #     else:
+                        #         # check how close guess is to real location
+                        #         test_dist = 10 # meters
+                        #         alarm = check_accuracy.check_accuracy(guess,test_dist)
+                        #         if alarm:
+                        #             print '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+                        #             print '####################################################################'
+                        #             print '\n\n\n\n\n\n\n\n\n\n\n'
+                        #             print 'Guess is within %d meters of transmitter location!!'
+                        #             print 'number of hyperbola pairs (iterations): ', self.hyp_iter
+                        #             print '\n\n\n\n\n\n\n\n\n\n\n'
+                        #             print '####################################################################'
+                        #             print '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+                        #             sys.exit()
+                        #         #fi
+                        #     # fi
+                        # # fi    
                         self.hyp_iter +=1
 
 
@@ -329,15 +398,9 @@ class geo_module:
                 continue
             ####################################################################
 
+
+        self.clean_exit()
         
-        self.conn.commit()
-        self.cur.close() 
-        self.conn.close()
-        self.write_results()
-        t_stop = time.time()
-        t_tot = t_stop - t_start
-        print ''
-        print 'total run time: %s seconds' %t_tot
 ################################################################################
 
 

@@ -7,7 +7,7 @@ import psycopg2
 
 import test_coords
 import alex_random
-import sim_utils
+import new_sim_utils
 import sdr_kml_writer
 
 from geo_utils import geo_utils
@@ -15,7 +15,7 @@ from beacon import beacon
 from sim_data import data_utils
 
 ENABLE_JITTER = False
-ENABLE_DROPPED_PACKETS = True
+ENABLE_DROPPED_PACKETS = False
 ENABLE_LOCATION_HISTORY = True
 ENABLE_BEACON_DELAY = False
 
@@ -125,7 +125,7 @@ class simulation:
         #                         password = "sdrc_pass",
         #                         database = "sdrc_db")
 
-        conn = psycopg2.connect(host = "128.173.90.68",
+        conn = psycopg2.connect(host = "128.173.90.88",
                                 user = "sdrc_user",
                                 password = "sdrc_pass",
                                 database = "sdrc_db")
@@ -134,48 +134,59 @@ class simulation:
 
 
         for i in range(n):
-
+            f = open('data_in.data', 'a')
 
             (rx_pktno,) = struct.unpack('!H', beacon_packet[0:2])
             (beacon_ID,) = struct.unpack('!H', beacon_packet[2:4])
 
             # packet number
             payload1 = struct.pack('!H', self.packet_number & 0xffff)
+            f.write(str(self.packet_number) + ';')
 
             # team id
-            id = team_id[i]
-            payload2 = struct.pack('!H', id & 0xffff)
+            ident = team_id[i]
+            payload2 = struct.pack('!H', ident & 0xffff)
+            f.write(str(ident) + ';')
 
             # location
             if (self.iterator == 1):
                 loc = location[i]
             else:
-                old_loc = location[i]
-                loc = alex_random.random_move(old_loc)
+                # old_loc = location[i]
+                # loc = alex_random.random_move(old_loc)
+                loc = alex_random.get_random_coord()
                 self.data.set_rx_location(i,loc)
+
+            f.write(str(loc)+';')
+
             self.iterator += 1
-            payload3 = sim_utils.pack_loc(loc)
+            payload3 = new_sim_utils.pack_loc(loc)
             
 
             # toa
             t = tof[i]
             toa = time_base + t
-            if (ENABLE_JITTER):
-                jitter = self.random_timing_jitter()
-                toa = toa+jitter
-            else:
-                pass
+            # if (ENABLE_JITTER):
+            #     jitter = self.random_timing_jitter()
+            #     toa = toa+jitter
+            # else:
+            #     pass
             if self.DEBUG:
                 print "t = tof[i]: ", repr(t)
                 print "type(t): ", type (t)
                 print "toa = time_base + t: ", repr(toa)
                 print "type(toa): ", type(toa)
-            payload4 = sim_utils.pack_time(toa)
+            payload4 = new_sim_utils.pack_time(toa)
+
+            f.write(repr(toa)+';')
+
 
             # beacon payload
             payload5 = struct.pack('!H', rx_pktno & 0xffff)
+            f.write(str(rx_pktno) + ';')
             payload6 = struct.pack('!H', beacon_ID & 0xffff)
-
+            f.write(str(beacon_ID) + '\n')
+            f.close()
             # check if packet dropped
             drop = self.drop_packet()
             # this if evaluates true even if drop == False
@@ -202,7 +213,7 @@ class simulation:
                            payload5 + payload6)
 
 
-            
+            print "len(payload): ", len(payload)
             cur.execute("INSERT INTO blob_table (field_1) VALUES (%s)", (psycopg2.Binary(payload),))
 
 
@@ -216,8 +227,8 @@ class simulation:
 
     def record_location_history(self,loc):
         self.all_locations.append(loc)
-        if self.DEBUG:
-            print 'all locations:\n', self.all_locations
+        # if self.DEBUG:
+        #     print 'all locations:\n', self.all_locations
 
     # def write_location_history(self):
     #     # f = open('location_history','w+')
@@ -266,8 +277,8 @@ class simulation:
 
 if __name__=='__main__':
     main = simulation()
-    main.init_sim(10)
-    for i in range(200):
+    main.init_sim(3)
+    for i in range(10):
         
         main.rx_beacon_packet()
         main.receiver_chain()
@@ -317,8 +328,8 @@ if __name__=='__main__':
     #         payload = data[i]
     #         (rpt_packet_num,) = struct.unpack('!H',payload[0:2])
     #         (rpt_team_id,) = struct.unpack('!H',payload[2:4])
-    #         rpt_location = sim_utils.unpack_loc(payload[4:24])
-    #         rpt_timestamp = sim_utils.unpack_time(payload[24:36])
+    #         rpt_location = new_sim_utils.unpack_loc(payload[4:24])
+    #         rpt_timestamp = new_sim_utils.unpack_time(payload[24:36])
     #         (beacon_packet_num,) = struct.unpack('!H',payload[36:38])
     #         (beacon_id,) = struct.unpack('!H',payload[38:40])
 
@@ -406,7 +417,7 @@ if __name__=='__main__':
 #             dist = self.geo_utils.distance(__tx_loc,__rx_loc)
 #             self.__set_rx_distance(__dist)
 
-#             __power = sim_utils.power(__dist)
+#             __power = new_sim_utils.power(__dist)
 #             self.set_rx_power(__power)
 
 

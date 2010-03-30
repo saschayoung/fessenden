@@ -4,7 +4,7 @@ import time, random, struct
 import numpy as np
 import psycopg2
 
-import sim_utils
+import new_sim_utils
 
 
 class db_blob2data:
@@ -38,7 +38,7 @@ class db_blob2data:
 
         
     def init_db(self):
-        self.conn = psycopg2.connect(host = "128.173.90.68",
+        self.conn = psycopg2.connect(host = "128.173.90.88",
                              user = "sdrc_user",
                              password = "sdrc_pass",
                              database = "sdrc_db")
@@ -73,6 +73,7 @@ class db_blob2data:
         self.cur.execute("SELECT %s FROM %s WHERE idx = %s;" %(self.t1_fields,self.t1, n))
         (self.blob,) = self.cur.fetchone()
         print "blob: ", self.blob
+        print "blob length: ", len(self.blob)
 #             if (len(self.blob) == 40):
 #                 break
 #             else:
@@ -84,11 +85,11 @@ class db_blob2data:
         print "len(blob): ", len(self.blob)
         (self.rpt_packet_num,) = struct.unpack('!H',self.blob[0:2])        
         (self.rpt_team_id,) = struct.unpack('!H',self.blob[2:4])
-        self.rpt_location = sim_utils.unpack_loc(self.blob[4:24])
-        self.rpt_timestamp = sim_utils.unpack_time(self.blob[24:36])
-        (self.beacon_packet_num,) = struct.unpack('!H',self.blob[36:38])
+        self.rpt_location = new_sim_utils.unpack_loc(self.blob[4:28])
+        self.rpt_timestamp = new_sim_utils.unpack_time(self.blob[28:40])
+        (self.beacon_packet_num,) = struct.unpack('!H',self.blob[40:42])
 
-        (self.beacon_id,) = struct.unpack('!H',self.blob[38:40])
+        (self.beacon_id,) = struct.unpack('!H',self.blob[42:44])
 
         if self.DEBUG:
             print "rpt_packet_num: ", self.rpt_packet_num
@@ -102,6 +103,13 @@ class db_blob2data:
 
 
     def write_data(self):
+        f = open('location_bt.data', 'a')
+        f.write(str(self.rpt_location) + '\n')
+        f.close
+
+        f = open('time_bt.data', 'a')
+        f.write(str(self.rpt_timestamp) + '\n')
+        f.close
         self.cur.execute("""INSERT INTO %s %s VALUES (%s, %s, %s, %s, %s, %s);""" %(
                 self.t2,
                 self.t2_fields,
@@ -139,7 +147,7 @@ class db_blob2data:
                     self.loop_escape += 1
                     print "no new data"
                     print "print loop_escape: ", self.loop_escape
-                    if (self.loop_escape == 100):
+                    if (self.loop_escape ==5):
                         print "no new data for 100 iterations"
                         print "ending program"
                         break
