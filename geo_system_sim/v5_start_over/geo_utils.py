@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
 import numpy as np
-# import matplotlib.pyplot as plt
 
-import sys,os
+
 
 DEBUG = False
 
@@ -11,6 +10,12 @@ class geo_utils:
     
     '''
     Functions for geographic and geolocation math
+        earth_radius = np.float(6371e3)
+        speed_of_light = np.float(299792458.0)
+
+        distance(self,p1,p2)
+        midpoint(self,p1,p2)
+        hyperbola(self,p1,p2,toa1,toa2)
     '''
     
     def __init__(self):
@@ -20,7 +25,6 @@ class geo_utils:
         '''
 
         # administrivia
-        self.DEBUG = True
         self.earth_radius = np.float(6371e3)
         self.speed_of_light = np.float(299792458.0)
 
@@ -63,14 +67,6 @@ class geo_utils:
         m = (lon,lat)
 
         return m
-
-    def time_of_flight(self,p1,p2):
-
-        d = self.distance(p1,p2)
-
-        tof = d/self.speed_of_light
-
-        return tof
 
 
     def hyperbola(self,p1,p2,toa1,toa2):
@@ -156,78 +152,7 @@ class geo_utils:
         x_hyperbola_p = x_hyperbola*np.cos(alpha) - y_hyperbola*np.sin(alpha)+x_0
         y_hyperbola_p = x_hyperbola*np.sin(alpha) + y_hyperbola*np.cos(alpha)+y_0
         
-        #plt.plot(x_hyperbola_p,y_hyperbola_p)
 
         return (x_hyperbola_p,y_hyperbola_p)
-
-
-    def intersections(self,x1,y1,x2,y2):
-        '''
-        find locations where two curves intersect.
-        uses matlab function
-        
-        input x1,y1,x2,y2          the x & y lists/vectors/etc of two curves
-        output x_result,y_result   the coordinates of any solution, paired
-                                   by index
-        '''
-        
-        f = open('x1','w+')
-        for num in x1:
-            f.write(str(num)+'\n')
-        f.close()
-
-        f = open('y1','w+')
-        for num in y1:
-            f.write(str(num)+'\n')
-        f.close()
-        
-        f = open('x2','w+')
-        for num in x2:
-            f.write(str(num)+'\n')
-        f.close()
-
-        f = open('y2','w+')
-        for num in y2:
-            f.write(str(num)+'\n')
-        f.close()
-        string = 'matlab -nojvm -nodesktop -nosplash -nodisplay -r \"intersections()\"'
-        os.system(string)
-
-        f = open('intersect_results','r')
-        a = f.readlines()
-        f.close()
-
-        # check to make sure a is even length
-        if (len(a) % 2):
-            sys.exit('error, odd length vector result')
-
-
-        try: 
-            a = [float(x.strip('\n')) for x in a]
-        except ValueError:
-            print 'no data in file -> no intersection'
-            return (-1,-1)
-#         print "a: ", a
-
-        x_result = []
-        y_result = []
-            
-        if ( len(a) > 2 ):
-            i = 0
-            m = len(a)/2
-            while ( i < len(a)/2 ):
-                x_result.append(a[i])
-                y_result.append(a[m])
-                i +=1
-                m +=1
-    #         print "geo_utils.intersections()"
-    #         print "x_result: ", x_result
-    #         print "y_result: ", y_result
-        else:
-            x_result.append(a[0])
-            y_result.append(a[1])
-
-        
-        return (x_result,y_result)
 
 

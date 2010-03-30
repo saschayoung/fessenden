@@ -7,27 +7,25 @@ import psycopg2
 import new_sim_utils
 
 
+
+
 class db_blob2data:
 
     def __init__(self,options):
 
-        self.DEBUG = True
+        DEBUG = True
 
         self.t_sleep = 0.01
 
-        self.user = 'sdrc_user'
-        self.passwd = 'sdrc_pass'
 
         self.state = 1
-        self.loop_escape = 0
+        self.db_wait_loop = 0
 
-        #self.old_idx_min = 1
         self.old_idx_max = 1
-        #self.new_idx_min = 1
         self.new_idx_max = 1
 
-        self.host = options.host
-        self.db = 'sdrc_db'
+
+
         self.t1 = 'blob_table'
         self.t1_fields = '(field_1)'
         
@@ -37,14 +35,11 @@ class db_blob2data:
 
         
     def init_db(self):
+        self.host = options.host
         self.conn = psycopg2.connect(host = self.host,
-                             user = "sdrc_user",
-                             password = "sdrc_pass",
-                             database = "sdrc_db")
-        # self.conn = psycopg2.connect(host = self.db_host,
-        #                              user = self.user,
-        #                              password = self.passwd,
-        #                              database = self.db)
+                                     user = "sdrc_user",
+                                     password = "sdrc_pass",
+                                     database = "sdrc_db")
         self.cur = self.conn.cursor ()
         
     def db_sleep(self):
@@ -65,7 +60,7 @@ class db_blob2data:
         (result,) = self.cur.fetchone()
         self.new_idx_max = result
         #self.new_idx_max = 10
-        if self.DEBUG:
+        if DEBUG:
             print 'result: ', result
 
     def get_blob(self,n):
@@ -90,7 +85,7 @@ class db_blob2data:
 
         (self.beacon_id,) = struct.unpack('!H',self.blob[42:44])
 
-        if self.DEBUG:
+        if DEBUG:
             print "rpt_packet_num: ", self.rpt_packet_num
             print "rpt_team_id: ", self.rpt_team_id
             print "rpt_location: ", self.rpt_location

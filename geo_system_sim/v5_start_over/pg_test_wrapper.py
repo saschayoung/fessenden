@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 
-
+#core libraries
 import struct
-
+from types import NoneType
+# external libraries
 import psycopg2
 import numpy as np
+
+# local imports
 
 class reset_db:
 
@@ -27,15 +30,25 @@ class reset_db:
         #insert test code here
         # f = open('data_out.data','w+')
 
-        beacon_packet_number = 11
-        cur.execute("SELECT idx FROM data_table WHERE beacon_pkt_num = %s;" %(beacon_packet_number,))
-        result = cur.fetchall()
-        print result
-        if ( result == [] ):
-            print 'result == []'
 
 
+        cur.execute("SELECT * FROM hrf_data_table WHERE idx = 2000;")
+        r = cur.fetchone()
+        print r
+        (index,pkt_num,team_id,loc,t,beacon_pkt_num,beacon_id) = r
+        print index,pkt_num,team_id,loc,t,beacon_pkt_num,beacon_id
 
+
+        # # beacon_packet_number = 11
+        # cur.execute("SELECT  FROM hrf_data_table WHERE beacon_pkt_num = 4000;")
+        # r = cur.fetchall()
+        # print r
+
+        # #      
+        # if ( type(result) is NoneType ):
+        #             print 'type(result) is NoneType'
+
+        
         # # result comes back from cur.fetchall() like this: [(7,), (8,), (9,)]
         # # turn it into this: [7, 8, 9]
         # for i in range(len(result)):

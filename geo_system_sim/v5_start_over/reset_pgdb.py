@@ -25,17 +25,17 @@ class reset_db:
 
 
 
-        cur.execute("DROP TABLE IF EXISTS %s;" % 'blob_table')
-        cur.execute("CREATE TABLE blob_table (idx serial PRIMARY KEY, field_1 bytea);")
+        # cur.execute("DROP TABLE IF EXISTS %s;" % 'binary_data_table')
+        # cur.execute("CREATE TABLE binary_data_table (idx serial PRIMARY KEY, binary_data bytea);")
 
-        cur.execute("DROP TABLE IF EXISTS %s;" % 'data_table')
-        cur.execute("""CREATE TABLE data_table (idx serial PRIMARY KEY, 
-                                                rpt_pkt_num INT, 
-                                                rpt_team_id INT, 
-                                                rpt_location CHAR(50), 
-                                                rpt_timestamp CHAR(50), 
-                                                beacon_id INT,
-                                                beacon_pkt_num INT);""")
+        cur.execute("DROP TABLE IF EXISTS %s;" % 'hrf_data_table')
+        cur.execute("""CREATE TABLE hrf_data_table (idx serial PRIMARY KEY, 
+                                                field_team_pkt_num INT, 
+                                                field_team_id INT, 
+                                                field_team_location CHAR(50), 
+                                                field_team_time CHAR(50), 
+                                                beacon_pkt_num INT,
+                                                beacon_id INT);""")
 
 
         conn.commit()
@@ -51,7 +51,7 @@ if __name__=='__main__':
     usage = "usage: %prog [options] arg"
 
     parser = OptionParser(usage=usage)
-    parser.add_option("", "--host", type="string", default="128.173.90.68",
+    parser.add_option("", "--host", type="string", default="128.173.90.88",
                       help="database host in dotted decimal form [default=%default]")
 
     (options, args) = parser.parse_args()
