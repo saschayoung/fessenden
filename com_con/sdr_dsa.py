@@ -36,6 +36,7 @@ class component:
         self.threshold_distance = 5000
         self.geo = geo_utils.geo_utils()
 
+        self.time_out_flag = 0
         self.channel_time = 10
         
         self.time_thread = timer.ResettableTimer(10.0, self.timer_flip, inc=1)
@@ -54,21 +55,25 @@ class component:
     def timer_flip(self):
         self.lock.acquire()
         for i in range(len(self.freqs)):
-            print self.freqs[i]
+            # print self.freqs[i]
 
             if self.freqs[i][1] > 0:
                 self.freqs[i][1] += 1
-            elif self.freqs[i][1] < 0:
-                self.freqs[i][2] -= 1
-            if self.freqs[i][2] < 0:
-                booted_id = self.freqs[i][1] * -1
-                if self.booted_list.count(booted_id) == 0:
-                    self.booted_list.append(booted_id)
+            if self.time_out_flag:
+                elif self.freqs[i][1] < 0:
+                    self.freqs[i][2] -= 1
+                if self.freqs[i][2] < 0:
+                    booted_freq = self.freqs[i][0]
+                    if self.booted_list.count(booted_freq) == 0:
+                        self.booted_list.append(booted_freq)
         self.lock.release()
 
         if not(self.kill_flag):
             self.time_thread.reset()
             self.time_thread.run()
+
+    def start(self):
+        self.work()
 
 
     def work(self):
@@ -83,13 +88,10 @@ class component:
 
     def output_data(self):
         self.lock.acquire()
-        for i in self.booted_list:
-            if self.release_out.count(i) == 0:
-                self.release_out.append(i)
-        self.booted_list = []
+        freq_data = [k for k in self.freqs]
         self.lock.release()
         
-        return [self.acquire_out, self.release_out]
+        return [self.acquire_out, self.release_out, freq_data]
 
     def input_data(self, release_request = None, acquire_request = None, user_locs = None, emphasis = None):
         if release_request:
@@ -104,6 +106,13 @@ class component:
                 print "Type: ", type(release_request)
                 print "Request: ", release_request
                 print
+
+        self.lock.acquire()
+        for i in self.booted_list:
+            if self.release_requests.count(i) == 0:
+                self.release_requests.append(i)
+        self.booted_list = []
+        self.lock.release()
 
         if acquire_request:
             #(id, skill,loc)
@@ -203,6 +212,13 @@ class component:
         satisfied.reverse()
         for i in satisfied:
             self.queue.pop(i)
+
+        self.lock.acquire()
+        if len(self.queue) > 0:
+            self.time_out_flag = 1
+        else:
+            self.time_out_flag = 0
+        self.lock.release()
     
     def release_frequency(self):
         #list of released ids
