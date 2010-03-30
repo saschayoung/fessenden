@@ -118,8 +118,8 @@ class geo_utils:
 
 
         # hyperbolas
-        t = np.linspace(-np.pi,np.pi,100)
-        print 'type(t): ', type(t)
+        t = np.linspace(-3,3,100)
+
         # t = np.linspace(-2,2,100)
 
         dd = self.speed_of_light*((toa1 - toa2))/(60*1852)

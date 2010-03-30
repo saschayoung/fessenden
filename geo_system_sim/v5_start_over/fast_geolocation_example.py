@@ -10,9 +10,9 @@ import test_coords
 import alex_random
 from hyperbola_writer import hyperbola_writer
 import tdoa_stats
-import time
+import time,sys
 
-PLOT = True
+PLOT = False
 DEBUG = True
 
 
@@ -55,6 +55,9 @@ class geolocate:
         # y_rx3 = rx3[1]
 
         tof_1 = self.geo_utils.time_of_flight(tx,rx1)
+        print type(tof_1)
+        sys.exit(1)
+        
         tof_2 = self.geo_utils.time_of_flight(tx,rx2)
         tof_3 = self.geo_utils.time_of_flight(tx,rx3)
         
@@ -87,6 +90,10 @@ if __name__ == '__main__':
     rx2 = test_coords.get_uspto_coords()
     rx3 = test_coords.get_tcwhs_coords()
     rx4 = test_coords.get_lee_st_coords()
+    rx5 = alex_random.get_random_coord()
+    print 'type(rx4):', type(rx4)
+    print 'type(rx4[0]):', type(rx4[0])
+    print 'type(rx5[0]):', type(rx5[0])
 
     # write hyperbolas to kml file
     # ans = main.tdoa_sim(tx,rx1,rx2,rx3)
@@ -118,22 +125,28 @@ if __name__ == '__main__':
 
 
 
-    # i = 0
-    # iterations = 2000
-    # while i < iterations:
-    #     rx1 = alex_random.get_random_coord()
-    #     rx2 = alex_random.get_random_coord()
-    #     rx3 = alex_random.get_random_coord()
-    #     ans = main.tdoa_sim(tx,rx1,rx2,rx3)
-    #     h.write_hyperbola(ans)
+    i = 0
+    iterations = 1000
+    while i < iterations:
+        rx1 = alex_random.get_random_coord()
+        rx2 = alex_random.get_random_coord()
+        rx3 = alex_random.get_random_coord()
+        ans = main.tdoa_sim(tx,rx1,rx2,rx3)
+        if (np.isnan(ans).any()):
+            print 'answer contains NaN'
+            print loc,t
+            PLOT = False
+            break
 
-    #     x_results = np.concatenate([x_results,ans[0]])
-    #     x_results = np.concatenate([x_results,ans[2]])
-    #     y_results = np.concatenate([y_results,ans[1]])
-    #     y_results = np.concatenate([y_results,ans[3]])
-    #     if ( (i % 25) == 0):
-    #         tdoa_stats.three_pass(x_results,y_results)
-    #     i+=1
+        h.write_hyperbola(ans)
+
+        x_results = np.concatenate([x_results,ans[0]])
+        x_results = np.concatenate([x_results,ans[2]])
+        y_results = np.concatenate([y_results,ans[1]])
+        y_results = np.concatenate([y_results,ans[3]])
+        if ( (i % 25) == 0):
+            tdoa_stats.three_pass(x_results,y_results)
+        i+=1
 
 
     t1 = time.time()

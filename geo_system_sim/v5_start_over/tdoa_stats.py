@@ -7,20 +7,11 @@ import numpy as np
 import sdr_kml_writer
 
 
-DEBUG = True
+DEBUG = False
 PLOT = False
 
 
 def three_pass(x_results,y_results):
-    # host = os.uname()[1]
-    # d = time.localtime()
-    # date = '%s-%s-%s' %(str(d[0]),str(d[1]),str(d[2]))
-    # p = '/home/aryoung/batch_results/%s_%s' %(host, date)
-    # if not os.path.exists(p):
-    #     os.makedirs(p)
-    
-                              
-    # print 'geo_hist file number: ', num
 
     # First pass
     try:
