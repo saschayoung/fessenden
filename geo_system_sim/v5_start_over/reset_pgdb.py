@@ -24,10 +24,11 @@ class reset_db:
         cur = conn.cursor()
 
 
+        # cur.execute("DROP TABLE IF EXISTS %s;" % 'blob_table')
+        cur.execute("DROP TABLE IF EXISTS %s;" % 'binary_data_table')
+        cur.execute("CREATE TABLE binary_data_table (idx serial PRIMARY KEY, binary_data bytea);")
 
-        # cur.execute("DROP TABLE IF EXISTS %s;" % 'binary_data_table')
-        # cur.execute("CREATE TABLE binary_data_table (idx serial PRIMARY KEY, binary_data bytea);")
-
+        # cur.execute("DROP TABLE IF EXISTS %s;" % 'data_table')
         cur.execute("DROP TABLE IF EXISTS %s;" % 'hrf_data_table')
         cur.execute("""CREATE TABLE hrf_data_table (idx serial PRIMARY KEY, 
                                                 field_team_pkt_num INT, 

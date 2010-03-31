@@ -45,8 +45,6 @@ class reset_db:
         # print r
 
         # #      
-        # if ( type(result) is NoneType ):
-        #             print 'type(result) is NoneType'
 
         
         # # result comes back from cur.fetchall() like this: [(7,), (8,), (9,)]

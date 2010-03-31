@@ -65,6 +65,10 @@ class db_agent:
             # get the data from db
             binary_data = self.get_binary_data(j)
 
+            # # skip over empty strings (dropped packets)
+            # if (len(binary_data) == 0):
+            #     continue
+
             # parse data into readable form
             (field_radio_pkt_num,) = struct.unpack('!i',binary_data[0:4])        
             (field_team_id,) = struct.unpack('!i',binary_data[4:8])
@@ -86,8 +90,8 @@ class db_agent:
 
 
         self.stop_db()
-
-
+        sys.stdout.write('\nDone\n\n')
+        sys.stdout.flush()
 
 
 

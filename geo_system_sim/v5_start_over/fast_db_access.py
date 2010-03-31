@@ -11,12 +11,14 @@ DEBUG = False
 
 class fast_db_access:
 
-    def __init__(self):
+    def __init__(self, host):
+        self.host = host
         self.current_beacon_pkt_num = 0
         self.first_run = True
+        
 
     def start_db(self):
-        self.conn = psycopg2.connect(host = "128.173.90.88",
+        self.conn = psycopg2.connect(host = self.host,
                                      user = "sdrc_user",
                                      password = "sdrc_pass",
                                      database = "sdrc_db")
@@ -62,13 +64,13 @@ class fast_db_access:
             return -1
 
         
-        while ( len(current_idxs) < 3 ):       # get more data if there's 
-            current_idxs = self.get_idxs()     # not three sets
-            self.current_beacon_pkt_num += 1
+        # while ( len(current_idxs) < 3 ):       # get more data if there's 
+        #     current_idxs = self.get_idxs()     # not three sets
+        #     self.current_beacon_pkt_num += 1
 
-            if ( current_idxs == [] ):             # if no data
-                self.stop_db()                     # exit
-                return -1
+        #     if ( current_idxs == [] ):             # if no data
+        #         self.stop_db()                     # exit
+        #         return -1
 
 
         for i in range(len(current_idxs)):
@@ -81,7 +83,7 @@ class fast_db_access:
         ########################################################################            
         data = []
         for i in current_idxs:
-            self.cur.execute("SELECT * FROM hrf_data_table WHERE idx = %s;" %(i+1,))
+            self.cur.execute("SELECT * FROM hrf_data_table WHERE idx = %s;" %(i,))
             r = self.cur.fetchone()
             if ( type(r) is NoneType ):
                 self.stop_db()
