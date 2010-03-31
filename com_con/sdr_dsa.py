@@ -60,7 +60,7 @@ class component:
             if self.freqs[i][1] > 0:
                 self.freqs[i][1] += 1
             if self.time_out_flag:
-                elif self.freqs[i][1] < 0:
+                if self.freqs[i][1] < 0:
                     self.freqs[i][2] -= 1
                 if self.freqs[i][2] < 0:
                     booted_freq = self.freqs[i][0]
@@ -207,6 +207,8 @@ class component:
                 self.freqs[1] = -1*item[0]
                 self.freqs[2] = self.channel_time
                 self.lock.release()
+
+            index += 1
 
         satisfied.sort()
         satisfied.reverse()

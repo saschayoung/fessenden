@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import timer, threading
+import timer, threading, wx
 import sdr_gui
 
 class controller:
@@ -37,8 +37,6 @@ class controller:
         self.best_guess = None
 
         #GUI Interface variables
-        self.__gui = sdr_gui.gui(self.__set_new_users,self.__set_dsa_requests,self.__set_emphasis,self.__get_freq_data,
-                                 self.__get_user_data,self.__get_geoloc_data)
         self.__gui_new_users = []
         self.__gui_dsa_requests = []
         self.__gui_emphasis = None
@@ -158,7 +156,11 @@ class controller:
 
 
     def start_gui(self):
-        return self.__gui.start()
+        app = wx.App()
+        self.__gui = sdr_gui.gui(self.__set_new_users,self.__set_dsa_requests,self.__set_emphasis,self.__get_freq_data,
+                                 self.__get_user_data,self.__get_geoloc_data)
+        self.__gui.Show()
+        app.MainLoop()
 
     #GUI Interface Functions
     def __set_new_users(self, new_users):
@@ -207,4 +209,4 @@ if __name__ == '__main__':
 
     test = controller()
     test.start_gui()
-    time.sleep(14)
+    # time.sleep(14)
