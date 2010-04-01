@@ -73,7 +73,7 @@ class kb_table:
 
     def write_data(self,data):
             s1 = 'kb_table'
-            s2 = '(field_team_id, field_team_name, field_team_skill, field_team_location, beacon_pkt_freq)'
+            s2 = '(field_team_id, field_team_name, field_team_skill, field_team_location, field_team_freq)'
             
 
             self.cur.execute("""INSERT INTO %s %s VALUES (%s, %s, %s, %s, %s, %s);""" %(s1,s2,
@@ -81,6 +81,7 @@ class kb_table:
                                                                                         data[2],data[3],
                                                                                         data[4]))
 
-
+            conn.commit()
+ 
 
 
