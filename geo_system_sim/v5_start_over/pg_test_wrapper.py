@@ -30,13 +30,16 @@ class reset_db:
         #insert test code here
         # f = open('data_out.data','w+')
 
+        n = 19
+        cur.execute("SELECT MAX(idx) FROM hrf_data_table WHERE field_team_id = %s;" %(n))
+        (idx,) = cur.fetchone()
+        print idx
 
-
-        cur.execute("SELECT * FROM hrf_data_table WHERE idx = 2000;")
-        r = cur.fetchone()
-        print r
-        (index,pkt_num,team_id,loc,t,beacon_pkt_num,beacon_id) = r
-        print index,pkt_num,team_id,loc,t,beacon_pkt_num,beacon_id
+        # cur.execute("SELECT * FROM hrf_data_table WHERE idx = 2000;")
+        # r = cur.fetchone()
+        # print r
+        # (index,pkt_num,team_id,loc,t,beacon_pkt_num,beacon_id) = r
+        # print index,pkt_num,team_id,loc,t,beacon_pkt_num,beacon_id
 
 
         # # beacon_packet_number = 11
