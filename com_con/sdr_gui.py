@@ -417,6 +417,12 @@ class gui(wx.Frame):
 
         manage_panel.SetSizer(manage_box)
 
+        manage_panel.Bind(wx.EVT_BUTTON, self.request_frequency, id=manage_request_button.GetId())
+        manage_panel.Bind(wx.EVT_TEXT_ENTER, self.request_frequency, id=self.manage_request_ctrl.GetId())
+        
+        manage_panel.Bind(wx.EVT_BUTTON, self.release_frequency, id=manage_release_button.GetId())
+        manage_panel.Bind(wx.EVT_TEXT_ENTER, self.release_frequency, id=self.manage_release_ctrl.GetId())
+
         manage_panel.Bind(wx.EVT_BUTTON, self.set_emphasis, id=manage_emphasis_button.GetId())
         manage_panel.Bind(wx.EVT_TEXT_ENTER, self.set_emphasis, id=self.manage_emphasis_ctrl.GetId())
 
@@ -550,6 +556,25 @@ class gui(wx.Frame):
     def al_handler(self, event):
         al_dialog(self)
 
+    def request_frequency(self, event):
+        team_id = self.manage_request_ctrl.GetValue.strip()
+        
+        if len(team_id) == 0:
+            self.manage_request_ctrl.SetValue("Value Needed")
+        elif not(self.is_digit(team_id)):
+            self.manage_request_ctrl.SetValue("No Characters")
+        else:
+            team_id = int(team_id)
+            self.__set_dsa_requests([team_id,[]])
+            self.manage_request_ctrl.SetValue("Request made for Team %d"%team_id)
+
+    def release_frequency(self, event):
+        freq = self.manage_release_ctrl.GetValue.strip()
+
+        if len(freq) == 0:
+            self.manage_release_ctrl.SetValue("Value Needed")
+        elif not
+
     def set_emphasis(self, event):
         text = self.manage_emphasis_ctrl.GetValue().strip()
 
@@ -587,33 +612,27 @@ class gui(wx.Frame):
         else:
             self.spectrum_error.SetLabel('')
 
-    
+    def is_digit(self, str):
+        '''
+        function to check if a str is a number
+        considers 1.0 a number where isdigit() does not
+        '''
+        list = str.split('.')
+        
+        if len(list) < 2:
+            list.append('0')
 
-    def start(self):
-        pass
+        if list[0][0]=='-':
+            list[0] = list[0][1:]
 
-        # for i in range(30):
-        #     if i%6 == 0:
-        #         self.__set_new_users('From GUI: New Users')
-        #     elif i%6 == 1:
-        #         self.__set_dsa_requests([])
-        #     elif i%6 == 2:
-        #         self.__set_emphasis('From GUI: Set Emphasis')
-        #     elif i%6 == 3:
-        #         data = self.__get_freq_data()
-        #         print
-        #         print "From GUI-Freq Data: ", data
-        #         print
-        #     elif i%6 == 4:
-        #         data = self.__get_user_data()
-        #         print
-        #         print "From GUI-User Data: ", data
-        #         print
-        #     elif i%6 == 5:
-        #         data = self.__get_geoloc_data()
-        #         print
-        #         print "From GUI-Geoloc Data: ", data
-        #         print
-        #     time.sleep(1)
+        result = list[0].isdigit() and list[1].isdigit()
+
+        if len(list) > 2:
+            result = False
+
+        return result    
+
+
+
         
 
