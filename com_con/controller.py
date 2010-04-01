@@ -58,7 +58,7 @@ class controller:
     def reset_timer(self):
         if not(self.kill_flag):
             self.timer.reset()
-            self.timer.run()
+            # self.timer.run()
 
     def handle_timer(self,state):
         if state == 1:

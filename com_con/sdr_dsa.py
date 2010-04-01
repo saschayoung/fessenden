@@ -70,7 +70,7 @@ class component:
 
         if not(self.kill_flag):
             self.time_thread.reset()
-            self.time_thread.run()
+            # self.time_thread.run() 
 
     def start(self):
         self.work()
