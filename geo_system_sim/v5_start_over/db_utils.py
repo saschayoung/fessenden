@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# core libraries
+import time
 
 # external libraries
 import psycopg2
@@ -73,13 +75,14 @@ class kb_table:
 
     def write_data(self,data):
             s1 = 'kb_table'
-            s2 = '(field_team_id, field_team_name, field_team_skill, field_team_location, field_team_freq)'
-            
+            s2 = '(field_team_id, field_team_name, field_team_skill, field_team_location, field_team_freq, time)'
+            t = time.localtime()
+            t = str(t[3]) + ':' + str(t[4])
 
-            self.cur.execute("""INSERT INTO %s %s VALUES (%s, %s, %s, %s, %s, %s);""" %(s1,s2,
-                                                                                        data[0],data[1],
-                                                                                        data[2],data[3],
-                                                                                        data[4]))
+            self.cur.execute("""INSERT INTO %s %s VALUES (%s, %s, %s, %s, %s, %s, %s);""" %(s1,s2,
+                                                                                            data[0],data[1],
+                                                                                            data[2],data[3],
+                                                                                            data[4]),t)
 
             conn.commit()
  

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import time, random
+import time, random, os
 from geo_utils import geo_utils
 
 
@@ -18,6 +18,19 @@ def time_of_flight(p1,p2):
     return tof
 
     
+def get_move_loc(filename):
+    try:
+        f = open(filename,'r')
+        l = f.readlines()
+        f.close()
+        l = l[0].split(',')
+        lon = np.float64(l[0])
+        lat = np.float64(l[1])
+        os.remove(filename)
+        return [lon,lat]
+    except Exception,e:
+        print 'Exception: ', e
+        return -1
 
 
 class stochastics:

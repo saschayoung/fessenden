@@ -169,7 +169,7 @@ if __name__ == '__main__':
         cb = plt.colorbar()
         cb.set_label('counts')
         fig.patch.set_alpha(0.01)
-        plt.draw()
+        # plt.draw()
         # # ax = plt.gca()
         # ax.set_axis_off()
         # ax.set_xticks([])
@@ -184,7 +184,8 @@ if __name__ == '__main__':
         # c_im.show()
         # im.save('pyplot_crop','png')
         plt.savefig('density_plot.png',transparent=False)
-
+    # print 'continuing to run...'
+    # raw_input()
 
     # f = open('x_results_%d_iters' %(iterations),'w+')
     # for num in x_results:

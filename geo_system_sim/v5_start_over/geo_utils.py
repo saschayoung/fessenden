@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import numpy as np
+from pyproj import Proj
+from pyproj import Geod
 
 
 
@@ -29,6 +31,7 @@ class geo_utils:
         self.speed_of_light = np.float(299792458.0)
 
 
+
     def distance(self,p1,p2):
         '''
         calculates distance between 2 points on earths surface
@@ -50,6 +53,23 @@ class geo_utils:
 
         return d
     
+
+    def midpoint_utm(self,p1,p2):
+        """
+        calculates midpoint between 2 points on earths surface
+
+        input: p1,p2   location in the form (lon,lat)
+        return: m      midpoint in the form (lon,lat)
+        """
+
+        g = Geod(ellps='WGS84')
+        l = g.npts(p1[0],p1[0],p1[1],p1[1],1)
+        
+        m = l[0]
+        # print 'm: ', m
+        
+        return m
+
 
     def midpoint(self,p1,p2):
         '''

@@ -15,7 +15,7 @@ def iter_hist(x_results,y_results):
 
     # First pass
     try:
-        H, xedges, yedges = np.histogram2d(x_results, y_results)
+        H, xedges, yedges = np.histogram2d(x_results, y_results, bins=20)
         extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
 
         idx = np.unravel_index(np.argmax(H),H.shape)
@@ -24,16 +24,16 @@ def iter_hist(x_results,y_results):
         y_lower = yedges[idx[1]]
         y_upper = yedges[idx[1]+1]
 
-        # if DEBUG:
-        #     print "First Pass"
-        #     print 'type(H): %s   type(H[0][0]): %s' %(type(H),type(H[0][0]))
-        #     print 'H: '
-        #     print H
-        #     print 'idx: ', idx
-        #     print 'x_lower: ', x_lower
-        #     print 'x_upper: ', x_upper
-        #     print 'y_lower: ', y_lower
-        #     print 'y_upper: ', y_upper
+        if DEBUG:
+            print "First Pass"
+            print 'type(H): %s   type(H[0][0]): %s' %(type(H),type(H[0][0]))
+            print 'H: '
+            print H
+            print 'idx: ', idx
+            print 'x_lower: ', x_lower
+            print 'x_upper: ', x_upper
+            print 'y_lower: ', y_lower
+            print 'y_upper: ', y_upper
 
         x_refined = []
         y_refined = []
@@ -58,7 +58,7 @@ def iter_hist(x_results,y_results):
 
     # Second pass
     try:
-        H_p, xedges_p, yedges_p = np.histogram2d(x_refined, y_refined)
+        H_p, xedges_p, yedges_p = np.histogram2d(x_refined, y_refined, bins=15)
         extent_p = [xedges_p[0], xedges_p[-1], yedges_p[0], yedges_p[-1]]
 
         idx_p = np.unravel_index(np.argmax(H_p),H_p.shape)
@@ -80,7 +80,7 @@ def iter_hist(x_results,y_results):
 
         x_drefined = []
         y_drefined = []
-
+                
         i = 0
         while ( i < len(x_refined) ):
             test = ( ((x_refined[i] >= x_lower_p)  and
@@ -108,9 +108,13 @@ def iter_hist(x_results,y_results):
     H_pp, xedges_pp, yedges_pp = np.histogram2d(x_drefined, y_drefined)
     extent_pp = [xedges_pp[0], xedges_pp[-1], yedges_pp[0], yedges_pp[-1]]
 
+    # print 'H_pp:\n',H_pp
+    # print 'idx_pp: ', idx_pp
+    # print 'idx_pp: ', idx_pp[0]
+    # print 'idx_pp: ', idx_pp[1]
+
     idx_pp = np.unravel_index(np.argmax(H_pp),H_pp.shape)
-    
-    a = H_pp[idx[0]][idx[1]]
+    a = H_pp[idx_pp[0]][idx_pp[1]]
     b = np.nonzero(H_pp == a)
     if ( len(b[0]) > 1 ):
         results = [x_lower_p,x_upper_p,y_lower_p,y_upper_p]
@@ -161,7 +165,7 @@ def write_kml(results):
     p_x = (0.5)*(results[0] + results[1])
     p_y = (0.5)*(results[2] + results[3])
     kml_write = sdr_kml_writer.kml_writer()
-    coord = str(p_x)+','+str(p_y)
+    coord = repr(p_x)+','+repr(p_y)
     kml_write.add_placemark('','',coord)
     filename = 'guess.kml'
     kml_write.write_to_file(filename)

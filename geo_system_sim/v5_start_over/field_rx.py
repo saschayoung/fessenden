@@ -26,6 +26,7 @@ class simulation:
     def __init__(self,options):
         # self.options = options
         self.prev_loc = []
+        self.target = 0
 
     # db access
     ############################################################################
@@ -44,22 +45,41 @@ class simulation:
         self.conn.commit()
     ############################################################################
 
+
+
+    # location and movement
+    ############################################################################
     def get_location(self,ii,kk):
-        # add directed movement functionality here 
-        if options.move:
-            if ( ii == 1 ):  # first iteration
-                loc = location_alexandria.get_random_coord()
-                self.prev_loc.append(loc)
-            else:
+        move = sim_utils.get_move_loc(options.file)
+
+        if ( ii == 1 ):       # first iteration
+            loc = location_alexandria.get_random_coord()
+            self.prev_loc.append(loc)
+
+        elif ( move == -1):   # no targeted move coords available
+
+            if ( self.target ):                # previous targeted move coords exist
+                loc = location_alexandria.directed_move(self.prev_loc[kk-1])
+                self.prev_loc[kk-1] = loc  
+
+            elif ( options.inc_move ):         # incremental move enabled
                 loc = location_alexandria.random_move(self.prev_loc[kk-1])
                 self.prev_loc[kk-1] = loc
-        else:
-            loc = location_alexandria.get_random_coord()
 
-        return loc
+            else:                              # random move enabled
+                loc = location_alexandria.get_random_coord()
+                self.prev_loc[kk-1] = loc
+
+        else:                 # (new) targeted move coords available
+            self.target = move
+            loc = location_alexandria.directed_move(self.prev_loc[kk-1],self.target)
+            self.prev_loc[kk-1] = loc
+    ############################################################################
 
 
 
+    # main
+    ############################################################################
     def run(self):
         # administrivia
         ########################################################################
@@ -78,8 +98,6 @@ class simulation:
         
         update_status = 0
         ########################################################################
-
-
         
         
         for i in range(iterations):
@@ -129,6 +147,7 @@ class simulation:
 
         sys.stdout.write('\nDone\n\n')
         sys.stdout.flush()
+    ############################################################################
 
 
 
@@ -153,8 +172,10 @@ if __name__=='__main__':
                       help="enable beacon backoff... [default=%default]")
     parser.add_option("-t", "--delay", type="int", default=5,
                       help="maximum delay time between beacon transmissions [default=%default]")
-    parser.add_option("-m", "--move", action="store_true", default=False,
+    parser.add_option("", "--inc_move", action="store_true", default=False,
                       help="enable incremental team movement (team movement is random otherwise) [default=%default]")
+    parser.add_option("-f", "--file", type="string", default="move_command",
+                      help="file to check for new coordinate locations to head towards [default=%default]")
 
     
 

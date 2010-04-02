@@ -48,7 +48,8 @@ class reset_db:
                                                 hist_box2_c2 char(50), 
                                                 hist_box3_c1 char(50), 
                                                 hist_box3_c2 char(50), 
-                                                guess CHAR(50));""")
+                                                guess CHAR(50),
+                                                time CHAR(20));""")
 
         cur.execute("DROP TABLE IF EXISTS %s;" % 'kb_table')
         cur.execute("""CREATE TABLE kb_table (idx serial PRIMARY KEY, 
@@ -56,7 +57,9 @@ class reset_db:
                                                 field_team_name CHAR(50), 
                                                 field_team_skill CHAR(50), 
                                                 field_team_location CHAR(50),
-                                                field_team_freq FLOAT);""")
+                                                field_team_freq FLOAT,
+                                                time CHAR(20));""")
+
 
         conn.commit()
         cur.close() 
