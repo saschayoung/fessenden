@@ -117,8 +117,8 @@ class component:
         if acquire_request:
             #(id, skill,loc)
             if not([tuple, list].count(type(acquire_request)) == 0):
-                if [tuple, list].count(type(self.acquire_requests[0])) == 0:
-                    self.acquire_requests = [self.acquire_requests]
+                if [tuple, list].count(type(acquire_request[0])) == 0:
+                    self.acquire_requests = [acquire_request]
                 else:
                     self.acquire_requests = acquire_request
             else:
@@ -130,18 +130,15 @@ class component:
         if user_locs:
             #Assumed order [id, loc, freq]
             bad_type = True
-            if not([tuple, list, dict].count(type(user_locs)) == 0):
-                if type(users) is dict:
-                    bad_type = False
-                    self.user_locs = [user_locs]
-                else:
-                    if type(user_locs[0]) is dict:
-                        bad_type = True
+            if not([tuple, list].count(type(user_locs)) == 0):
+                if not(len(user_locs) == 0):
+                    if not([tuple, list].count(type(user_locs[0])) == 0):
+                        bad_type = False
                         self.user_locs = user_locs
 
             if bad_type:
                 print "SDR DSA Error: Bad type for users"
-                print "Type: ", type(user_locs)
+                print "Outer Type: ", type(user_locs)
                 if not([tuple, list].count(type(user_locs)) == 0):
                     print "Inner Type: ", type(user_locs[0])
                 print "Users: ", user_locs
@@ -164,14 +161,12 @@ class component:
                 user_list.append(-1*data[0])
         self.lock.release()
 
-
         for item in self.acquire_requests:
             if user_list.count(item[0]) == 0:
                 if self.queue.count(item) == 0:
                     self.queue.append(item)
 
         self.acquire_requests = []
-        
         
         tmp1 = []
         tmp2 = []
@@ -185,7 +180,6 @@ class component:
                 tmp2.append(item)
 
         self.queue = tmp1 + tmp2
-        
 
     def acquire_frequency(self):
         index = 0
@@ -204,8 +198,8 @@ class component:
                 satisfied.append(index)
                 self.lock.acquire()
                 self.acquire_out.append([item[0], self.freqs[freq_index][0]])
-                self.freqs[1] = -1*item[0]
-                self.freqs[2] = self.channel_time
+                self.freqs[freq_index][1] = -1*item[0]
+                self.freqs[freq_index][2] = self.channel_time
                 self.lock.release()
 
             index += 1
@@ -239,6 +233,7 @@ class component:
         self.release_requests = []
 
     def get_open_channel(self, request_loc = None):
+
         max_pref = -9999
         max_index = 0
         index = 0
@@ -253,7 +248,7 @@ class component:
         if max_pref < 0:
             result = -1
         else:
-            result = 0
+            result = 1
 
         if result == -1:
             if self.user_locs and request_loc:

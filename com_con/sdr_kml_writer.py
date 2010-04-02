@@ -175,7 +175,7 @@ class extruded_placemark():
         node = self.root.find("name")
         node.text = value
 
-    def set_dscription(self, value):
+    def set_description(self, value):
         node = self.root.find("description")
         node.text = value
 
@@ -226,7 +226,7 @@ class line():
         node = self.root.find("name")
         node.text = value
 
-    def set_dscription(self, value):
+    def set_description(self, value):
         node = self.root.find("description")
         node.text = value
 
@@ -297,7 +297,7 @@ class polygon():
         node = self.root.find("name")
         node.text = value
 
-    def set_dscription(self, value):
+    def set_description(self, value):
         node = self.root.find("description")
         node.text = value
 
@@ -348,7 +348,7 @@ class kml_writer():
         node.append(style_node.root)
         
 
-    def add_placemark(self, name, description, coordinates, style='hand-radio'):
+    def add_placemark(self, name, description, coordinates, style=''):
         node = self.page.find("Document")
 
         coordinates = str(coordinates).strip('[]')
@@ -372,24 +372,28 @@ class kml_writer():
         self.lines[name] = line_node
 
     def add_box(self, name, description, style, corner1, corner2):
-        out_coords = []
-        
-        out_coords.append(corner1)
-        out_coords.append([corner2[0], corner1[1]])
-        out_coords.append(corner2)
-        out_coords.append([corner1[0], corner2[1]])
-        out_coords.append(corner1)
+        if len(corner1):
+            out_coords = []
 
-        center = []
-        center.append((corner1[0] + corner2[0])/2)
-        center.append((corner1[1] + corner2[1])/2)
-        
+            out_coords.append(corner1)
+            out_coords.append([corner2[0], corner1[1]])
+            out_coords.append(corner2)
+            out_coords.append([corner1[0], corner2[1]])
+            out_coords.append(corner1)
 
-        outer_string = '\n'
-        for point in out_coords:
-            outer_string += '\t' + str(point).strip('[]') + ',30\n'
+            center = []
+            center.append((corner1[0] + corner2[0])/2)
+            center.append((corner1[1] + corner2[1])/2)
 
-        inner_string = str(center).strip('[]') + ',30'
+
+            outer_string = '\n'
+            for point in out_coords:
+                outer_string += '\t' + str(point).strip('[]') + ',30\n'
+
+            inner_string = str(center).strip('[]') + ',30'
+        else:
+            outer_string = ''
+            inner_string = ''
 
         node = self.page.find('Document')
         
@@ -398,9 +402,8 @@ class kml_writer():
 
         self.boxes[name] = polygon_node
 
-
     def update_placemark_loc(self, placemark_name, new_coord):
-        string = str(new_coords).strip('[]') + ',50'
+        string = str(new_coord).strip('[]') + ',50'
         self.placemarks[placemark_name].set_coordinates(string)
 
     def add_point_to_line(self, name, point):
@@ -408,24 +411,28 @@ class kml_writer():
         self.lines[name].append_point(string)
 
     def update_box_loc(self, name,  corner1, corner2):
-        out_coords = []
-        
-        out_coords.append(corner1)
-        out_coords.append([corner2[0], corner1[1]])
-        out_coords.append(corner2)
-        out_coords.append([corner1[0], corner2[1]])
-        out_coords.append(corner1)
+        if len(corner1):
+            out_coords = []
 
-        center = []
-        center.append((corner1[0] + corner2[0])/2)
-        center.append((corner1[1] + corner2[1])/2)
-        
+            out_coords.append(corner1)
+            out_coords.append([corner2[0], corner1[1]])
+            out_coords.append(corner2)
+            out_coords.append([corner1[0], corner2[1]])
+            out_coords.append(corner1)
 
-        outer_string = ''
-        for point in out_coords:
-            outer_string += str(point).strip('[]') + ',30\n'
+            center = []
+            center.append((corner1[0] + corner2[0])/2)
+            center.append((corner1[1] + corner2[1])/2)
 
-        inner_string = str(center).strip('[]') + ',30'
+
+            outer_string = ''
+            for point in out_coords:
+                outer_string += str(point).strip('[]') + ',30\n'
+
+            inner_string = str(center).strip('[]') + ',30'
+        else:
+            outer_string = ''
+            inner_string = ''
         
         self.boxes[name].set_outer_coordinates(outer_string)
         self.boxes[name].set_inner_coordinates(inner_string)
@@ -439,6 +446,15 @@ class kml_writer():
                     break
 
         return node
+
+    def update_placemark_description(self, name, descrip):
+        self.placemarks[name].set_description(descrip)
+
+    def update_box_description(self, name, descrip):
+        self.boxes[name].set_description(descrip)
+
+    def update_line_description(self, name, descrip):
+        self.lines[name].set_description(descrip)
 
     def update_pushpin_color(self, style_id, color):
         node = self.get_style(style_id)

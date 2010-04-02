@@ -133,14 +133,19 @@ class demo_dialog(wx.Dialog):
         self.event_handler(self.position - 1)
 
 class gui(wx.Frame):
-    def __init__(self, set_new_users, set_dsa_requests, set_emphasis, get_freq_data, get_user_data, get_geoloc_data):
+    def __init__(self, set_new_users, make_freq_requests, release_freq, set_emphasis, get_freq_data, get_user_data, get_geoloc_data):
         wx.Frame.__init__(self, None, -1, 'SDR HQ', size = (700,600),
                           style = wx.DEFAULT_FRAME_STYLE)
 
         self.panels = {}
         self.ids = {}
 
+        self.users = []
+
         self.main_panel_start = True
+
+        # self.timer = wx.Timer(self, -1)
+        # self.timer.Start()
 
         #Menus
         ##########################################################################
@@ -434,13 +439,80 @@ class gui(wx.Frame):
         ##########################################################################
         new_panel = wx.Panel(self, -1)
     
-        new_tag = wx.StaticText(new_panel, -1, "New User Panel")
+        new_tag = wx.StaticText(new_panel, -1, "Add New User")
         
-        new_box = wx.BoxSizer()
-        
-        new_box.Add(new_tag, 0, wx.ALL, 0)
+        new_name_label = wx.StaticText(new_panel, -1, "Enter Team Name:")
+        self.new_name_ctrl = wx.TextCtrl(new_panel, -1, '', style=wx.TE_PROCESS_ENTER)
 
+        new_skill_label = wx.StaticText(new_panel, -1, "Enter Team Skill:")
+        self.new_skill_ctrl = wx.TextCtrl(new_panel, -1, '', style=wx.TE_PROCESS_ENTER)
+
+        new_id_label = wx.StaticText(new_panel, -1, "Team Id:")
+        self.new_id_ctrl = wx.TextCtrl(new_panel, -1, '', style=wx.TE_READONLY)
+
+        self.new_notification_label = wx.StaticText(new_panel, -1, '', style=wx.ALIGN_CENTER)
+        new_button = wx.Button(new_panel, -1, "Add User")
+
+        new_tag_font = new_tag.GetFont()
+        new_tag_font.SetPointSize(16)
+        new_tag.SetFont(new_tag_font)
+
+        label_font = new_name_label.GetFont()
+        label_font.SetPointSize(12)
+
+        new_name_label.SetFont(label_font)
+        new_skill_label.SetFont(label_font)
+        new_id_label.SetFont(label_font)
+    
+        self.new_notification_label.SetFont(label_font)
+        new_button.SetFont(label_font)
+
+
+        new_box = wx.FlexGridSizer(9, 3, 0, 0)
+        
+        new_box.Add(new_tag, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        new_box.Add(wx.Size(350,50), 0)
+        new_box.Add(wx.Size(0,0), 0)
+
+        new_box.Add(wx.Size(300,75), 0)
+        new_box.Add(wx.Size(0,0), 0)
+        new_box.Add(wx.Size(0,0), 0)
+
+        new_box.Add(new_name_label, 0, wx.ALIGN_CENTER, 0)
+        new_box.Add(self.new_name_ctrl, 0, wx.EXPAND, 0)
+        new_box.Add(wx.Size(0,0), 0)
+
+        new_box.Add(wx.Size(0,60), 0)
+        new_box.Add(wx.Size(0,0), 0)
+        new_box.Add(wx.Size(0,0), 0)
+
+        new_box.Add(new_skill_label, 0, wx.ALIGN_CENTER, 0)
+        new_box.Add(self.new_skill_ctrl, 0, wx.EXPAND, 0)
+        new_box.Add(wx.Size(0,0), 0)
+
+        new_box.Add(wx.Size(0,60), 0)
+        new_box.Add(wx.Size(0,0), 0)
+        new_box.Add(wx.Size(0,0), 0)
+
+        new_box.Add(new_id_label, 0, wx.ALIGN_CENTER, 0)
+        new_box.Add(self.new_id_ctrl, 0, wx.EXPAND, 0)
+        new_box.Add(wx.Size(0,0), 0)
+
+        new_box.Add(wx.Size(0,50), 0)
+        new_box.Add(wx.Size(0,0), 0)
+        new_box.Add(wx.Size(0,0), 0)
+
+        new_box.Add(self.new_notification_label, 0, wx.ALIGN_CENTER, 0)
+        new_box.Add(new_button, 0 , wx.EXPAND|wx.ALL, 80)
+        new_box.Add(wx.Size(0,250), 0)        
+        
         new_panel.SetSizer(new_box)
+
+        new_panel.Bind(wx.EVT_BUTTON, self.add_user, id=new_button.GetId())
+        new_panel.Bind(wx.EVT_TEXT_ENTER, self.add_user, id=self.new_name_ctrl.GetId())
+        new_panel.Bind(wx.EVT_TEXT_ENTER, self.add_user, id=self.new_skill_ctrl.GetId())
+        new_panel.Bind(wx.EVT_TEXT, self.clear_new_notification, id=self.new_name_ctrl.GetId())
+        new_panel.Bind(wx.EVT_TEXT, self.clear_new_notification, id=self.new_skill_ctrl.GetId())
 
         new_panel.Show(False)
         
@@ -450,11 +522,63 @@ class gui(wx.Frame):
         ##########################################################################
         current_panel = wx.Panel(self, -1)
         
-        current_tag = wx.StaticText(current_panel, -1, "Current User Panel")
-        
-        current_box = wx.BoxSizer()
+        # current_tag = wx.StaticText(current_panel, -1, "Current User Panel")
+        # current_tag_font = current_tag.GetFont()
+        # current_tag_font.SetPointSize(14)
+        # current_tag.SetFont(current_tag_font)
 
-        current_box.Add(current_tag, 0, wx.ALL, 0)
+        current_box = wx.FlexGridSizer(22, 5, 1, 1)
+        # current_box.Add(current_tag, 0, wx.ALL, 0)
+        # current_box.Add(wx.Size(0,0), 0)
+        # current_box.Add(wx.Size(0,0), 0)
+        # current_box.Add(wx.Size(0,0), 0)
+        # current_box.Add(wx.Size(0,0), 0)
+
+        
+        current_name_label = wx.StaticText(current_panel, -1, 'Name')
+        current_id_label = wx.StaticText(current_panel, -1, 'Id')
+        current_skill_label = wx.StaticText(current_panel, -1, 'Skill')
+        current_lat_label = wx.StaticText(current_panel, -1, 'Latitude')
+        current_lon_label = wx.StaticText(current_panel, -1, 'Longitude')
+        
+        label_font = current_name_label.GetFont()
+        label_font.SetPointSize(12)
+        
+        current_name_label.SetFont(label_font)
+        current_id_label.SetFont(label_font)
+        current_skill_label.SetFont(label_font)
+        current_lat_label.SetFont(label_font)
+        current_lon_label.SetFont(label_font)
+
+        current_box.Add(current_name_label, 0, wx.ALIGN_CENTER, 0)
+        current_box.Add(current_id_label, 0, wx.ALIGN_CENTER, 0)
+        current_box.Add(current_skill_label, 0, wx.ALIGN_CENTER, 0)
+        current_box.Add(current_lat_label, 0, wx.ALIGN_CENTER, 0)
+        current_box.Add(current_lon_label, 0, wx.ALIGN_CENTER, 0)
+
+        self.current_ctrl = []
+        for i in range(20):
+            tmp ={}
+            tmp['name'] = wx.TextCtrl(current_panel, -1, '', style=wx.TE_READONLY|wx.TE_CENTER)
+            tmp['id'] = wx.TextCtrl(current_panel, -1, '', style=wx.TE_READONLY|wx.TE_CENTER)
+            tmp['skill'] = wx.TextCtrl(current_panel, -1, '', style=wx.TE_READONLY|wx.TE_CENTER)
+            tmp['lat'] = wx.TextCtrl(current_panel, -1, '', style=wx.TE_READONLY|wx.TE_CENTER)
+            tmp['lon'] = wx.TextCtrl(current_panel, -1, '', style=wx.TE_READONLY|wx.TE_CENTER)
+
+            current_box.Add(tmp['name'], 0, wx.EXPAND, 0)
+            current_box.Add(tmp['id'], 0, wx.EXPAND, 0)
+            current_box.Add(tmp['skill'], 0, wx.EXPAND, 0)
+            current_box.Add(tmp['lat'], 0, wx.EXPAND, 0)
+            current_box.Add(tmp['lon'], 0, wx.EXPAND, 0)
+            
+            self.current_ctrl.append(tmp)
+        
+        current_space = 139
+        current_box.Add(wx.Size(current_space,0), 0)
+        current_box.Add(wx.Size(current_space,0), 0)
+        current_box.Add(wx.Size(current_space,0), 0)
+        current_box.Add(wx.Size(current_space,0), 0)
+        current_box.Add(wx.Size(current_space,0), 0)
     
         current_panel.SetSizer(current_box)
 
@@ -478,7 +602,8 @@ class gui(wx.Frame):
         #Connection to Controller
         ##########################################################################
         self.__set_new_users = set_new_users
-        self.__set_dsa_requests = set_dsa_requests
+        self.__make_freq_request = make_freq_requests
+        self.__release_freq = release_freq
         self.__set_emphasis = set_emphasis
         self.__get_freq_data = get_freq_data
         self.__get_user_data = get_user_data
@@ -557,7 +682,7 @@ class gui(wx.Frame):
         al_dialog(self)
 
     def request_frequency(self, event):
-        team_id = self.manage_request_ctrl.GetValue.strip()
+        team_id = self.manage_request_ctrl.GetValue().strip()
         
         if len(team_id) == 0:
             self.manage_request_ctrl.SetValue("Value Needed")
@@ -565,27 +690,38 @@ class gui(wx.Frame):
             self.manage_request_ctrl.SetValue("No Characters")
         else:
             team_id = int(team_id)
-            self.__set_dsa_requests([team_id,[]])
+            skill = None
+            loc = None
+            if self.users:
+                for user in self.users:
+                    if user['id'] == team_id:
+                        skill = user['skill']
+                        loc = user['location']
+            request = (team_id, skill, loc)
+            self.__make_freq_request(team_id)
             self.manage_request_ctrl.SetValue("Request made for Team %d"%team_id)
 
     def release_frequency(self, event):
-        freq = self.manage_release_ctrl.GetValue.strip()
+        freq = self.manage_release_ctrl.GetValue().strip()
 
         if len(freq) == 0:
             self.manage_release_ctrl.SetValue("Value Needed")
-        elif not
+        elif not(self.is_digit(freq)):
+            self.manage_release_ctrl.SetValue("No Characters")
+        else:
+            freq = float(freq)
+            self.__release_freq(freq)
+            self.manage_release_ctrl.SetValue("Frequency %.1f Released"%freq)
 
     def set_emphasis(self, event):
         text = self.manage_emphasis_ctrl.GetValue().strip()
 
-        if not(type(text) is str):
-            self.manage_emphasis_ctrl.SetValue("Only strings are accepted")
-            return
-
-        #if text not in list of acceptable values
-        #maybe should just use a combo box
+        if len(text) == 0:
+            self.manage_emphasis_ctrl.SetValue("Value Needed")
+        elif self.is_digit(text):
+            self.manage_emphasis_ctrl.SetValue("Only Characters")
         else:
-            self.__set_emphasis(text)
+            self.__set_emphasis(str(text))
             self.manage_emphasis_ctrl.SetValue("Emphasis set to %s"%text)
 
     def update_spectrum_panel(self, event):
@@ -611,6 +747,41 @@ class gui(wx.Frame):
             self.spectrum_error.SetLabel(string)
         else:
             self.spectrum_error.SetLabel('')
+
+    def add_user(self, event):
+        name = self.new_name_ctrl.GetValue().strip()
+        skill = self.new_skill_ctrl.GetValue().strip()
+        team_id = self.new_id_ctrl.GetValue().strip()
+
+        if len(name) == 0:
+            self.new_name_ctrl.SetValue("Value Needed")
+        elif len(skill) == 0:
+            self.new_skill_ctrl.SetValue("Value Needed")
+        elif self.is_digit(skill):
+            self.new_skill_ctrl.SetValue("Only Character")
+        else:
+            if len(team_id) == 0:
+                team_id = 1
+            else:
+                team_id = int(team_id) + 1
+                
+            user = {'name':name, 'skill':skill, 'id':team_id, 'location':None, 'freq':None}
+            self.users.append(user)
+
+            self.__set_new_users(user)
+            
+            self.new_notification_label.SetLabel("New User Accepted")
+            self.new_name_ctrl.SetValue('')
+            self.new_skill_ctrl.SetValue('')
+            self.new_id_ctrl.SetValue(str(team_id+1))
+
+    def clear_new_notification(self, event):
+        name = self.new_name_ctrl.GetValue()
+        skill = self.new_skill_ctrl.GetValue()
+        
+        if not(len(name) and len(skill)):
+            if len(name) or len(skill):
+                self.new_notification_label.SetLabel('')
 
     def is_digit(self, str):
         '''

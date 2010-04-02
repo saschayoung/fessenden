@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import numpy
 
 class component:
     def __init__(self):
@@ -45,7 +46,7 @@ class component:
                 f1.close()
 
         if self.move_to_loc:
-            f1 = open(self.move_commands_filename, 'a')
+            f1 = open(self.move_command_filename, 'a')
             string = self.move_command_string%(self.move_to_loc[0],self.move_to_loc[1])
             f1.write(string)
             f1.close()
@@ -72,9 +73,9 @@ class component:
             bad_type = True
             if not([tuple, list].count(type(move_to_loc)) == 0):
                 if len(move_to_loc) == 2:
-                    if not([float,long].count(type(move_to_loc[0])) == 0) and not([float,long].count(type(move_to_loc[1])) == 0):
-                        self.move_to_loc = move_to_loc
-                        bad_type = False
+                    # if not([float,long].count(type(move_to_loc[0])) == 0) and not([float,long].count(type(move_to_loc[1])) == 0):
+                    self.move_to_loc = move_to_loc
+                    bad_type = False
 
             if bad_type:
                 print "SDR Radio Error: Bad value for move to loc"
@@ -82,7 +83,7 @@ class component:
                 if not([tuple,list].count(type(move_to_loc)) == 0):
                     print "Length: ", len(move_to_loc)
                     for i in range(len(move_to_loc)):
-                        string = "Element " + str(i) +" Type: " + str(type(move_to_type[i]))
+                        string = "Element " + str(i) +" Type: " + str(type(move_to_loc[i]))
                         print string
                 print "Value: ", move_to_loc
 
