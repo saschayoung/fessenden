@@ -29,20 +29,36 @@ class geolocation_table:
         self.conn.close()
 
     def get_idx(self):
-            self.cur.execute("SELECT MAX(idx) FROM geolocation_table;")
-            (idx,) = self.cur.fetchone()
-            return idx
+        self.cur.execute("SELECT MAX(idx) FROM geolocation_table;")
+        (idx,) = self.cur.fetchone()
+        return idx
 
     def get_data(self,idx):
-            self.cur.execute("SELECT * FROM geolocation_table WHERE idx = %s;" %(idx,))
-            r = self.cur.fetchone()
-            if ( type(r) is NoneType ):
-                self.stop_db()
-                return -1
-            else:
-                (index,hist_box1_c1,hist_box1_c2,hist_box2_c1,hist_box2_c2,guess) = r
-                r = r[1:]
-                return r
+        self.cur.execute("SELECT * FROM geolocation_table WHERE idx = %s;" %(idx,))
+        r = self.cur.fetchone()
+        if ( type(r) is NoneType ):
+            self.stop_db()
+            return -1
+        else:
+            (index, hist_box1_c1, hist_box1_c2, hist_box2_c1, 
+             hist_box3_c2, hist_box3_c1, hist_box3_c2, guess, time) = r
+            r = r[1:]
+            return r
+
+
+    def write_data(self,data):
+            s1 = 'geolocation_table'
+            s2 = '(hist_box1_c1, hist_box1_c2, hist_box2_c1, hist_box2_c2, hist_box3_c1, hist_box3_c2, guess, time)'
+            t = time.localtime()
+            t = psycopg2.Time(t[3], t[4], t[4]) 
+
+            self.cur.execute("""INSERT INTO %s %s VALUES (%s, %s, %s, %s, %s, %s, %s, %s);""" %(s1,s2,
+                                                                                                data[0],data[1],data[2],
+                                                                                                data[3],data[4],data[5],
+                                                                                                data[6],t))
+
+            self.conn.commit()
+
 
 class kb_table:
     """
@@ -66,25 +82,26 @@ class kb_table:
         self.conn.close()
 
     def get_loc_hrf_table(self,n):
-            self.cur.execute("SELECT MAX(idx) FROM hrf_data_table WHERE field_team_id = %s;" %(n))
-            (idx,) = self.cur.fetchone()
-            self.cur.execute("SELECT field_team_location FROM hrf_data_table WHERE idx  = %s;" %(idx))
-            (loc,) = self.cur.fetchone()
-            return loc
+        self.cur.execute("SELECT MAX(idx) FROM hrf_data_table WHERE field_team_id = %s;" %(n))
+        (idx,) = self.cur.fetchone()
+        self.cur.execute("SELECT field_team_location FROM hrf_data_table WHERE idx  = %s;" %(idx))
+        (loc,) = self.cur.fetchone()
+        return loc
 
 
     def write_data(self,data):
-            s1 = 'kb_table'
-            s2 = '(field_team_id, field_team_name, field_team_skill, field_team_location, field_team_freq, time)'
-            t = time.localtime()
-            t = str(t[3]) + ':' + str(t[4])
+        s1 = 'kb_table'
+        s2 = '(field_team_id, field_team_name, field_team_skill, field_team_location, field_team_freq, time)'
+        t = time.localtime()
+        t = psycopg2.Time(t[3], t[4], t[4]) 
 
-            self.cur.execute("""INSERT INTO %s %s VALUES (%s, %s, %s, %s, %s, %s, %s);""" %(s1,s2,
-                                                                                            data[0],data[1],
-                                                                                            data[2],data[3],
-                                                                                            data[4]),t)
 
-            conn.commit()
- 
+        self.cur.execute("""INSERT INTO %s %s VALUES (%s, %s, %s, %s, %s, %s, %s);""" %(s1,s2,
+                                                                                        data[0],data[1],
+                                                                                        data[2],data[3],
+                                                                                        data[4]),t)
+        
+        self.conn.commit()
+            
 
 

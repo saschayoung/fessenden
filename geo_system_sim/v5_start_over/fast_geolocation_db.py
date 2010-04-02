@@ -187,8 +187,8 @@ if __name__=='__main__':
             iterations += 1
         
         if ( (iterations % 25) == 0):
-            g = loc_utils.iter_hist(x_results,y_results)
-            guess = np.concatenate([guess,g])
+            loc_utils.iter_hist(x_results,y_results)
+            # guess = np.concatenate([guess,g])
             
 
         #fi
@@ -223,9 +223,4 @@ if __name__=='__main__':
         cb.set_label('counts')
         fig.patch.set_alpha(0.1)
         plt.savefig(options.file + '.png',transparent=True)
-
-
-        # print final.get_array()
-
-
         plt.show()

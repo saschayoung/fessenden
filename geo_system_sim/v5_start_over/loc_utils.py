@@ -2,10 +2,9 @@
 
 import sys
 import numpy as np
-# import matplotlib.cm as cm
-# import matplotlib.pyplot as plt
 import sdr_kml_writer
 
+from db_utils import geolocation_table
 
 DEBUG = False
 PLOT = False
@@ -14,6 +13,7 @@ PLOT = False
 def iter_hist(x_results,y_results):
 
     # First pass
+    ############################################################################
     try:
         H, xedges, yedges = np.histogram2d(x_results, y_results, bins=20)
         extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
@@ -53,10 +53,13 @@ def iter_hist(x_results,y_results):
         print e
         print 'First pass failed'
         print 'probably not enough data'
-        return (-1,-1)
+        # return (-1,-1)
+    ############################################################################
+
 
 
     # Second pass
+    ############################################################################
     try:
         H_p, xedges_p, yedges_p = np.histogram2d(x_refined, y_refined, bins=15)
         extent_p = [xedges_p[0], xedges_p[-1], yedges_p[0], yedges_p[-1]]
@@ -95,15 +98,19 @@ def iter_hist(x_results,y_results):
     except:
         print 'Second pass failed'
         print 'probably not enough data'
-        results = [x_lower,x_upper,y_lower,y_upper]
-        r = write_kml(results)
-        return r
-        # write_kml(results,num,'first_pass')
-        # write_file(results,num,p,'first_pass')
-        # return -2
+        fp = [x_lower,x_upper,y_lower,y_upper]
+        sp = -1
+        tp = -1
+        write_db(fp,sp,tp)
+        
+        # results = [x_lower,x_upper,y_lower,y_upper]
+        # r = write_kml(results)
+        # return r
+    ############################################################################
 
 
     # Third pass
+    ############################################################################
     # try:
     H_pp, xedges_pp, yedges_pp = np.histogram2d(x_drefined, y_drefined)
     extent_pp = [xedges_pp[0], xedges_pp[-1], yedges_pp[0], yedges_pp[-1]]
@@ -117,9 +124,10 @@ def iter_hist(x_results,y_results):
     a = H_pp[idx_pp[0]][idx_pp[1]]
     b = np.nonzero(H_pp == a)
     if ( len(b[0]) > 1 ):
-        results = [x_lower_p,x_upper_p,y_lower_p,y_upper_p]
-        r = write_kml(results)
-        return r
+        fp = [x_lower,x_upper,y_lower,y_upper]
+        sp = [x_lower_p,x_upper_p,y_lower_p,y_upper_p]
+        tp = -1
+        write_db(fp,sp,tp)
 
 
     x_lower_pp = xedges_pp[idx_pp[0]]
@@ -149,9 +157,16 @@ def iter_hist(x_results,y_results):
 
 
     # else:
-    results = [x_lower_pp,x_upper_pp,y_lower_pp,y_upper_pp]
-    r = write_kml(results)
-    return r
+    fp = [x_lower,x_upper,y_lower,y_upper]
+    sp = [x_lower_p,x_upper_p,y_lower_p,y_upper_p]
+    tp = [x_lower_pp,x_upper_pp,y_lower_pp,y_upper_pp]
+    write_db(fp,sp,tp)
+    # results = [x_lower_pp,x_upper_pp,y_lower_pp,y_upper_pp]
+    # r = write_kml(results)
+    # return r
+
+
+    ############################################################################
         # write_kml(results,num,'third_pass')
         # write_file(results,num,p,'third_pass')
         # return 0
@@ -159,9 +174,44 @@ def iter_hist(x_results,y_results):
 
 
 
+def write_db(fp,sp,tp):
+    g = geolocation_table('128.173.90.88')
+    g.start_db()
+
+    if ( (sp == -1) and ( tp == -1) ):
+        p_x = (0.5)*(fp[0] + fp[1])
+        p_y = (0.5)*(fp[2] + fp[3])
+        data  = [(fp[0],fp[2]),(fp[1],fp[3]),
+                 -1,-1,
+                 -1,-1,
+                 (p_x,p_y)]
+
+    elif ( not (sp == -1) and ( tp == -1) ):
+        p_x = (0.5)*(sp[0] + sp[1])
+        p_y = (0.5)*(sp[2] + sp[3])
+        data  = [(fp[0],fp[2]),(fp[1],fp[3]),
+                 (sp[0],sp[2]),(sp[1],sp[3]),
+                 -1,-1,
+                 (p_x,p_y)]
+
+    else: # ( not (sp == -1) and not ( tp == -1) ):
+        p_x = (0.5)*(sp[0] + sp[1])
+        p_y = (0.5)*(sp[2] + sp[3])
+        data  = [(fp[0],fp[2]),(fp[1],fp[3]),
+                 (sp[0],sp[2]),(sp[1],sp[3]),
+                 (tp[0],tp[2]),(tp[1],tp[3]),
+                 (p_x,p_y)]
+
+    g.write_data(data)
+    g.stop_db()
+
+        
+    
+
 
 
 def write_kml(results):
+
     p_x = (0.5)*(results[0] + results[1])
     p_y = (0.5)*(results[2] + results[3])
     kml_write = sdr_kml_writer.kml_writer()
