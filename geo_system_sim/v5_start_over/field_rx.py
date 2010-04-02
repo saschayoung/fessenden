@@ -74,6 +74,8 @@ class simulation:
             self.target = move
             loc = location_alexandria.directed_move(self.prev_loc[kk-1],self.target)
             self.prev_loc[kk-1] = loc
+
+        return loc
     ############################################################################
 
 
@@ -176,6 +178,8 @@ if __name__=='__main__':
                       help="enable incremental team movement (team movement is random otherwise) [default=%default]")
     parser.add_option("-f", "--file", type="string", default="move_command",
                       help="file to check for new coordinate locations to head towards [default=%default]")
+    # parser.add_option("-f", "--file", type="string", default="move_command",
+    #                   help="file to check for new coordinate locations to head towards [default=%default]")
 
     
 

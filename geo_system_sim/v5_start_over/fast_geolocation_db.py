@@ -133,7 +133,7 @@ if __name__=='__main__':
 
         (loc,t) = data
 
-        if  not ( len(loc) < 3 ):       # regular case: 2 hyperbolas
+        if ( len(loc) >= 3 ):       # regular case: 2 hyperbolas
             for k in range(len(loc)-2):
                 rx1 = loc[k]
                 rx2 = loc[k+1]
@@ -187,17 +187,17 @@ if __name__=='__main__':
             iterations += 1
         
         if ( (iterations % 25) == 0):
-            loc_utils.iter_hist(x_results,y_results)
+            loc_utils.iter_hist(options.host,x_results,y_results)
             # guess = np.concatenate([guess,g])
             
 
         #fi
     #endwhile
 
-    f = open(options.file + '.dat', 'w+')
-    for i in guess:
-        f.write(str(i) + '\n')
-    f.close
+    # f = open(options.file + '.dat', 'w+')
+    # for i in guess:
+    #     f.write(str(i) + '\n')
+    # f.close
 
     t1 = time.time()
     t_tot = t1 - t0

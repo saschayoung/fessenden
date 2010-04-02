@@ -29,7 +29,8 @@ def get_move_loc(filename):
         os.remove(filename)
         return [lon,lat]
     except Exception,e:
-        print 'Exception: ', e
+        if DEBUG:
+            print 'Exception: ', e
         return -1
 
 

@@ -2,10 +2,70 @@
 
 # core libraries
 import time
+from types import NoneType
 
 # external libraries
 import psycopg2
 import numpy as np
+
+# class hrf_data_table:
+#     """
+#     Database access and manipulation tools for hrf_data_table
+#     """
+
+#     def __init__(self, host):
+#         self.host = host
+        
+
+#     def start_db(self):
+#         self.conn = psycopg2.connect(host = self.host,
+#                                      user = "sdrc_user",
+#                                      password = "sdrc_pass",
+#                                      database = "sdrc_db")
+#         self.cur = self.conn.cursor()
+
+#     def stop_db(self):
+#         # conn.commit() <- is this needed?
+#         self.cur.close() 
+#         self.conn.close()
+
+#     def get_end(self):
+#         self.cur.execute("SELECT MAX(idx) FROM geolocation_table;")
+#         (idx,) = self.cur.fetchone()
+#         return idx
+
+#     def get_start(self):
+#         self.cur.execute("SELECT MIN(idx) FROM geolocation_table;")
+#         (idx,) = self.cur.fetchone()
+#         return idx
+
+#     def get_data(self,idx):
+#         self.cur.execute("SELECT * FROM geolocation_table WHERE idx = %s;" %(idx,))
+#         r = self.cur.fetchone()
+#         if ( type(r) is NoneType ):
+#             self.stop_db()
+#             return -1
+#         else:
+#             (index, hist_box1_c1, hist_box1_c2, hist_box2_c1, 
+#              hist_box3_c2, hist_box3_c1, hist_box3_c2, guess, time) = r
+#             r = r[1:]
+#             return r
+
+
+#     def write_data(self,data):
+#             s1 = 'geolocation_table'
+#             s2 = '(hist_box1_c1, hist_box1_c2, hist_box2_c1, hist_box2_c2, hist_box3_c1, hist_box3_c2, guess, time)'
+#             t = time.localtime()
+#             t = psycopg2.Time(t[3], t[4], t[4]) 
+
+#             self.cur.execute("""INSERT INTO %s %s VALUES (%s, %s, %s, %s, %s, %s, %s, %s);""" %(s1,s2,
+#                                                                                                 data[0],data[1],data[2],
+#                                                                                                 data[3],data[4],data[5],
+#                                                                                                 data[6],t))
+
+#             self.conn.commit()
+
+
 
 class geolocation_table:
     """
@@ -28,8 +88,13 @@ class geolocation_table:
         self.cur.close() 
         self.conn.close()
 
-    def get_idx(self):
+    def get_end(self):
         self.cur.execute("SELECT MAX(idx) FROM geolocation_table;")
+        (idx,) = self.cur.fetchone()
+        return idx
+
+    def get_start(self):
+        self.cur.execute("SELECT MIN(idx) FROM geolocation_table;")
         (idx,) = self.cur.fetchone()
         return idx
 
@@ -81,12 +146,21 @@ class kb_table:
         self.cur.close() 
         self.conn.close()
 
-    def get_loc_hrf_table(self,n):
-        self.cur.execute("SELECT MAX(idx) FROM hrf_data_table WHERE field_team_id = %s;" %(n))
-        (idx,) = self.cur.fetchone()
-        self.cur.execute("SELECT field_team_location FROM hrf_data_table WHERE idx  = %s;" %(idx))
-        (loc,) = self.cur.fetchone()
-        return loc
+    def get_loc_hrf_table(self,l):
+        loc_now = []
+        for i in l:
+            self.cur.execute("SELECT MAX(idx) FROM hrf_data_table WHERE field_team_id = %s;" %(i,))
+            (idx,) = self.cur.fetchone()
+            self.cur.execute("SELECT field_team_location FROM hrf_data_table WHERE idx  = %s;" %(idx,))
+            (loc,) = self.cur.fetchone()
+            loc = loc.strip(' ()')        # format location
+            loc = loc.split(',')
+            loc[0] = np.float128(loc[0])
+            loc[1] = np.float128(loc[1])
+            loc_now.append(loc)
+        return loc_now
+
+
 
 
     def write_data(self,data):

@@ -7,10 +7,9 @@ import sdr_kml_writer
 from db_utils import geolocation_table
 
 DEBUG = False
-PLOT = False
 
 
-def iter_hist(x_results,y_results):
+def iter_hist(host,x_results,y_results):
 
     # First pass
     ############################################################################
@@ -48,6 +47,7 @@ def iter_hist(x_results,y_results):
                 x_refined.append(x_results[i])
                 y_refined.append(y_results[i])
             i +=1
+
 
     except Exception,e:
         print e
@@ -101,7 +101,7 @@ def iter_hist(x_results,y_results):
         fp = [x_lower,x_upper,y_lower,y_upper]
         sp = -1
         tp = -1
-        write_db(fp,sp,tp)
+        write_db(host,fp,sp,tp)
         
         # results = [x_lower,x_upper,y_lower,y_upper]
         # r = write_kml(results)
@@ -127,7 +127,7 @@ def iter_hist(x_results,y_results):
         fp = [x_lower,x_upper,y_lower,y_upper]
         sp = [x_lower_p,x_upper_p,y_lower_p,y_upper_p]
         tp = -1
-        write_db(fp,sp,tp)
+        write_db(host,fp,sp,tp)
 
 
     x_lower_pp = xedges_pp[idx_pp[0]]
@@ -160,7 +160,7 @@ def iter_hist(x_results,y_results):
     fp = [x_lower,x_upper,y_lower,y_upper]
     sp = [x_lower_p,x_upper_p,y_lower_p,y_upper_p]
     tp = [x_lower_pp,x_upper_pp,y_lower_pp,y_upper_pp]
-    write_db(fp,sp,tp)
+    write_db(host,fp,sp,tp)
     # results = [x_lower_pp,x_upper_pp,y_lower_pp,y_upper_pp]
     # r = write_kml(results)
     # return r
@@ -174,8 +174,8 @@ def iter_hist(x_results,y_results):
 
 
 
-def write_db(fp,sp,tp):
-    g = geolocation_table('128.173.90.88')
+def write_db(host,fp,sp,tp):
+    g = geolocation_table(host)
     g.start_db()
 
     if ( (sp == -1) and ( tp == -1) ):
@@ -195,8 +195,8 @@ def write_db(fp,sp,tp):
                  (p_x,p_y)]
 
     else: # ( not (sp == -1) and not ( tp == -1) ):
-        p_x = (0.5)*(sp[0] + sp[1])
-        p_y = (0.5)*(sp[2] + sp[3])
+        p_x = (0.5)*(tp[0] + tp[1])
+        p_y = (0.5)*(tp[2] + tp[3])
         data  = [(fp[0],fp[2]),(fp[1],fp[3]),
                  (sp[0],sp[2]),(sp[1],sp[3]),
                  (tp[0],tp[2]),(tp[1],tp[3]),

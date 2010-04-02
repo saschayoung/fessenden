@@ -1,7 +1,8 @@
 #!/bin/bash
 
+HOST=128.173.90.68
 
-python reset_pgdb.py --host=128.173.90.88
-python field_rx.py --host=128.173.90.88 -r 20 -i 1000 -m
-python db_agent.py --host=128.173.90.88
-# python fast_geolocation_db.py --host=128.173.90.88 
+python reset_pgdb.py --host=$HOST
+python field_rx.py --host=$HOST -r 2 -i 1000  --inc_move
+python db_agent.py --host=$HOST
+python fast_geolocation_db.py --host=$HOST
