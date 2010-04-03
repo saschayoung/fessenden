@@ -2,6 +2,36 @@
 
 import wx
 import time
+import threading
+
+class colored_text_box(wx.Panel):
+    def __init__(self, parent, text):
+        wx.Panel.__init__(self, parent, -1)
+
+        self.SetBackgroundColour(wx.Colour(red=0x00,green=0x00,blue=0xff))
+
+        self.text_label = wx.StaticText(self, -1, text, style=wx.ALIGN_CENTER)
+        
+        text_font = self.text_label.GetFont()
+        text_font.SetPointSize(16)
+        text_font.SetWeight(wx.FONTWEIGHT_BOLD)
+        self.text_label.SetFont(text_font)
+
+        self.box = wx.GridSizer(1,1,0,0)
+        
+        self.box.Add(self.text_label, 0, wx.ALIGN_CENTER|wx.ALL, 2)
+
+        self.SetSizer(self.box)
+
+    def set_text(self, text):
+        self.text_label.SetLabel(str(text))
+        self.box.Layout()
+
+    def set_used(self):
+        self.SetBackgroundColour(wx.Colour(red=0xff, green=0x00, blue=0x00))
+
+    def set_free(self):
+        self.SetBackgroundColour(wx.Colour(red=0x00, green=0xff, blue=0x00))
 
 class al_dialog(wx.Dialog):
     def __init__(self, parent):
@@ -51,14 +81,13 @@ class demo_dialog(wx.Dialog):
         display_panel = wx.Panel(self, -1, style=wx.BORDER_SUNKEN)
         
         self.text = ['Welcome to the Demo\nClick Next to move on',
-                     'This is the tour through the GUI.\nThis GUI is serves as an interface\nto a time base controller. The\nController handles all the\nnecessary coordination functions\nof the system with time threads',
-                     'This is the View Spectrum Panel\nThis panel allows an operator to\nkeep an eye on the results\nof the DSA engine',
-                     'This is the Unbuilt\nRequest Frequency Panel',
-                     'This is the Unbuilt\nRelease Frequency Panel',
-                     'This is the Half-Built\nModify DSA Operations Panel',
-                     'This is the Unbuilt\nAdd User Panel',
-                     'This is the Unbuilt\nView Users Panel',
-                     'Wow there are a lot\nof panels to build...']
+                     'This is the tour through the GUI.\nThis GUI is serves as an interface\nto a time base controller. The\nController handles all the\nnecessary coordination functions\nof the system with time threads.',
+                     'This is the View Spectrum Panel.\nThis panel allows an operator to\nkeep an eye on the results\nof the DSA engine.',
+                     'This is the Graphical Spectrum\nPanel. This panel allows an\noperator to quickly see\nthe spectral usage.',
+                     'This is the Manage DSA Panel.\nThis panel allows an operator to\nmake requests for a frequency\nrelease a frequency orto change\nthe currently emphasised skill.',
+                     'This is the Add User Panel.\nThis panel allows an operator to\nadd a new team to the system,\nthe id for the team will be\nautomatically generated.',
+                     'This is the View Current Users\nPanel. This panel keeps an\noperator up to date on what\nteams are registered, where\nthey are, and what\ntheir skills are.']
+
 
         self.position = 0
         self.text_display = wx.StaticText(display_panel, -1, self.text[self.position],style = wx.ALIGN_CENTER)
@@ -141,12 +170,15 @@ class gui(wx.Frame):
         self.ids = {}
 
         self.users = []
+        self.freq_data = []
 
         self.main_panel_start = True
 
-        # self.timer = wx.Timer(self, -1)
-        # self.timer.Start()
+        self.timer = wx.Timer(self, -1)
+        self.timer.Start(1000)
 
+        self.lock = threading.Lock()
+        
         #Menus
         ##########################################################################
         menubar = wx.MenuBar()
@@ -158,9 +190,11 @@ class gui(wx.Frame):
         dsa_menu = wx.Menu()
         spectrum_action = wx.MenuItem(dsa_menu, -1, "View &Spectral Use\tCtrl+S")
         manage_action = wx.MenuItem(dsa_menu, -1, "&Manage Spectrum\tCtrl+M")
+        graphic_action = wx.MenuItem(dsa_menu, -1, "&Graphic Spectrum\tCtrl+G")
 
         dsa_menu.AppendItem(spectrum_action)
         dsa_menu.AppendItem(manage_action)
+        dsa_menu.AppendItem(graphic_action)
 
         user_menu = wx.Menu()
         new_action = wx.MenuItem(user_menu, -1, "&Add New User\tCtrl+A")
@@ -188,6 +222,7 @@ class gui(wx.Frame):
         self.Bind(wx.EVT_MENU, self.quit, id=quit_action.GetId())
         self.Bind(wx.EVT_MENU, self.panel_show, id=spectrum_action.GetId())
         self.Bind(wx.EVT_MENU, self.panel_show, id=manage_action.GetId())
+        self.Bind(wx.EVT_MENU, self.panel_show, id=graphic_action.GetId())
         self.Bind(wx.EVT_MENU, self.panel_show, id=new_action.GetId())
         self.Bind(wx.EVT_MENU, self.panel_show, id=current_action.GetId())
         self.Bind(wx.EVT_MENU, self.about_handler, id=about_action.GetId())
@@ -289,25 +324,72 @@ class gui(wx.Frame):
         spectrum_box2.Add(wx.Size(spectrum_space,0),0)
         spectrum_box2.Add(wx.Size(spectrum_space,0),0)
 
-        spectrum_button = wx.Button(spectrum_panel, -1, "Update")
-        spectrum_button_font = spectrum_button.GetFont()
-        spectrum_button_font.SetPointSize(12)
-        spectrum_button.SetFont(spectrum_button_font)
-
-        self.spectrum_error = wx.StaticText(spectrum_panel, -1, '')
-
         spectrum_box1.Add(spectrum_tag, 0, wx.ALL, 0)
+        spectrum_box1.Add(wx.Size(0,25), 0)
         spectrum_box1.Add(spectrum_box2, 0, wx.EXPAND|wx.ALL, 7)
-        spectrum_box1.Add(spectrum_button, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
-        spectrum_box1.Add(self.spectrum_error, 0, wx.ALL, 10)
 
         spectrum_panel.SetSizer(spectrum_box1)
-
-        self.Bind(wx.EVT_BUTTON, self.update_spectrum_panel, id=spectrum_button.GetId())
         
         spectrum_panel.Show(not(self.main_panel_start))
 
         self.panels[spectrum_action.GetId()] = spectrum_panel
+
+        #Graphic Panel
+        ##########################################################################
+        graphic_panel = wx.Panel(self, -1)
+        
+        graphic_tag = wx.StaticText(graphic_panel, -1, 'Graphical Spectrum View')
+        graphic_tag_font = graphic_tag.GetFont()
+        graphic_tag_font.SetPointSize(16)
+        graphic_tag.SetFont(graphic_tag_font)
+
+        graphic_box2 = wx.FlexGridSizer(5,5,4,4)
+        graphic_vert_space = 100
+        graphic_hori_space = 169
+
+        self.graphic_ctrl = []
+        j = 0
+        for i in range(15):
+            if j < 4:
+                tmp = colored_text_box(graphic_panel,'')
+                graphic_box2.Add(tmp, 0, wx.EXPAND|wx.ALIGN_CENTER, 0)
+                self.graphic_ctrl.append(tmp)
+                j += 1
+            else:
+                j = 0
+                graphic_box2.Add(wx.Size(0,graphic_vert_space), 0)
+
+
+        graphic_box2.Add(wx.Size(0,0), 0)
+
+        tmp = colored_text_box(graphic_panel, '')
+        graphic_box2.Add(tmp, 0, wx.EXPAND|wx.ALIGN_CENTER, 0)
+        self.graphic_ctrl.append(tmp)
+        
+        tmp = colored_text_box(graphic_panel, '')
+        graphic_box2.Add(tmp, 0, wx.EXPAND|wx.ALIGN_CENTER, 0)
+        self.graphic_ctrl.append(tmp)
+
+        graphic_box2.Add(wx.Size(0,graphic_vert_space), 0)
+        graphic_box2.Add(wx.Size(0, 0), 0)
+                
+        graphic_box2.Add(wx.Size(graphic_hori_space, 0), 0)
+        graphic_box2.Add(wx.Size(graphic_hori_space, 0), 0)                
+        graphic_box2.Add(wx.Size(graphic_hori_space, 0), 0)
+        graphic_box2.Add(wx.Size(graphic_hori_space, 0), 0)
+        graphic_box2.Add(wx.Size(0, 0), 0)
+
+        graphic_box1 = wx.BoxSizer(wx.VERTICAL)
+
+        graphic_box1.Add(graphic_tag, 0, wx.ALL, 5)
+        graphic_box1.Add(wx.Size(0, 25), 0)
+        graphic_box1.Add(graphic_box2, 0, wx.EXPAND|wx.ALL, 5)
+
+        graphic_panel.SetSizer(graphic_box1)
+        
+        graphic_panel.Show(False)
+
+        self.panels[graphic_action.GetId()] = graphic_panel
 
         #Manage Panel
         ##########################################################################
@@ -328,34 +410,21 @@ class gui(wx.Frame):
         self.manage_emphasis_ctrl = wx.TextCtrl(manage_panel, -1, '', style=wx.TE_PROCESS_ENTER)
         manage_emphasis_button = wx.Button(manage_panel, -1, "Set Emphasis")
 
-        manage_request_tag_font = manage_request_tag.GetFont()
-        manage_request_tag_font.SetPointSize(16)
-        manage_request_tag_font.SetUnderlined(True)
-        manage_request_tag.SetFont(manage_request_tag_font)
+        manage_tag_font = manage_request_tag.GetFont()
+        manage_tag_font.SetPointSize(16)
+        manage_tag_font.SetUnderlined(True)
 
-        manage_request_label_font = manage_request_label.GetFont()
-        manage_request_label_font.SetPointSize(12)
-        manage_request_label.SetFont(manage_request_label_font)
+        manage_request_tag.SetFont(manage_tag_font)
+        manage_release_tag.SetFont(manage_tag_font)
+        manage_emphasis_tag.SetFont(manage_tag_font)
 
-        manage_release_tag_font = manage_release_tag.GetFont()
-        manage_release_tag_font.SetPointSize(16)
-        manage_release_tag_font.SetUnderlined(True)
-        manage_release_tag.SetFont(manage_release_tag_font)
+        manage_label_font = manage_request_label.GetFont()
+        manage_label_font.SetPointSize(12)
 
-        manage_release_label_font = manage_release_label.GetFont()
-        manage_release_label_font.SetPointSize(12)
-        manage_release_label.SetFont(manage_release_label_font)
-
-        manage_emphasis_tag_font = manage_emphasis_tag.GetFont()
-        manage_emphasis_tag_font.SetPointSize(16)
-        manage_emphasis_tag_font.SetUnderlined(True)
-        manage_emphasis_tag.SetFont(manage_emphasis_tag_font)
-
-        manage_emphasis_label_font = manage_emphasis_label.GetFont()
-        manage_emphasis_label_font.SetPointSize(12)
-        manage_emphasis_label.SetFont(manage_emphasis_label_font)
+        manage_request_label.SetFont(manage_label_font)
+        manage_release_label.SetFont(manage_label_font)
+        manage_emphasis_label.SetFont(manage_label_font)
         
-
         manage_front_space = 5
 
         manage_box = wx.FlexGridSizer(10, 5, 4, 4)
@@ -448,7 +517,7 @@ class gui(wx.Frame):
         self.new_skill_ctrl = wx.TextCtrl(new_panel, -1, '', style=wx.TE_PROCESS_ENTER)
 
         new_id_label = wx.StaticText(new_panel, -1, "Team Id:")
-        self.new_id_ctrl = wx.TextCtrl(new_panel, -1, '', style=wx.TE_READONLY)
+        self.new_id_ctrl = wx.TextCtrl(new_panel, -1, '1', style=wx.TE_READONLY)
 
         self.new_notification_label = wx.StaticText(new_panel, -1, '', style=wx.ALIGN_CENTER)
         new_button = wx.Button(new_panel, -1, "Add User")
@@ -522,19 +591,8 @@ class gui(wx.Frame):
         ##########################################################################
         current_panel = wx.Panel(self, -1)
         
-        # current_tag = wx.StaticText(current_panel, -1, "Current User Panel")
-        # current_tag_font = current_tag.GetFont()
-        # current_tag_font.SetPointSize(14)
-        # current_tag.SetFont(current_tag_font)
-
         current_box = wx.FlexGridSizer(22, 5, 1, 1)
-        # current_box.Add(current_tag, 0, wx.ALL, 0)
-        # current_box.Add(wx.Size(0,0), 0)
-        # current_box.Add(wx.Size(0,0), 0)
-        # current_box.Add(wx.Size(0,0), 0)
-        # current_box.Add(wx.Size(0,0), 0)
 
-        
         current_name_label = wx.StaticText(current_panel, -1, 'Name')
         current_id_label = wx.StaticText(current_panel, -1, 'Id')
         current_skill_label = wx.StaticText(current_panel, -1, 'Skill')
@@ -593,11 +651,13 @@ class gui(wx.Frame):
         self.main_box.Add(main_panel, 0, wx.EXPAND, 0)
         self.main_box.Add(spectrum_panel, 0, wx.EXPAND, 0)
         self.main_box.Add(manage_panel, 0, wx.EXPAND, 0)
+        self.main_box.Add(graphic_panel, 0, wx.EXPAND, 0)
         self.main_box.Add(new_panel, 0, wx.EXPAND, 0)
         self.main_box.Add(current_panel, 0, wx.EXPAND, 0)
 
         self.SetSizer(self.main_box)
 
+        self.Bind(wx.EVT_TIMER, self.timer_handler, id=self.timer.GetId())
 
         #Connection to Controller
         ##########################################################################
@@ -633,20 +693,17 @@ class gui(wx.Frame):
 
         index = -1
         if position < 1:
-            index = -1
+            index = 5
         elif position < 2:
             index = 0
         elif position < 3:
-            index = 1
-        elif position < 4:
             index = 2
+        elif position < 4:
+            index = 1
         elif position < 5:
             index = 3
         elif position < 6:
             index = 4
-        else:
-            index = 5
-
 
         show_key = panel_keys[index]
         for key in panel_keys:
@@ -692,11 +749,13 @@ class gui(wx.Frame):
             team_id = int(team_id)
             skill = None
             loc = None
+            self.lock.acquire()
             if self.users:
                 for user in self.users:
                     if user['id'] == team_id:
                         skill = user['skill']
                         loc = user['location']
+            self.lock.release()
             request = (team_id, skill, loc)
             self.__make_freq_request(team_id)
             self.manage_request_ctrl.SetValue("Request made for Team %d"%team_id)
@@ -724,6 +783,11 @@ class gui(wx.Frame):
             self.__set_emphasis(str(text))
             self.manage_emphasis_ctrl.SetValue("Emphasis set to %s"%text)
 
+    def timer_handler(self, event):
+        self.update_spectrum_panel(event)
+        self.update_graphic_panel(event)
+        self.update_current_panel(event)
+
     def update_spectrum_panel(self, event):
         freq_data = self.__get_freq_data()
         
@@ -741,12 +805,38 @@ class gui(wx.Frame):
             self.spectrum_ctrl[index]['time'].SetValue(str(item[2]))
 
             index += 1
+
+        self.freq_data = [k for k in freq_data]
+    
+    def update_graphic_panel(self, event):
+        for i in range(len(self.freq_data)):
+            self.graphic_ctrl[i].set_text(self.freq_data[i][0])
+            if self.freq_data[i][1] < 0:
+                self.graphic_ctrl[i].set_used()
+            else:
+                self.graphic_ctrl[i].set_free()
+
+
+    def update_current_panel(self, event):
+        users = self.__get_user_data()
         
-        if len(freq_data) < 1:
-            string = "Frequency Data is currently unavailable, please try again"
-            self.spectrum_error.SetLabel(string)
-        else:
-            self.spectrum_error.SetLabel('')
+        self.lock.acquire()
+        index = 0
+        for user in users:
+            self.current_ctrl[index]['name'].SetValue(user['name'])
+            self.current_ctrl[index]['id'].SetValue(str(user['id']))
+            self.current_ctrl[index]['skill'].SetValue(user['skill'])
+            if user['location']:
+                self.current_ctrl[index]['lat'].SetValue(str(user['location'][1]))
+                self.current_ctrl[index]['lon'].SetValue(str(user['location'][0]))
+            else:
+                self.current_ctrl[index]['lat'].SetValue('None')
+                self.current_ctrl[index]['lon'].SetValue('None')
+
+            index += 1
+
+        self.users = [k for k in users]
+        self.lock.release()
 
     def add_user(self, event):
         name = self.new_name_ctrl.GetValue().strip()
@@ -760,13 +850,12 @@ class gui(wx.Frame):
         elif self.is_digit(skill):
             self.new_skill_ctrl.SetValue("Only Character")
         else:
-            if len(team_id) == 0:
-                team_id = 1
-            else:
-                team_id = int(team_id) + 1
+            team_id = int(team_id)
                 
             user = {'name':name, 'skill':skill, 'id':team_id, 'location':None, 'freq':None}
+            self.lock.acquire()
             self.users.append(user)
+            self.lock.release()
 
             self.__set_new_users(user)
             

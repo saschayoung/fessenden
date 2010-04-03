@@ -364,14 +364,14 @@ class kml_writer():
 
         point_string = '\n'
         for point in points:
-            point_string += '\t' + str(point).strip('[]') + ',30\n'
+            point_string += '\t' + str(point).strip('[]') + ',0\n'
 
         line_node = line(name, description, style, point_string)
         node.append(line_node.root)
 
         self.lines[name] = line_node
 
-    def add_box(self, name, description, style, corner1, corner2):
+    def add_box(self, name, description, style, corner1, corner2, height = 30):
         if len(corner1):
             out_coords = []
 
@@ -388,9 +388,9 @@ class kml_writer():
 
             outer_string = '\n'
             for point in out_coords:
-                outer_string += '\t' + str(point).strip('[]') + ',30\n'
+                outer_string += '\t' + str(point).strip('[]') + ','+ str(height) +'\n'
 
-            inner_string = str(center).strip('[]') + ',30'
+            inner_string = str(center).strip('[]') + ',' + str(height)
         else:
             outer_string = ''
             inner_string = ''
@@ -407,10 +407,10 @@ class kml_writer():
         self.placemarks[placemark_name].set_coordinates(string)
 
     def add_point_to_line(self, name, point):
-        string = '\t'+ str(point).strip('[]') + ',30'
+        string = '\t'+ str(point).strip('[]') + ',0'
         self.lines[name].append_point(string)
 
-    def update_box_loc(self, name,  corner1, corner2):
+    def update_box_loc(self, name,  corner1, corner2, height = 30):
         if len(corner1):
             out_coords = []
 
@@ -427,9 +427,9 @@ class kml_writer():
 
             outer_string = ''
             for point in out_coords:
-                outer_string += str(point).strip('[]') + ',30\n'
+                outer_string += str(point).strip('[]') + ',' + str(height) +'\n'
 
-            inner_string = str(center).strip('[]') + ',30'
+            inner_string = str(center).strip('[]') + ',' + str(height)
         else:
             outer_string = ''
             inner_string = ''
