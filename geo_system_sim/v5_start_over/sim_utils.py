@@ -2,7 +2,7 @@
 
 import time, random, os
 from geo_utils import geo_utils
-
+import numpy as np
 
 DEBUG = False
 

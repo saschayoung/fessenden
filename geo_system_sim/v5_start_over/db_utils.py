@@ -146,7 +146,7 @@ class kb_table:
         self.cur.close() 
         self.conn.close()
 
-    def get_loc_hrf_table(self,l):
+    def get_team_locations(self,l):
         loc_now = []
         for i in l:
             self.cur.execute("SELECT MAX(idx) FROM hrf_data_table WHERE field_team_id = %s;" %(i,))
@@ -179,3 +179,65 @@ class kb_table:
             
 
 
+class movement_table:
+    """
+    Database access and manipulation tools for movement_table
+    """
+
+    def __init__(self, host):
+        self.host = host
+        
+
+    def start_db(self):
+        self.conn = psycopg2.connect(host = self.host,
+                                     user = "sdrc_user",
+                                     password = "sdrc_pass",
+                                     database = "sdrc_db")
+        self.cur = self.conn.cursor()
+
+    def stop_db(self):
+        # conn.commit() <- is this needed?
+        self.cur.close() 
+        self.conn.close()
+
+    def get_end(self):
+        self.cur.execute("SELECT MAX(idx) FROM movement_table;")
+        (idx,) = self.cur.fetchone()
+        return idx
+
+
+    def get_data(self,idx):
+        self.cur.execute("SELECT * FROM movement_table WHERE idx = %s;" %(idx,))
+        r = self.cur.fetchone()
+        if ( type(r) is NoneType ):
+            self.stop_db()
+            return -1
+        else:
+            # (index, box_c1, box_c2, target) = r
+            r = r[1:]
+            c1 = r[0].strip(' ()')
+            c1= c1.split(',')
+            c1[0] = np.float128(c1[0])
+            c1[1] = np.float128(c1[1])
+
+            c2 = r[1].strip(' ()')
+            c2 = c2.split(',')
+            c2[0] = np.float128(c2[0])
+            c2[1] = np.float128(c2[1])
+
+            target = r[2].strip(' ()')
+            target = target.split(',')
+            target[0] = np.float128(target[0])
+            target[1] = np.float128(target[1])
+
+            data = [c1,c2,target]
+            return data
+
+
+    def write_data(self,data):
+            s1 = 'movement_table'
+            s2 = '(box_c1, box_c2, target)'
+
+            self.cur.execute("""INSERT INTO %s %s VALUES (%s, %s, %s);""" %(s1,s2,box_c1, box_c2, target))
+
+            self.conn.commit()

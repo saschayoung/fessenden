@@ -23,6 +23,13 @@ def iter_hist(host,x_results,y_results):
         y_lower = yedges[idx[1]]
         y_upper = yedges[idx[1]+1]
 
+        x_lower_box = xedges[idx[0]-1]
+        x_upper_box = xedges[idx[0]+1]
+        y_lower_box = yedges[idx[1]-1]
+        y_upper_box = yedges[idx[1]+1]
+
+
+
         if DEBUG:
             print "First Pass"
             print 'type(H): %s   type(H[0][0]): %s' %(type(H),type(H[0][0]))
@@ -53,7 +60,7 @@ def iter_hist(host,x_results,y_results):
         print e
         print 'First pass failed'
         print 'probably not enough data'
-        # return (-1,-1)
+        return -1
     ############################################################################
 
 
@@ -98,10 +105,12 @@ def iter_hist(host,x_results,y_results):
     except:
         print 'Second pass failed'
         print 'probably not enough data'
+        big_box = [x_lower_box,x_upper_box,y_lower_box,y_upper_box]
         fp = [x_lower,x_upper,y_lower,y_upper]
         sp = -1
         tp = -1
-        write_db(host,fp,sp,tp)
+        write_db(host,big_box,fp,sp,tp)
+        return -2
         
         # results = [x_lower,x_upper,y_lower,y_upper]
         # r = write_kml(results)
@@ -111,7 +120,7 @@ def iter_hist(host,x_results,y_results):
 
     # Third pass
     ############################################################################
-    # try:
+    #try:
     H_pp, xedges_pp, yedges_pp = np.histogram2d(x_drefined, y_drefined)
     extent_pp = [xedges_pp[0], xedges_pp[-1], yedges_pp[0], yedges_pp[-1]]
 
@@ -124,10 +133,12 @@ def iter_hist(host,x_results,y_results):
     a = H_pp[idx_pp[0]][idx_pp[1]]
     b = np.nonzero(H_pp == a)
     if ( len(b[0]) > 1 ):
+        big_box = [x_lower_box,x_upper_box,y_lower_box,y_upper_box]
         fp = [x_lower,x_upper,y_lower,y_upper]
         sp = [x_lower_p,x_upper_p,y_lower_p,y_upper_p]
         tp = -1
-        write_db(host,fp,sp,tp)
+        write_db(host,big_box,fp,sp,tp)
+        return -3
 
 
     x_lower_pp = xedges_pp[idx_pp[0]]
@@ -146,8 +157,13 @@ def iter_hist(host,x_results,y_results):
         print "y_upper_pp: ", y_upper_pp
 
     # except:
-    # print 'Third pass failed'
-    # print 'probably not enough data'
+    #     print 'Third pass failed'
+    #     print 'probably not enough data'
+    #     fp = [x_lower,x_upper,y_lower,y_upper]
+    #     sp = [x_lower_p,x_upper_p,y_lower_p,y_upper_p]
+    #     tp = -1
+    #     write_db(host,fp,sp,tp)
+
     # results = [x_lower_p,x_upper_p,y_lower_p,y_upper_p]
     # r = write_kml(results)
     # return r
@@ -157,10 +173,12 @@ def iter_hist(host,x_results,y_results):
 
 
     # else:
+    big_box = [x_lower_box,x_upper_box,y_lower_box,y_upper_box]
     fp = [x_lower,x_upper,y_lower,y_upper]
     sp = [x_lower_p,x_upper_p,y_lower_p,y_upper_p]
     tp = [x_lower_pp,x_upper_pp,y_lower_pp,y_upper_pp]
-    write_db(host,fp,sp,tp)
+    write_db(host,big_box,fp,sp,tp)
+        # return 0
     # results = [x_lower_pp,x_upper_pp,y_lower_pp,y_upper_pp]
     # r = write_kml(results)
     # return r
@@ -169,38 +187,47 @@ def iter_hist(host,x_results,y_results):
     ############################################################################
         # write_kml(results,num,'third_pass')
         # write_file(results,num,p,'third_pass')
-        # return 0
-        
 
 
-
-def write_db(host,fp,sp,tp):
+def write_db(host,box,fp,sp,tp):
     g = geolocation_table(host)
     g.start_db()
 
     if ( (sp == -1) and ( tp == -1) ):
         p_x = (0.5)*(fp[0] + fp[1])
         p_y = (0.5)*(fp[2] + fp[3])
-        data  = [(fp[0],fp[2]),(fp[1],fp[3]),
+        data  = [(box[0],box[2]),(box[1],box[3]),
                  -1,-1,
                  -1,-1,
                  (p_x,p_y)]
+        # data  = [(fp[0],fp[2]),(fp[1],fp[3]),
+        #          -1,-1,
+        #          -1,-1,
+        #          (p_x,p_y)]
 
     elif ( not (sp == -1) and ( tp == -1) ):
         p_x = (0.5)*(sp[0] + sp[1])
         p_y = (0.5)*(sp[2] + sp[3])
-        data  = [(fp[0],fp[2]),(fp[1],fp[3]),
+        data  = [(box[0],box[2]),(box[1],box[3]),
                  (sp[0],sp[2]),(sp[1],sp[3]),
                  -1,-1,
                  (p_x,p_y)]
+        # data  = [(fp[0],fp[2]),(fp[1],fp[3]),
+        #          (sp[0],sp[2]),(sp[1],sp[3]),
+        #          -1,-1,
+        #          (p_x,p_y)]
 
     else: # ( not (sp == -1) and not ( tp == -1) ):
         p_x = (0.5)*(tp[0] + tp[1])
         p_y = (0.5)*(tp[2] + tp[3])
-        data  = [(fp[0],fp[2]),(fp[1],fp[3]),
+        data  = [(box[0],box[2]),(box[1],box[3]),
                  (sp[0],sp[2]),(sp[1],sp[3]),
                  (tp[0],tp[2]),(tp[1],tp[3]),
                  (p_x,p_y)]
+        # data  = [(fp[0],fp[2]),(fp[1],fp[3]),
+        #          (sp[0],sp[2]),(sp[1],sp[3]),
+        #          (tp[0],tp[2]),(tp[1],tp[3]),
+        #          (p_x,p_y)]
 
     g.write_data(data)
     g.stop_db()

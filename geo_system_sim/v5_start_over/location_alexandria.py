@@ -57,7 +57,7 @@ def random_move(coordinates, direction = -1, magnitude = 0.0006):
     
     return result
 
-def directed_move(start, finish, magnitude = 0.0006):
+def directed_move(start, finish, magnitude = 0.000006):
     delta_x = finish[0]-start[0]
     delta_y = finish[1]-start[1]
 

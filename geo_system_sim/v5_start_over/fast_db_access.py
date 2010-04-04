@@ -7,7 +7,7 @@ from types import NoneType
 import psycopg2
 import numpy as np
 
-DEBUG = False
+DEBUG = True
 
 class fast_db_access:
 
@@ -44,7 +44,7 @@ class fast_db_access:
             
 
     def run(self):
-        self.start_db()
+        # self.start_db()
 
         # get first beacon packet number in db        
         ########################################################################
@@ -57,10 +57,13 @@ class fast_db_access:
         # get indices 
         ########################################################################
         current_idxs = self.get_idxs()
-        self.current_beacon_pkt_num += 1 
+        # if DEBUG:
+        #     print "current_idxs: ", current_idxs
+        #     # print "data: ", data
+        #fi
 
         if ( current_idxs == [] ):             # if no data
-            self.stop_db()                     # exit
+            # self.stop_db()                     # exit
             return -1
 
         
@@ -86,7 +89,7 @@ class fast_db_access:
             self.cur.execute("SELECT * FROM hrf_data_table WHERE idx = %s;" %(i,))
             r = self.cur.fetchone()
             if ( type(r) is NoneType ):
-                self.stop_db()
+                # self.stop_db()
                 return -1
             else:
                 (index,pkt_num,team_id,loc,t,beacon_pkt_num,beacon_id) = r
@@ -100,9 +103,11 @@ class fast_db_access:
                 data.append([loc,t])
         ########################################################################            
 
+        self.current_beacon_pkt_num += 1 
 
 
-        self.stop_db()
+
+        # self.stop_db()
         return data
 
 
@@ -124,8 +129,4 @@ if __name__=='__main__':
 
 
 
-            # if DEBUG:
-            #     print "current_idxs: ", current_idxs
-            #     print "data: ", data
-            # #fi
 

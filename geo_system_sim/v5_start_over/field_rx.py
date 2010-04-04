@@ -2,6 +2,7 @@
 
 # core libraries
 import struct, sys
+from types import NoneType
 
 # external libraries
 import psycopg2
@@ -12,6 +13,7 @@ import sim_utils
 import location_alexandria
 import test_coords
 from geo_utils import geo_utils
+from db_utils import movement_table
 
 DEBUG = True
 
@@ -20,7 +22,25 @@ def update(iteration):
     sys.stdout.write("Working... iteration: %3d\r" % iteration)
     sys.stdout.flush()
 
+def is_inside_box(p1,c1,c2):
+    test = ( ((c1[0] <= p1[0])  and
+              (c2[0] >  p1[0])) and
+             ((c1[1] <= p1[1])  and
+              (c2[1] >  p1[1])) )
+    return test
 
+
+
+def find_closest_corner(p1,c1,c2):
+    c3 = [c1[0],c2[1]]
+    c4 = [c2[0],c1[1]]
+    d1 = geo_utils.distance(p1,c1)
+    d2 = geo_utils.distance(p1,c2)
+    d3 = geo_utils.distance(p1,c3)
+    d4 = geo_utils.distance(p1,c4)
+    d = [d1, d2, d3, d4]
+    d = sorted(d)
+    return d[0]
 
 class simulation:
     def __init__(self,options):
@@ -46,37 +66,101 @@ class simulation:
     ############################################################################
 
 
-
     # location and movement
     ############################################################################
     def get_location(self,ii,kk):
-        move = sim_utils.get_move_loc(options.file)
-
         if ( ii == 1 ):       # first iteration
             loc = location_alexandria.get_random_coord()
+            print 'first iteration'
             self.prev_loc.append(loc)
+        else:
+            print 'get data from db'
+            move = movement_table(options.host)
+            move.start_db()
+            idx = move.get_end()
+            if ( type(idx) == NoneType ):
+                print 'type(idx) == NoneType'
+                if ( options.inc_move ):         # incremental move enabled
+                    print 'inc_move enabled'
+                    loc = location_alexandria.random_move(self.prev_loc[kk-1])
+                    self.prev_loc[kk-1] = loc
 
-        elif ( move == -1):   # no targeted move coords available
+                else:                             # random move enabled
+                    print 'random move enabled'
+                    loc = location_alexandria.get_random_coord()
+                    self.prev_loc[kk-1] = loc
+            else:
+                print 'type(idx) != NoneType'
+                r = move.get_data(idx)
+                print 'r: ', r
+                if ( r == -1 ):
+                    print 'r == -1'
+                    if ( options.inc_move ):         # incremental move enabled
+                        print 'inc_move enabled'
+                        loc = location_alexandria.random_move(self.prev_loc[kk-1])
+                        self.prev_loc[kk-1] = loc
 
-            if ( self.target ):                # previous targeted move coords exist
-                loc = location_alexandria.directed_move(self.prev_loc[kk-1])
-                self.prev_loc[kk-1] = loc  
-
-            elif ( options.inc_move ):         # incremental move enabled
-                loc = location_alexandria.random_move(self.prev_loc[kk-1])
-                self.prev_loc[kk-1] = loc
-
-            else:                              # random move enabled
-                loc = location_alexandria.get_random_coord()
-                self.prev_loc[kk-1] = loc
-
-        else:                 # (new) targeted move coords available
-            self.target = move
-            loc = location_alexandria.directed_move(self.prev_loc[kk-1],self.target)
-            self.prev_loc[kk-1] = loc
-
+                    else:                             # random move enabled
+                        print 'random move enabled'
+                        loc = location_alexandria.get_random_coord()
+                        self.prev_loc[kk-1] = loc
+                else:
+                    print 'r != -1'
+                    c1 = r[0]
+                    c2 = r[1]
+                    target = r[2]
+                    p_loc = self.prev_loc[kk-1]
+                    if ( is_inside_box(p_loc,c1,c2) ):
+                        print 'currently inside box'
+                        print 'present_loc: ', p_loc
+                        print 'lower bounds: ', c1
+                        print 'upper bounds: ', c2
+                        loc = location_alexandria.directed_move(p_loc,target)
+                        self.prev_loc[kk-1] = loc
+                    else:
+                        target_p = find_closest_corner(p_loc,c1,c2)
+                        loc = location_alexandria.directed_move(p_loc,target_p)
+                        print 'closest corner: ', loc
+                        self.prev_loc[kk-1] = loc
+        print 'loc: ', loc
+        # sys.exit(1)
         return loc
     ############################################################################
+
+
+
+    # # location and movement
+    # ############################################################################
+    # def get_location(self,ii,kk):
+    #     move = sim_utils.get_move_loc(options.file)
+
+    #     if ( ii == 1 ):       # first iteration
+    #         loc = location_alexandria.get_random_coord()
+    #         self.prev_loc.append(loc)
+
+    #     elif ( move == -1):   # no targeted move coords available
+
+    #         if ( self.target ):                # previous targeted move coords exist
+    #             loc = location_alexandria.directed_move(self.prev_loc[kk-1],self.target)
+    #             self.prev_loc[kk-1] = loc  
+    #             # print 'no new coordinates, still moving to: ', loc
+
+    #         elif ( options.inc_move ):         # incremental move enabled
+    #             loc = location_alexandria.random_move(self.prev_loc[kk-1])
+    #             self.prev_loc[kk-1] = loc
+
+    #         else:                              # random move enabled
+    #             loc = location_alexandria.get_random_coord()
+    #             self.prev_loc[kk-1] = loc
+
+    #     else:                 # (new) targeted move coords available
+    #         self.target = move
+    #         loc = location_alexandria.directed_move(self.prev_loc[kk-1],self.target)
+    #         self.prev_loc[kk-1] = loc
+    #         # print 'new coordinates, moving to: ', loc
+
+    #     return loc
+    # ############################################################################
 
 
 
@@ -96,18 +180,21 @@ class simulation:
         tx = test_coords.get_tx_coords()
         
         field_radios = options.radios
-        iterations = options.iterations
+        # iterations = options.iterations
         
         update_status = 0
+        i = 0
         ########################################################################
         
-        
-        for i in range(iterations):
+        while True:
+        # for i in range(iterations):
             ii = i + 1  # beacon pkt num
             jj = i + 1  # field team pkt num
 
             # this part simulates the beacon transmission
             ####################################################################
+            # print '( not (ii == 1) and options.backoff ): ', ( not (ii == 1) and
+            #                                                    options.backoff )
             if ( not (ii == 1) and options.backoff ):
                 stoch.backoff()
             beacon_pkt_num = ii
@@ -144,6 +231,7 @@ class simulation:
                 update_status += 1
             #endfor
             update(update_status)
+            i += 1
         #endfor
         self.stop_db()
 
@@ -164,15 +252,15 @@ if __name__=='__main__':
                       help="database host in dotted decimal form [default=%default]")
     parser.add_option("-r", "--radios", type="int", default="3",
                       help="number of field radios to simulate [default=%default]")
-    parser.add_option("-i", "--iterations", type="int", default="10",
-                      help="number of times to run simulation [default=%default]")
+    # parser.add_option("-i", "--iterations", type="int", default="10",
+    #                   help="number of times to run simulation [default=%default]")
     parser.add_option("-d", "--drop", action="store_true", default=False,
                       help="simlulate dropped packets [default=%default]")
     parser.add_option("", "--rate", type="float", default=0.1,
                       help="packet error/drop rate [default=%default]")
     parser.add_option("-b", "--backoff", action="store_true", default=False,
                       help="enable beacon backoff... [default=%default]")
-    parser.add_option("-t", "--delay", type="int", default=5,
+    parser.add_option("-t", "--delay", type="int", default=50,
                       help="maximum delay time between beacon transmissions [default=%default]")
     parser.add_option("", "--inc_move", action="store_true", default=False,
                       help="enable incremental team movement (team movement is random otherwise) [default=%default]")

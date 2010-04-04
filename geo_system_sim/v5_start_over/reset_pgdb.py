@@ -60,6 +60,12 @@ class reset_db:
                                                 field_team_freq FLOAT,
                                                 time TIME);""")
 
+        cur.execute("DROP TABLE IF EXISTS %s;" % 'movement_table')
+        cur.execute("""CREATE TABLE movement_table (idx serial PRIMARY KEY, 
+                                                box_c1 CHAR(50), 
+                                                box_c2 CHAR(50),
+                                                target CHAR(50));""")
+
 
         conn.commit()
         cur.close() 

@@ -30,10 +30,18 @@ class reset_db:
         #insert test code here
         # f = open('data_out.data','w+')
 
-        n = 19
-        cur.execute("SELECT MAX(idx) FROM hrf_data_table WHERE field_team_id = %s;" %(n))
+        cur.execute("SELECT MAX(idx) FROM movement_table;")
         (idx,) = cur.fetchone()
         print idx
+        print type(idx)
+        if ( type(idx) is NoneType ):
+            print 'idx == NoneType'
+
+
+        # n = 19
+        # cur.execute("SELECT MAX(idx) FROM hrf_data_table WHERE field_team_id = %s;" %(n))
+        # (idx,) = cur.fetchone()
+        # print idx
 
         # cur.execute("SELECT * FROM hrf_data_table WHERE idx = 2000;")
         # r = cur.fetchone()
