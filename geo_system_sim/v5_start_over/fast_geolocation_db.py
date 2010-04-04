@@ -133,7 +133,9 @@ class main:
             data = db.get()
             ####################################################################
             if ( data == -1):
+                print 'sleeping'
                 self.sleep()
+                print 'wake up'
                 n_sleep += 1
                 # if ( n_sleep >= 1000 ):
                 #     sys.stdout.write('\nDone\n')
@@ -186,8 +188,9 @@ class main:
             else: # ( len(loc) == 1 )
                 pass
 
-            if ( (iterations % 25) == 0):
-                loc_utils.iter_hist(self.options.host,x_results,y_results)
+            # if ( (iterations % 25) == 0):
+            print 'running loc_utils'
+            loc_utils.iter_hist(self.options.host,x_results,y_results)
         ########################################################################
 
         db.stop()

@@ -32,15 +32,21 @@ def is_inside_box(p1,c1,c2):
 
 
 def find_closest_corner(p1,c1,c2):
+    g = geo_utils()
     c3 = [c1[0],c2[1]]
     c4 = [c2[0],c1[1]]
-    d1 = geo_utils.distance(p1,c1)
-    d2 = geo_utils.distance(p1,c2)
-    d3 = geo_utils.distance(p1,c3)
-    d4 = geo_utils.distance(p1,c4)
-    d = [d1, d2, d3, d4]
+    # print 'c1: ', c1, type(c1)
+    # print 'c2: ', c2,type(c2)
+    # print 'c3: ', c3,type(c3)
+    # print 'c4: ', c4,type(c4)
+    d1 = g.distance(p1,c1)
+    d2 = g.distance(p1,c2)
+    d3 = g.distance(p1,c3)
+    d4 = g.distance(p1,c4)
+    d = [[d1,c1], [d2,c2], [d3,c3], [d4,c4]]
+    # print 'd: ', d
     d = sorted(d)
-    return d[0]
+    return d[0][1]
 
 class simulation:
     def __init__(self,options):
@@ -119,6 +125,8 @@ class simulation:
                         self.prev_loc[kk-1] = loc
                     else:
                         target_p = find_closest_corner(p_loc,c1,c2)
+                        print 'target_p: ', target_p
+                        print 'p_loc: ', p_loc
                         loc = location_alexandria.directed_move(p_loc,target_p)
                         print 'closest corner: ', loc
                         self.prev_loc[kk-1] = loc

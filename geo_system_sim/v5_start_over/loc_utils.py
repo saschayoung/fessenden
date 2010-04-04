@@ -178,7 +178,7 @@ def iter_hist(host,x_results,y_results):
     sp = [x_lower_p,x_upper_p,y_lower_p,y_upper_p]
     tp = [x_lower_pp,x_upper_pp,y_lower_pp,y_upper_pp]
     write_db(host,big_box,fp,sp,tp)
-        # return 0
+    return 0
     # results = [x_lower_pp,x_upper_pp,y_lower_pp,y_upper_pp]
     # r = write_kml(results)
     # return r
@@ -229,8 +229,12 @@ def write_db(host,box,fp,sp,tp):
         #          (tp[0],tp[2]),(tp[1],tp[3]),
         #          (p_x,p_y)]
 
+    print 'writing data to db'
     g.write_data(data)
+    print 'done'
+    print 'stopping db'
     g.stop_db()
+    print 'done'
 
         
     
