@@ -238,6 +238,6 @@ class movement_table:
             s1 = 'movement_table'
             s2 = '(box_c1, box_c2, target)'
 
-            self.cur.execute("""INSERT INTO %s %s VALUES (%s, %s, %s);""" %(s1,s2,box_c1, box_c2, target))
+            self.cur.execute("""INSERT INTO %s %s VALUES (%s, %s, %s);""" %(s1,s2,data[0],data[1],data[2]))
 
             self.conn.commit()
