@@ -64,7 +64,7 @@ class NodeAServer(threading.Thread):
         Stop thread and wait for return.
         """
         self.stop_event.set()
-        self.rf.shutdown()
+        # self.rf.shutdown()
 
         threading.Thread.join(self, timeout)
 
