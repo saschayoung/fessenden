@@ -19,8 +19,8 @@ class Sample(object):
 
 
     def run(self):
+        self.thread.start()
         while True:
-            self.thread.start()
             print "main time: ", time.time()
             time.sleep(0.6)
         
