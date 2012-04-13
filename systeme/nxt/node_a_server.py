@@ -41,7 +41,7 @@ class NodeAServer(threading.Thread):
         Extend thread class.
 
         """
-        # self.rf = NodeA()
+        self.rf = NodeA()
         self.stop_event = threading.Event()
         threading.Thread.__init__(self)
 
