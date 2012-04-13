@@ -19,9 +19,10 @@ class Sample(object):
 
 
     def run(self):
-        self.thread.start()
-        print "main time: ", time.time()
-        time.sleep(0.6)
+        while True:
+            self.thread.start()
+            print "main time: ", time.time()
+            time.sleep(0.6)
         
 
 
@@ -52,8 +53,8 @@ class NodeAServer(threading.Thread):
         This function waits for the hardware scanner to read a
         barcode. The barcode something something something.
         """
-        while True:
-        # while not self.stop_event.isSet():
+        # while True:
+        while not self.stop_event.isSet():
             print "threaded time: ", time.time()
             time.sleep(0.5)
             # self.rf.fsm()
