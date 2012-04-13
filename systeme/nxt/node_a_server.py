@@ -9,7 +9,7 @@ A threaded barcode scanning `server`.
 import time
 import threading
 
-# from node_a import NodeA
+from node_a import NodeA
 
 
 
