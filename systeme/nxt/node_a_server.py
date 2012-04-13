@@ -53,7 +53,7 @@ class NodeAServer(threading.Thread):
 
 if __name__=='__main__':
     main = NodeAServer()
-    try:
-        main.start()
-    except KeyboardInterrupt:
-        main.join()
+    # try:
+    main.start()
+    # except KeyboardInterrupt:
+    #     main.join()
