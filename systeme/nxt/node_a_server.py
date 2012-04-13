@@ -55,5 +55,5 @@ if __name__=='__main__':
     main = NodeAServer()
     try:
         main.start()
-    except KeyboardInterupt:
+    except KeyboardInterrupt:
         main.join()
