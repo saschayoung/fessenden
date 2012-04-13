@@ -29,19 +29,22 @@ class NodeA(object):
 
     def _receive(self, freq):
         rx_packet = self.radio.receive(freq, rx_fifo_threshold=17, timeout=2.0)
-        (rx_packet_num, rx_flags, rx_data) = self.packet.parse_packet(rx_packet)
+        if rx_packet == []:
+            return
+        else:
+            (rx_packet_num, rx_flags, rx_data) = self.packet.parse_packet(rx_packet)
 
-        # this chunk of code should probably be moved into
-        # packet_utils: UAVPacket.unpack_data()
-        s = ''
-        for i in range(8):
-            s = s + chr(rx_data[i])
+            # this chunk of code should probably be moved into
+            # packet_utils: UAVPacket.unpack_data()
+            s = ''
+            for i in range(8):
+                s = s + chr(rx_data[i])
 
-        (goodput,) = struct.unpack('!d', s)
+            (goodput,) = struct.unpack('!d', s)
 
-        a4, a3, a2, a1 = rx_data[8:12]
-        ack_number = (a4 << 24) + (a3 << 16) + (a2 << 8) + a1
-        print "Calculated goodput for packet %d = %f" %(ack_number, goodput)
+            a4, a3, a2, a1 = rx_data[8:12]
+            ack_number = (a4 << 24) + (a3 << 16) + (a2 << 8) + a1
+            print "Calculated goodput for packet %d = %f" %(ack_number, goodput)
 
 
 

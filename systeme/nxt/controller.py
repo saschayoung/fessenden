@@ -6,6 +6,8 @@ from barcode_server import BarcodeServer
 from flight_path import FlightPath
 from knowledge_base import KnowledgeBase
 from motion import Motion
+from node_a_server import NodeAServer
+
 
 
 class Controller(object):
@@ -14,10 +16,12 @@ class Controller(object):
         self.kb = KnowledgeBase()
 
 
+
         self.location = BarcodeServer(self.location_callback)
         self.flight_path = FlightPath()
         self.motion = Motion(self.kb)
 
+        self.node_a = NodeAServer()
 
 
     def _init_fp(self):
@@ -45,6 +49,7 @@ class Controller(object):
 
     def run(self):
         self.location.start()
+        self.node_a.start()
 
         path = [100001, 100002, 100003, 100004, 100005, 100006, 100007]
 
@@ -56,7 +61,7 @@ class Controller(object):
 
     def shutdown(self):
         self.motion.shutdown()
-
+        self.node_a.join()
 
 
 
@@ -68,6 +73,7 @@ if __name__=='__main__':
     main = Controller()
     try:
         main.run()
+        main.shutdown()
     except KeyboardInterrupt:
         main.shutdown()
 

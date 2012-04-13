@@ -14,6 +14,10 @@ from node_a import NodeA
 
 
 class Sample(object):
+    """
+    Class for testing and debugging thread.
+    """
+
     def __init__(self):
         self.thread = NodeAServer()
 
@@ -24,7 +28,6 @@ class Sample(object):
             print "main time: ", time.time()
             time.sleep(0.6)
         
-
 
     def shutdown(self):
         self.thread.join()
@@ -55,9 +58,9 @@ class NodeAServer(threading.Thread):
         """
         # while True:
         while not self.stop_event.isSet():
-            print "threaded time: ", time.time()
-            time.sleep(0.5)
-            # self.rf.fsm()
+            # print "threaded time: ", time.time()
+            # time.sleep(0.5)
+            self.rf.fsm()
 
 
 
@@ -66,7 +69,7 @@ class NodeAServer(threading.Thread):
         Stop thread and wait for return.
         """
         self.stop_event.set()
-        # self.rf.shutdown()
+        self.rf.shutdown()
 
         threading.Thread.join(self, timeout)
 
