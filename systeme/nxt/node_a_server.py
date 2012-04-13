@@ -52,7 +52,8 @@ class NodeAServer(threading.Thread):
         This function waits for the hardware scanner to read a
         barcode. The barcode something something something.
         """
-        while not self.stop_event.isSet():
+        while True:
+        # while not self.stop_event.isSet():
             print "threaded time: ", time.time()
             time.sleep(0.5)
             # self.rf.fsm()
