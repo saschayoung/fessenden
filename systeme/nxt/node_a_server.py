@@ -33,8 +33,8 @@ class NodeAServer(threading.Thread):
         This function waits for the hardware scanner to read a
         barcode. The barcode something something something.
         """
-        while not self.stop_event.isSet():
-            self.rf.fsm()
+        # while not self.stop_event.isSet():
+        self.rf.fsm()
 
 
 
