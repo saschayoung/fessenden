@@ -75,6 +75,6 @@ class NodeAServer(threading.Thread):
 if __name__=='__main__':
     main = Sample()
     try:
-        main.start()
+        main.run()
     except KeyboardInterrupt:
         main.shutdown()
