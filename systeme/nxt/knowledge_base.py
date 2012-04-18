@@ -4,6 +4,7 @@
 class KnowledgeBase(object):
     def __init__(self):
         self.current_location = 0
+        self.duration = []
 
 
     def get_state(self):

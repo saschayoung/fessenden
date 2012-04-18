@@ -54,9 +54,15 @@ class Controller(object):
         path = [100001, 100002, 100003, 100004, 100005, 100006, 100007]
 
         for p in path:
-        # self.motion.debug_test()
             self.motion.move_until_location(p)
-            time.sleep(0.5)
+            if p == 100001:
+                tic = time.time()
+            else:
+                toc = time.time()
+                self.kb.duration.append(toc-tic)
+                tic = time.time()
+        print "kb.duration: ", self.kb.duration
+
 
 
     def shutdown(self):
