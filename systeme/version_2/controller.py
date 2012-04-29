@@ -50,8 +50,6 @@ class Controller(object):
             self.motion.move_until_location(start_node, speed = 25)
             while not self.kb.get_state()['current_location'] == start_node:
                 time.sleep(0.2)
-            # if DEBUG:
-            #     print "reached first node"
             next_node = self.kb.get_next_node(start_node)
 
             self.lock.acquire()
@@ -81,7 +79,6 @@ class Controller(object):
             self.lock.release()
 
             tic = time.time()
-            # self.motion.move_until_location(next_node)
             self.motion.move_from_here_to_there(last_node, next_node, speed = 45)
             while not self.kb.get_state()['current_location'] == next_node:
                 time.sleep(0.2)
@@ -107,9 +104,7 @@ class Controller(object):
 
             self.lock.acquire()
             self.kb.set_current_node(current_node)
-            # self.kb.set_last_node(last_node)
             self.kb.set_next_node(next_node)
-
             self.kb.set_current_edge(current_edge)
             self.kb.set_last_edge(last_edge)
             self.kb.set_next_edge(next_edge)

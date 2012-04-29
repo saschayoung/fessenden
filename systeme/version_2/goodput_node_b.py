@@ -17,6 +17,7 @@ class StandAloneRadioB(object):
         self.packet = Packet('B')
         self.radio = RadioAPI()
 
+        self.tx_packet_number = 1
         
         
 
@@ -36,7 +37,7 @@ class StandAloneRadioB(object):
         self.packet.set_flags_node_b(ack_packet = True)
         location = self.kb.get_state()['current_location']
         payload = self.data.pack_data(self.rx_packet_number, self.goodput)
-        tx_packet = self.packet.make_packet(location, payload)
+        tx_packet = self.packet.make_packet(self.tx_packet_number, location, payload)
         time.sleep(0.1)
         self.radio.transmit(tx_packet)
 

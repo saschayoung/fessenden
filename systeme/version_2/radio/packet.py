@@ -69,7 +69,7 @@ class Packet(object):
             raise ValueError
 
         self.node = node
-        self.packet_number = 1
+        # self.packet_number = 1
 
 
     def set_flags_node_b(self, ack_packet = False, ack_command = False):
@@ -164,7 +164,7 @@ class Packet(object):
 
         
 
-    def make_packet(self, location, data):
+    def make_packet(self, packet_number, location, data):
         """
         Make packet.
 
@@ -173,6 +173,8 @@ class Packet(object):
 
         Parameters
         ----------
+        packet_number : int
+            Packet number of tranmsit packet.
         location : int
             Current location of node.
         data : list
@@ -188,7 +190,7 @@ class Packet(object):
         
         """
         self.packet = []
-        self._make_header(location)
+        self._make_header(packet_number, location)
         self.packet[0:14] = self.header
         self.packet[14:64] = data
         return self.packet
@@ -227,7 +229,7 @@ class Packet(object):
         return packet_number, time_stamp, location, flags, data
 
 
-    def _make_header(self, location):
+    def _make_header(self, packet_number, location):
         """
         Make packet header.
 
@@ -244,11 +246,10 @@ class Packet(object):
         self.header = []
         
         # packet number
-        n3 = (self.packet_number & 0x00ff0000) >> 16
-        n2 = (self.packet_number & 0x0000ff00) >> 8
-        n1 = (self.packet_number & 0x000000ff)
+        n3 = (packet_number & 0x00ff0000) >> 16
+        n2 = (packet_number & 0x0000ff00) >> 8
+        n1 = (packet_number & 0x000000ff)
         self.header[0:3] = [n3, n2, n1]
-        self.packet_number += 1
 
         # time stamp
         t_array = []

@@ -18,6 +18,9 @@ class KnowledgeBase(object):
                                       'data_rate' : 4.8e3,
                                       'modulation' : "gfsk"}
         self.current_radio_profile = None
+
+        self.sent_packets = []
+        self.ack_packets = []
         # =================================================================
 
 
@@ -127,6 +130,8 @@ class KnowledgeBase(object):
         return {'current_location' : self.current_location,
                 'default_radio_profile' : self.default_radio_profile,
                 'current_radio_profile' : self.current_radio_profile,
+                'sent_packets' : self.sent_packets,
+                'ack_packets' : self.ack_packets,
                 'node_coordinates' : self.node_coordinates,
                 'weighted_edge_connections' : self.weighted_edge_connections,
                 # 'initial_edge_weights' : self.initial_edge_weights,
@@ -150,6 +155,20 @@ class KnowledgeBase(object):
             print "%s['weight']: %f" %(str(e), self.route[e[0]][e[1]]['weight'])
 
     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -42,8 +42,6 @@ class RadioSubsystem(threading.Thread):
         self.kb = knowledge_base
         self.lock = lock
 
-        self._flag = False
-
         self.stop_event = threading.Event()
 
         self.data = NodeAData()
@@ -51,7 +49,8 @@ class RadioSubsystem(threading.Thread):
         self.radio = RadioAPI()
 
         self._fsm_state = 'listen'
-
+        self.command = 'continue'
+        self.tx_packet_number = 1
 
     def _configure_radio(self, power, frequency, data_rate, modulation):
         """
@@ -69,8 +68,13 @@ class RadioSubsystem(threading.Thread):
         self.packet.set_flags_node_a()
         location = self.kb.get_state()['current_location']
         data = self.data.pack_data()
-        tx_packet = self.packet.make_packet(location, data)
+        tx_packet = self.packet.make_packet(self.tx_packet_number, location, data)
         self.radio.transmit(tx_packet)
+
+        self.lock.acquire()
+        self.kb.sent_packets.append(self.tx_packet_number)
+        self.lock.release()
+        self.tx_packet_number += 1
 
 
     def _receive_packet(self):
@@ -83,13 +87,17 @@ class RadioSubsystem(threading.Thread):
             print "time_out_exceeded"
             return
         else:
-            packet_number, time_stamp, location, flags, data = self.packet.parse_packet(rx_packet)
+            rx_packet_number, time_stamp, location, flags, data = self.packet.parse_packet(rx_packet)
             ack_packet_number, goodput = self.data.unpack_data(data)
             if DEBUG:
-                print "packet_number=%d  time_stamp=%f  location=%d  flags=0x%x" %(packet_number, time_stamp,
-                                                                                   location, flags)
+                print "rx_packet_number=%d  time_stamp=%f  location=%d  flags=0x%x" %(rx_packet_number,
+                                                                                   time_stamp,
+                                                                                   location,
+                                                                                   flags)
                 print "goodput for acknowledged packet #%d = %f bits/second" %(ack_packet_number, goodput)
-            
+            self.lock.acquire()
+            self.kb.ack_packets.append((ack_packet_number, goodput))
+            self.lock.release()
 
     def _listen(self):
         """
@@ -102,6 +110,37 @@ class RadioSubsystem(threading.Thread):
                 print "channel clear"
             else:
                 pass
+
+
+    def _fsm(self):
+            if self._fsm_state == "listen":
+                self._listen()
+                self._fsm_state = "send"
+            elif self._fsm_state == "send":
+                self._send_packet()
+                self._fsm_state = "receive"
+            elif self._fsm_state == "receive":
+                self._receive_packet()
+                self._fsm_state = "listen"
+            else:
+                print "radio subsystem fsm error"
+                self._fsm_state = "listen"
+
+
+
+    def control_radio_operation(self, command):
+        """
+        Control radio operation.
+
+        This function provides a method of controlling operation of the
+        radio.
+
+        Parameters
+        ----------
+        command : str
+            One of {`pause` | `continue` | `reconfigure` | ... }
+        """
+        self.command = command
 
 
     def run(self):
@@ -119,52 +158,28 @@ class RadioSubsystem(threading.Thread):
         modulation = default_radio_profile['modulation']
         self._configure_radio(power, frequency, data_rate, modulation)
 
-        # state = "listen"
-
-
         while not self.stop_event.isSet():
-            self._fsm_state()
-
-            # if state == "listen":
-            #     self._listen()
-            #     state = "send"
-
-            # elif state == "send":
-            #     self._send_packet()
-            #     state = "receive"
-
-            # elif state == "receive":
-            #     self._receive_packet()
-            #     state = "listen"
-
-            # else:
-            #     print "radio subsystem fsm error"
-            #     state = "listen"
-
-
-
-    def _fsm(self):
+            self._fsm()
         
 
-            if self._fsm_state == "listen":
-                self._listen()
-                self._fsm_state = "send"
-                return
-
-            elif self._fsm_state == "send":
-                self._send_packet()
-                self._fsm_state = "receive"
-                return
-
-            elif self._fsm_state == "receive":
-                self._receive_packet()
-                self._fsm_state = "listen"
-                return
+        # while not self.stop_event.isSet():
+        #     if self.command == 'pause':
+        #         if self._fsm_state == 'recieve':
+        #             self._fsm()
+        #         else:
+        #             time.sleep(0.01)
+        #     continue
+                
+        #         if do_once:
+        #             print "radio paused"
+        #         time.sleep(0.001)
+        #         continue
             
-            else:
-                print "radio subsystem fsm error"
-                self._fsm_state = "listen"
-                return
+        #     if self.command == 'continue':
+        #         self._fsm()
+
+
+
 
 
 
@@ -185,15 +200,6 @@ class RadioSubsystem(threading.Thread):
 
 
 
-    # def set_interrupt_flag(self):
-    #     """
-    #     Interrupt radio operation.
-
-    #     This function sets the flag `True`. This is used to interrupt
-    #     the standard operational flow of the radio.
-
-    #     """
-    #     self.flag = True
 
 
     # def set_command(self, command):
