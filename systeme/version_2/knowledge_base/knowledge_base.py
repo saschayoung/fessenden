@@ -58,10 +58,10 @@ class KnowledgeBase(object):
             self.route.add_node(int(n), coords=self.node_coordinates[n])
         self.route.add_weighted_edges_from(self.weighted_edge_connections)
 
-
-
+        
     def get_start_node(self):
         return self.route.nodes()[0]
+
 
     def get_next_node(self, node):
         if node == 7:
@@ -86,12 +86,12 @@ class KnowledgeBase(object):
         weight = np.array([weight])
         return next_nodes[np.argmin(weight)]
 
+
     def set_edge_weight(self, edge, weight):
         if edge == (7,1):
             pass
         else:
             self.route[edge[0]][edge[1]]['weight'] = weight
-
 
     def set_current_node(self, node):
         self.current_node = node

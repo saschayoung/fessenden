@@ -45,14 +45,15 @@ class StandAloneRadioA(object):
         Receive packet.
 
         """
-        rx_packet = self.radio.receive(rx_fifo_threshold=64, timeout=1.0)
+        rx_packet = self.radio.receive(rx_fifo_threshold=64, timeout=0.5)
         if rx_packet == []: # this occurs when timeout has been exceeded
             return
         else:
             packet_number, time_stamp, location, flags, data = self.packet.parse_packet(rx_packet)
             # print "packet_number=%d  time_stamp=%f  location=%d  flags=0x%x" %(packet_number, time_stamp,
             #                                                                    location, flags)
-            # print "goodput for acknowledged packet #%d = %f bits/second" %(ack_packet_number, goodput)
+            ack_packet_number, goodput = self.data.unpack_data(data)
+            print "goodput for acknowledged packet #%d = %f bits/second" %(ack_packet_number, goodput)
 
 
     def _listen(self):

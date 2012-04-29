@@ -8,8 +8,10 @@ Threaded UAV radio subsystem.
 
 import threading
 
+from data import NodeAData
 from packet import Packet
 from radio_api import RadioAPI
+
 
 DEBUG = False
 
@@ -44,12 +46,13 @@ class RadioSubsystem(threading.Thread):
 
         self.stop_event = threading.Event()
 
-        self.radio = RadioAPI()
+        self.data = NodeAData()
         self.packet = Packet('A')
+        self.radio = RadioAPI()
 
-        self.data = []
-        for i in range(50):
-            self.data.append(0xff)
+        # self.data = []
+        # for i in range(50):
+        #     self.data.append(0xff)
 
 
     def _configure_radio(self, power, frequency, data_rate, modulation):
@@ -67,7 +70,8 @@ class RadioSubsystem(threading.Thread):
         """
         self.packet.set_flags_node_a()
         location = self.kb.get_state()['current_location']
-        tx_packet = self.packet.make_packet(location, self.data)
+        data = self.data.pack_data()
+        tx_packet = self.packet.make_packet(location, data)
         self.radio.transmit(tx_packet)
 
 
@@ -76,15 +80,18 @@ class RadioSubsystem(threading.Thread):
         Receive packet.
 
         """
-        rx_packet = self.radio.receive(rx_fifo_threshold=63, timeout=1.0)
+        rx_packet = self.radio.receive(rx_fifo_threshold=64, timeout=2.0)
         if rx_packet == []: # this occurs when timeout has been exceeded
+            print "time_out_exceeded"
             return
         else:
             packet_number, time_stamp, location, flags, data = self.packet.parse_packet(rx_packet)
             if DEBUG:
                 print "packet_number=%d  time_stamp=%f  location=%d  flags=0x%x" %(packet_number, time_stamp,
                                                                                    location, flags)
-
+            ack_packet_number, goodput = self.data.unpack_data(data)
+            print "goodput for acknowledged packet #%d = %f bits/second" %(ack_packet_number, goodput)
+            
 
     def _listen(self):
         """

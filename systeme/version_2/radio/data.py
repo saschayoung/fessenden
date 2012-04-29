@@ -14,6 +14,7 @@ class NodeAData(object):
             data.append(0xff)
         return data
 
+
     def unpack_data(self, data):
         n3, n2, n1 = data[0:3]
         packet_number = (n3 << 16) + (n2 << 8) + n1
@@ -24,7 +25,6 @@ class NodeAData(object):
         for g in g_array:
             s = s + chr(g)
         (goodput,) = struct.unpack('!d', s)
-        # print goodput
         
         return packet_number, goodput
         
