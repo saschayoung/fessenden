@@ -13,7 +13,7 @@ from packet import Packet
 from radio_api import RadioAPI
 
 
-DEBUG = False
+DEBUG = True
 
 class RadioSubsystem(threading.Thread):
     """
@@ -50,9 +50,7 @@ class RadioSubsystem(threading.Thread):
         self.packet = Packet('A')
         self.radio = RadioAPI()
 
-        # self.data = []
-        # for i in range(50):
-        #     self.data.append(0xff)
+        self._fsm_state = 'listen'
 
 
     def _configure_radio(self, power, frequency, data_rate, modulation):
@@ -86,11 +84,11 @@ class RadioSubsystem(threading.Thread):
             return
         else:
             packet_number, time_stamp, location, flags, data = self.packet.parse_packet(rx_packet)
+            ack_packet_number, goodput = self.data.unpack_data(data)
             if DEBUG:
                 print "packet_number=%d  time_stamp=%f  location=%d  flags=0x%x" %(packet_number, time_stamp,
                                                                                    location, flags)
-            ack_packet_number, goodput = self.data.unpack_data(data)
-            print "goodput for acknowledged packet #%d = %f bits/second" %(ack_packet_number, goodput)
+                print "goodput for acknowledged packet #%d = %f bits/second" %(ack_packet_number, goodput)
             
 
     def _listen(self):
@@ -114,8 +112,6 @@ class RadioSubsystem(threading.Thread):
         print "Starting radio subsystem"
 
         self.radio.startup()
-        # don't know why location is in the middle here
-        # default_radio_profile = location = self.kb.get_state()['default_radio_profile']
         default_radio_profile = self.kb.get_state()['default_radio_profile']
         power = default_radio_profile['power']
         frequency = default_radio_profile['frequency']
@@ -123,25 +119,56 @@ class RadioSubsystem(threading.Thread):
         modulation = default_radio_profile['modulation']
         self._configure_radio(power, frequency, data_rate, modulation)
 
-        state = "listen"
+        # state = "listen"
 
 
         while not self.stop_event.isSet():
-            if state == "listen":
+            self._fsm_state()
+
+            # if state == "listen":
+            #     self._listen()
+            #     state = "send"
+
+            # elif state == "send":
+            #     self._send_packet()
+            #     state = "receive"
+
+            # elif state == "receive":
+            #     self._receive_packet()
+            #     state = "listen"
+
+            # else:
+            #     print "radio subsystem fsm error"
+            #     state = "listen"
+
+
+
+    def _fsm(self):
+        
+
+            if self._fsm_state == "listen":
                 self._listen()
-                state = "send"
+                self._fsm_state = "send"
+                return
 
-            elif state == "send":
+            elif self._fsm_state == "send":
                 self._send_packet()
-                state = "receive"
+                self._fsm_state = "receive"
+                return
 
-            elif state == "receive":
+            elif self._fsm_state == "receive":
                 self._receive_packet()
-                state = "listen"
-
+                self._fsm_state = "listen"
+                return
+            
             else:
                 print "radio subsystem fsm error"
-                state = "listen"
+                self._fsm_state = "listen"
+                return
+
+
+
+
 
 
     def join(self, timeout=None):
