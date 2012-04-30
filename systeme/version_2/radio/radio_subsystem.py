@@ -74,7 +74,7 @@ class RadioSubsystem(threading.Thread):
         location = self.kb.get_state()['current_location']
         data = self.data.pack_data()
         tx_packet = self.packet.make_packet(self.tx_packet_number, location, data)
-
+        self.tic = time.time()
         self.radio.transmit(tx_packet)
 
 
@@ -83,6 +83,7 @@ class RadioSubsystem(threading.Thread):
         Receive packet.
 
         """
+        print "processing latency = %f" %(time.time() - self.tic,)
         self.rx_packet = self.radio.receive(rx_fifo_threshold=64, timeout=2.0)
         if self.rx_packet == []: # this occurs when timeout has been exceeded
             print "time_out_exceeded"
