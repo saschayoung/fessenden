@@ -113,18 +113,21 @@ class RadioSubsystem(threading.Thread):
 
 
     def _fsm(self):
-            if self._fsm_state == "listen":
                 self._listen()
-                self._fsm_state = "send"
-            elif self._fsm_state == "send":
                 self._send_packet()
-                self._fsm_state = "receive"
-            elif self._fsm_state == "receive":
                 self._receive_packet()
-                self._fsm_state = "listen"
-            else:
-                print "radio subsystem fsm error"
-                self._fsm_state = "listen"
+            # if self._fsm_state == "listen":
+            #     self._listen()
+            #     self._fsm_state = "send"
+            # elif self._fsm_state == "send":
+            #     self._send_packet()
+            #     self._fsm_state = "receive"
+            # elif self._fsm_state == "receive":
+            #     self._receive_packet()
+            #     self._fsm_state = "listen"
+            # else:
+            #     print "radio subsystem fsm error"
+            #     self._fsm_state = "listen"
 
 
 

@@ -135,6 +135,7 @@ class Controller(object):
         # print "\n\n\n\n\n"
         self.motion.shutdown()
         self.rf.join()
+        time.sleep(0.1)
         self.location.join()  # shut this down last
 
 
