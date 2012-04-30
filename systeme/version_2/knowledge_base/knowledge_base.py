@@ -39,9 +39,9 @@ class KnowledgeBase(object):
         # weight alternative path higher to begin with to discourage
         # its use on first pass
         self.weighted_edge_connections = [(1,2,0),
-                                          (2,3,1),
+                                          (2,3,0),
                                           (2,8,1), (8,3,0), 
-                                          (2,9,0), (9,3,0),
+                                          (2,9,1), (9,3,0),
                                           (3,4,0),
                                           (4,5,0),
                                           (5,6,0),

@@ -17,6 +17,8 @@ class StandAloneRadioA(object):
         self.packet = Packet('A')
         self.radio = RadioAPI()
 
+        self.tx_packet_number = 1
+
         # self.data = []
         # for i in range(50):
         #     self.data.append(0xff)
@@ -38,7 +40,7 @@ class StandAloneRadioA(object):
         self.packet.set_flags_node_a()
         location = self.kb.get_state()['current_location']
         data = self.data.pack_data()
-        tx_packet = self.packet.make_packet(location, data)
+        tx_packet = self.packet.make_packet(self.tx_packet_number, location, data)
 
         self.lock.acquire()
         self.kb.sent_packets.append(self.tx_packet_number)
