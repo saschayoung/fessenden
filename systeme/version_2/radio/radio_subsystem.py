@@ -70,10 +70,6 @@ class RadioSubsystem(threading.Thread):
         data = self.data.pack_data()
         tx_packet = self.packet.make_packet(self.tx_packet_number, location, data)
 
-        self.lock.acquire()
-        self.kb.sent_packets.append(self.tx_packet_number)
-        self.lock.release()
-        self.tx_packet_number += 1
         self.radio.transmit(tx_packet)
 
 
@@ -82,22 +78,19 @@ class RadioSubsystem(threading.Thread):
         Receive packet.
 
         """
-        rx_packet = self.radio.receive(rx_fifo_threshold=64, timeout=2.0)
+        rx_packet = self.radio.receive(rx_fifo_threshold=64, timeout=1.0)
         if rx_packet == []: # this occurs when timeout has been exceeded
             print "time_out_exceeded"
             return
         else:
             rx_packet_number, time_stamp, location, flags, data = self.packet.parse_packet(rx_packet)
-            ack_packet_number, goodput = self.data.unpack_data(data)
+            self.ack_packet_number, self.goodput = self.data.unpack_data(data)
             if DEBUG:
                 print "rx_packet_number=%d  time_stamp=%f  location=%d  flags=0x%x" %(rx_packet_number,
                                                                                    time_stamp,
                                                                                    location,
                                                                                    flags)
-                print "goodput for acknowledged packet #%d = %f bits/second" %(ack_packet_number, goodput)
-            self.lock.acquire()
-            self.kb.ack_packets.append((ack_packet_number, goodput))
-            self.lock.release()
+                print "goodput for acknowledged packet #%d = %f bits/second" %(self.ack_packet_number, self.goodput)
 
     def _listen(self):
         """
@@ -114,20 +107,11 @@ class RadioSubsystem(threading.Thread):
 
     def _fsm(self):
                 self._listen()
+                time.sleep(0.01)
                 self._send_packet()
+                time.sleep(0.01)
                 self._receive_packet()
-            # if self._fsm_state == "listen":
-            #     self._listen()
-            #     self._fsm_state = "send"
-            # elif self._fsm_state == "send":
-            #     self._send_packet()
-            #     self._fsm_state = "receive"
-            # elif self._fsm_state == "receive":
-            #     self._receive_packet()
-            #     self._fsm_state = "listen"
-            # else:
-            #     print "radio subsystem fsm error"
-            #     self._fsm_state = "listen"
+                time.sleep(0.01)
 
 
 
@@ -164,6 +148,27 @@ class RadioSubsystem(threading.Thread):
         while not self.stop_event.isSet():
             self._fsm()
         
+            self.lock.acquire()
+            self.kb.sent_packets.append(self.tx_packet_number)
+            self.kb.ack_packets.append((self.ack_packet_number, self.goodput))
+            self.lock.release()
+            self.tx_packet_number += 1
+
+
+
+
+
+
+
+
+
+    def join(self, timeout=None):
+        self.stop_event.set()
+        self.radio.shutdown()
+        threading.Thread.join(self, timeout)
+
+
+
 
         # while not self.stop_event.isSet():
         #     if self.command == 'pause':
@@ -186,20 +191,18 @@ class RadioSubsystem(threading.Thread):
 
 
 
-
-
-
-    def join(self, timeout=None):
-        self.stop_event.set()
-        self.radio.shutdown()
-        threading.Thread.join(self, timeout)
-
-
-
-
-
-
-
+            # if self._fsm_state == "listen":
+            #     self._listen()
+            #     self._fsm_state = "send"
+            # elif self._fsm_state == "send":
+            #     self._send_packet()
+            #     self._fsm_state = "receive"
+            # elif self._fsm_state == "receive":
+            #     self._receive_packet()
+            #     self._fsm_state = "listen"
+            # else:
+            #     print "radio subsystem fsm error"
+            #     self._fsm_state = "listen"
 
 
 

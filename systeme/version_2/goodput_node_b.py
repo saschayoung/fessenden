@@ -40,8 +40,9 @@ class StandAloneRadioB(object):
         payload = self.data.pack_data(self.rx_packet_number, self.goodput)
         tx_packet = self.packet.make_packet(self.tx_packet_number, location, payload)
         self.tx_packet_number += 1
-        time.sleep(0.5) # trying to avoid timeouts at the robot
+        # time.sleep(0.5) # trying to avoid timeouts at the robot
         self.radio.transmit(tx_packet)
+        print "reply transmitted"
         
 
 
@@ -73,6 +74,16 @@ class StandAloneRadioB(object):
             print "channel clear"
 
 
+
+    def _fsm(self):
+                self._listen()
+                time.sleep(0.01)
+                self._receive_packet()
+                time.sleep(0.01)
+                self._send_packet()
+                time.sleep(0.01)
+
+
     def run(self):
         """
         Run the radio subsystem.
@@ -90,22 +101,25 @@ class StandAloneRadioB(object):
 
 
         while True:
-            if state == "listen":
-                self._listen()
-                state = "receive"
+            self._fsm()
+            # if state == "listen":
+            #     self._listen()
+            #     state = "receive"
+            #     time.sleep(0.1)
 
-            elif state == "receive":
-                self._receive_packet()
-                state = "send"
-                time.sleep(0.5)
+            # elif state == "receive":
+            #     self._receive_packet()
+            #     state = "send"
+            #     time.sleep(0.1)
 
-            elif state == "send":
-                self._send_packet()
-                state = "listen"
+            # elif state == "send":
+            #     self._send_packet()
+            #     state = "listen"
+            #     time.sleep(0.1)
 
-            else:
-                print "+++ Melon melon melon +++"
-                state = "listen"
+            # else:
+            #     print "+++ Melon melon melon +++"
+            #     state = "listen"
 
 
     def shutdown(self):

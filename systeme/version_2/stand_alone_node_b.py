@@ -16,7 +16,7 @@ class StandAloneRadioB(object):
         self.data = []
         for i in range(50):
             self.data.append(0xff)
-        
+        self.tx_packet_number = 1
 
     def _configure_radio(self, power, frequency, data_rate, modulation):
         """
@@ -33,8 +33,9 @@ class StandAloneRadioB(object):
         """
         self.packet.set_flags_node_b()
         location = self.kb.get_state()['current_location']
-        tx_packet = self.packet.make_packet(location, self.data)
+        tx_packet = self.packet.make_packet(self.tx_packet_number, location, self.data)
         self.radio.transmit(tx_packet)
+        self.tx_packet_number += 1
 
 
     def _receive_packet(self):
