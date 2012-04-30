@@ -127,10 +127,12 @@ class Controller(object):
 
 
     def shutdown(self):
-        pprint.pprint(self.kb.get_state())
-        print "\n\n\n\n\n"
-        self.kb.route_debug()
-        print "\n\n\n\n\n"
+        self.kb.save_kb()
+        
+        # pprint.pprint(self.kb.get_state())
+        # print "\n\n\n\n\n"
+        # self.kb.route_debug()
+        # print "\n\n\n\n\n"
         self.motion.shutdown()
         self.rf.join()
         self.location.join()  # shut this down last

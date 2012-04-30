@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import cPickle as pickle
+import time
 
 import networkx as nx
 import numpy as np
@@ -165,7 +167,12 @@ class KnowledgeBase(object):
 
 
 
-
+    def save_kb(self):
+        file_name = "./knowledge_base/kb_" + str(time.time()) + ".p"
+        dump_file = open(file_name, 'wb')
+        pickle.dump(self.get_state(), dump_file)
+        dump_file.close()
+        
 
 
 
@@ -175,6 +182,7 @@ class KnowledgeBase(object):
 if __name__=='__main__':
     kb = KnowledgeBase()
     state = kb.get_state()
+    kb.save_kb()
     print state
 
 
