@@ -83,7 +83,7 @@ class RadioSubsystem(threading.Thread):
         Receive packet.
 
         """
-        self.rx_packet = self.radio.receive(rx_fifo_threshold=64, timeout=1.0)
+        self.rx_packet = self.radio.receive(rx_fifo_threshold=64, timeout=2.0)
         if self.rx_packet == []: # this occurs when timeout has been exceeded
             print "time_out_exceeded"
             return

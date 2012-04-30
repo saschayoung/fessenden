@@ -41,6 +41,7 @@ class StandAloneRadioB(object):
         tx_packet = self.packet.make_packet(self.tx_packet_number, location, payload)
         self.tx_packet_number += 1
         # time.sleep(0.5) # trying to avoid timeouts at the robot
+        print "processing latency = %f" %(time.time()-self.tic,)
         self.radio.transmit(tx_packet)
         print "reply transmitted"
         
@@ -51,6 +52,7 @@ class StandAloneRadioB(object):
         Receive packet.
 
         """
+        self.tic = time.time()
         rx_packet = self.radio.receive(rx_fifo_threshold=64, timeout=None)
         if rx_packet == []: # this occurs when timeout has been exceeded
             return
