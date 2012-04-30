@@ -69,12 +69,12 @@ class RadioSubsystem(threading.Thread):
         location = self.kb.get_state()['current_location']
         data = self.data.pack_data()
         tx_packet = self.packet.make_packet(self.tx_packet_number, location, data)
-        self.radio.transmit(tx_packet)
 
         self.lock.acquire()
         self.kb.sent_packets.append(self.tx_packet_number)
         self.lock.release()
         self.tx_packet_number += 1
+        self.radio.transmit(tx_packet)
 
 
     def _receive_packet(self):
