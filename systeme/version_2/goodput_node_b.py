@@ -18,6 +18,7 @@ class StandAloneRadioB(object):
         self.radio = RadioAPI()
 
         self.tx_packet_number = 1
+        self.rx_packet_list = []
         
         
 
@@ -59,6 +60,7 @@ class StandAloneRadioB(object):
             del_time = time.time() - time_stamp
             self.goodput = 50*8 / del_time
             print "goodput for packet #%d = %f bits/second" %(self.rx_packet_number, self.goodput)
+            self.rx_packet_list.append(self.rx_packet_number)
 
 
     def _listen(self):
@@ -107,6 +109,10 @@ class StandAloneRadioB(object):
 
 
     def shutdown(self):
+        print "\n\n\n"
+        print "number of received packets = %d" %(len(self.rx_packet_list),)
+        print "\n\n\n"
+
         self.radio.shutdown()
 
 

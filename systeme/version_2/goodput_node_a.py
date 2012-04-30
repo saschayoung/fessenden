@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from threading import Lock
 
 from knowledge_base import KnowledgeBase
 from radio.data import NodeAData
@@ -10,6 +11,7 @@ from radio.radio_api import RadioAPI
 class StandAloneRadioA(object):
     def __init__(self):
         self.kb = KnowledgeBase()
+        self.lock = Lock()
 
         self.data = NodeAData()
         self.packet = Packet('A')
@@ -37,6 +39,11 @@ class StandAloneRadioA(object):
         location = self.kb.get_state()['current_location']
         data = self.data.pack_data()
         tx_packet = self.packet.make_packet(location, data)
+
+        self.lock.acquire()
+        self.kb.sent_packets.append(self.tx_packet_number)
+        self.lock.release()
+        self.tx_packet_number += 1
         self.radio.transmit(tx_packet)
 
 
@@ -45,15 +52,18 @@ class StandAloneRadioA(object):
         Receive packet.
 
         """
-        rx_packet = self.radio.receive(rx_fifo_threshold=64, timeout=0.5)
+        rx_packet = self.radio.receive(rx_fifo_threshold=64, timeout=2.0)
         if rx_packet == []: # this occurs when timeout has been exceeded
             return
         else:
             packet_number, time_stamp, location, flags, data = self.packet.parse_packet(rx_packet)
+            ack_packet_number, goodput = self.data.unpack_data(data)
             # print "packet_number=%d  time_stamp=%f  location=%d  flags=0x%x" %(packet_number, time_stamp,
             #                                                                    location, flags)
-            ack_packet_number, goodput = self.data.unpack_data(data)
             print "goodput for acknowledged packet #%d = %f bits/second" %(ack_packet_number, goodput)
+            self.lock.acquire()
+            self.kb.ack_packets.append((ack_packet_number, goodput))
+            self.lock.release()
 
 
     def _listen(self):
@@ -65,6 +75,13 @@ class StandAloneRadioA(object):
         if status == 'clear':
             print "channel clear"
 
+
+
+
+    def _fsm(self):
+                self._listen()
+                self._send_packet()
+                self._receive_packet()
 
     def run(self):
         """
@@ -79,29 +96,33 @@ class StandAloneRadioA(object):
         modulation = default_radio_profile['modulation']
         self._configure_radio(power, frequency, data_rate, modulation)
 
-        state = "listen"
+        # state = "listen"
 
 
         while True:
-            if state == "listen":
-                self._listen()
-                state = "send"
+            self._fsm()
+                        
+            # if state == "listen":
+            #     self._listen()
+            #     state = "send"
 
-            elif state == "send":
-                self._send_packet()
-                state = "receive"
+            # elif state == "send":
+            #     self._send_packet()
+            #     state = "receive"
 
-            elif state == "receive":
-                self._receive_packet()
-                state = "listen"
+            # elif state == "receive":
+            #     self._receive_packet()
+            #     state = "listen"
 
-            else:
-                print "+++ Melon melon melon +++"
-                state = "listen"
+            # else:
+            #     print "+++ Melon melon melon +++"
+            #     state = "listen"
 
 
 
     def shutdown(self):
+        self.kb.save_kb()
+
         self.radio.shutdown()
 
 
