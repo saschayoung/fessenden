@@ -7,6 +7,7 @@ Threaded UAV radio subsystem.
 """
 
 import threading
+import time
 
 from data import NodeAData
 from packet import Packet
@@ -52,6 +53,10 @@ class RadioSubsystem(threading.Thread):
         self.command = 'continue'
         self.tx_packet_number = 1
 
+        self.ack_packet_number = 0
+        self.goodput = 0
+
+
     def _configure_radio(self, power, frequency, data_rate, modulation):
         """
         Configure radio for operation.
@@ -78,18 +83,18 @@ class RadioSubsystem(threading.Thread):
         Receive packet.
 
         """
-        rx_packet = self.radio.receive(rx_fifo_threshold=64, timeout=1.0)
-        if rx_packet == []: # this occurs when timeout has been exceeded
+        self.rx_packet = self.radio.receive(rx_fifo_threshold=64, timeout=1.0)
+        if self.rx_packet == []: # this occurs when timeout has been exceeded
             print "time_out_exceeded"
             return
         else:
-            rx_packet_number, time_stamp, location, flags, data = self.packet.parse_packet(rx_packet)
+            rx_packet_number, time_stamp, location, flags, data = self.packet.parse_packet(self.rx_packet)
             self.ack_packet_number, self.goodput = self.data.unpack_data(data)
             if DEBUG:
                 print "rx_packet_number=%d  time_stamp=%f  location=%d  flags=0x%x" %(rx_packet_number,
-                                                                                   time_stamp,
-                                                                                   location,
-                                                                                   flags)
+                                                                                      time_stamp,
+                                                                                      location,
+                                                                                      flags)
                 print "goodput for acknowledged packet #%d = %f bits/second" %(self.ack_packet_number, self.goodput)
 
     def _listen(self):
@@ -147,13 +152,15 @@ class RadioSubsystem(threading.Thread):
 
         while not self.stop_event.isSet():
             self._fsm()
-        
-            self.lock.acquire()
-            self.kb.sent_packets.append(self.tx_packet_number)
-            self.kb.ack_packets.append((self.ack_packet_number, self.goodput))
-            self.lock.release()
+            
+            if not self.rx_packet == []:
+                self.lock.acquire()
+                self.kb.sent_packets.append(self.tx_packet_number)
+                self.kb.ack_packets.append((self.ack_packet_number, self.goodput))
+                self.lock.release()
             self.tx_packet_number += 1
 
+                
 
 
 
