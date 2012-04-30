@@ -38,8 +38,10 @@ class StandAloneRadioB(object):
         location = self.kb.get_state()['current_location']
         payload = self.data.pack_data(self.rx_packet_number, self.goodput)
         tx_packet = self.packet.make_packet(self.tx_packet_number, location, payload)
+        self.tx_packet_number += 1
         # time.sleep(0.5)
         self.radio.transmit(tx_packet)
+        
 
 
     def _receive_packet(self):
