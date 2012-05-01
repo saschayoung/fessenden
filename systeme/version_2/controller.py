@@ -26,8 +26,8 @@ class Controller(object):
 
         self.fsm_state = 'at_beginning'
 
-        self.sent_packets = []
-        self.ack_packets = []
+        self.sent_packet = []
+        self.ack_packet = []
         self.goodput = []
 
 
