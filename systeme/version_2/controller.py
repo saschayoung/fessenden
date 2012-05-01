@@ -108,7 +108,7 @@ class Controller(object):
 
 
         elif self.fsm_state == 'at_a_node':
-            self.radio.control_radio_operation('pause')
+            self.rf.control_radio_operation('pause')
             kb_state = self.kb.get_state()
 
             current_node = kb_state['next_node']
@@ -128,7 +128,7 @@ class Controller(object):
             # self.lock.release()
 
             self.fsm_state = 'traversing_edge'
-            self.radio.control_radio_operation('continue')
+            self.rf.control_radio_operation('continue')
             return
 
         else:
