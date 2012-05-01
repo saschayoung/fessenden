@@ -4,6 +4,8 @@ import pprint
 import time
 import threading
 
+import numpy as np
+
 from knowledge_base import KnowledgeBase
 # from knowledge_base.route import Route
 from location.barcode import Location
@@ -26,9 +28,9 @@ class Controller(object):
 
         self.fsm_state = 'at_beginning'
 
-        self.sent_packet = []
-        self.ack_packet = []
-        self.goodput = []
+        self.sent_packet = np.array([])
+        self.ack_packet = np.array([])
+        self.goodput = np.array([])
 
 
     def run(self):
@@ -47,15 +49,14 @@ class Controller(object):
 
 
     def radio_data_callback(self, sent_packet, ack_packet, goodput):
-        self.sent_packet.append(sent_packet)
-        self.ack_packet.append(ack_packet)
-        self.goodput.append(goodput)
+        np.append(self.sent_packet, sent_packet)
+        np.append(self.ack_packet, ack_packet)
+        np.append(self.goodput, goodput)
 
     def reset_radio_data(self):
-        self.sent_packets = []
-        self.ack_packets = []
-        self.goodput = []
-
+        self.sent_packet = np.array([])
+        self.ack_packet = np.array([])
+        self.goodput = np.array([])
 
 
     def fsm(self):
@@ -99,9 +100,11 @@ class Controller(object):
                 time.sleep(0.2)
             
             toc = time.time() - tic
+            # weight = toc * 
             self.kb.set_edge_weight(current_edge, toc)
-            print "goodput values for edge %s" %(str(current_edge),)
-            print self.goodput
+            # print "goodput values for edge %s" %(str(current_edge),)
+            # print self.goodput
+            print "average goodput for edge %s = %0.2f" %(str(current_edge), np.average(self.goodput))
             self.fsm_state = 'at_a_node'
 
             return
