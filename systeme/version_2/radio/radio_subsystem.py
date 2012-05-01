@@ -24,7 +24,7 @@ class RadioSubsystem(threading.Thread):
 
     """
 
-    def __init__(self, knowledge_base, lock):
+    def __init__(self, knowledge_base, lock, callback):
         """
         Extend threading class.
 
@@ -42,6 +42,7 @@ class RadioSubsystem(threading.Thread):
 
         self.kb = knowledge_base
         self.lock = lock
+        self.controller_callback = callback
 
         self.stop_event = threading.Event()
 
@@ -50,7 +51,7 @@ class RadioSubsystem(threading.Thread):
         self.radio = RadioAPI()
 
         self._fsm_state = 'listen'
-        self.command = 'continue'
+        self.radio_command = 'continue'
         self.tx_packet_number = 1
 
         self.ack_packet_number = 0
@@ -96,7 +97,8 @@ class RadioSubsystem(threading.Thread):
                                                                                       time_stamp,
                                                                                       location,
                                                                                       flags)
-                print "goodput for acknowledged packet #%d = %f bits/second" %(self.ack_packet_number, self.goodput)
+                print "goodput for acknowledged packet #%d = %f bits/second" %(self.ack_packet_number,
+                                                                               self.goodput)
 
     def _listen(self):
         """
@@ -133,7 +135,7 @@ class RadioSubsystem(threading.Thread):
         command : str
             One of {`pause` | `continue` | `reconfigure` | ... }
         """
-        self.command = command
+        self.radio_command = command
 
 
     def run(self):
@@ -152,28 +154,50 @@ class RadioSubsystem(threading.Thread):
         self._configure_radio(power, frequency, data_rate, modulation)
 
         while not self.stop_event.isSet():
-            self._fsm()
-            
-            if not self.rx_packet == []:
-                self.lock.acquire()
-                self.kb.sent_packets.append(self.tx_packet_number)
-                self.kb.ack_packets.append((self.ack_packet_number, self.goodput))
-                self.lock.release()
-            self.tx_packet_number += 1
 
+            if self.radio_command == 'continue':
+                self._fsm()
+                if not self.rx_packet == []:
+                    self.controller_callback(self.tx_packet_number, self.ack_packet_number, self.goodput)
+                    # self.lock.acquire()
+                    # self.kb.sent_packets.append(self.tx_packet_number)
+                    # self.kb.ack_packets.append((self.ack_packet_number, self.goodput))
+                    # self.lock.release()
+                self.tx_packet_number += 1
+
+            elif self.radio_command == 'pause':
+                time.sleep(0.01)
+                continue
+
+            elif self.radio_command == 'reconfigure':
+                pass
+            
                 
 
 
 
-
-
-
-
-
     def join(self, timeout=None):
+        """
+        Stop radio subsystem.
+
+        """
         self.stop_event.set()
         self.radio.shutdown()
         threading.Thread.join(self, timeout)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

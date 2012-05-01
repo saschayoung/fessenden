@@ -21,10 +21,15 @@ class Controller(object):
 
         self.location = Location(self.kb, self.lock)
         self.motion = SimpleMotion(self.kb, self.lock)
-        self.rf = RadioSubsystem(self.kb, self.lock)
+        self.rf = RadioSubsystem(self.kb, self.lock, self.radio_data_callback)
         # self.route = Route(self.kb, self.lock)
 
         self.fsm_state = 'at_beginning'
+
+        self.sent_packets = []
+        self.ack_packets = []
+        self.goodput = []
+
 
     def run(self):
         """
@@ -41,22 +46,31 @@ class Controller(object):
 
 
 
+    def radio_data_callback(self, sent_packet, ack_packet, goodput):
+        self.sent_packet.append(sent_packet)
+        self.ack_packet.append(ack_packet)
+        self.goodput.append(goodput)
+
+    def reset_radio_data(self):
+        self.sent_packets = []
+        self.ack_packets = []
+        self.goodput = []
+
+
 
     def fsm(self):
         if self.fsm_state == 'at_beginning':
-
-            # move to starting node
             start_node = self.kb.get_start_node()
             self.motion.move_until_location(start_node, speed = 25)
             while not self.kb.get_state()['current_location'] == start_node:
                 time.sleep(0.2)
             next_node = self.kb.get_next_node(start_node)
 
-            self.lock.acquire()
+            # self.lock.acquire()
             self.kb.set_current_node(start_node)
             self.kb.set_next_node(next_node)
             self.kb.set_next_edge((start_node, next_node))
-            self.lock.release()
+            # self.lock.release()
 
             self.fsm_state = 'traversing_edge'
 
@@ -64,6 +78,7 @@ class Controller(object):
             
 
         elif self.fsm_state == 'traversing_edge':
+            self.reset_radio_data()
             kb_state = self.kb.get_state()
             current_edge = kb_state['next_edge']
             next_edge = None
@@ -71,12 +86,12 @@ class Controller(object):
             current_node = None
             next_node = kb_state['next_node']
 
-            self.lock.acquire()
+            # self.lock.acquire()
             self.kb.set_current_edge(current_edge)
             self.kb.set_next_edge(next_edge)
             self.kb.set_last_node(last_node)
             self.kb.set_current_node(current_node)
-            self.lock.release()
+            # self.lock.release()
 
             tic = time.time()
             self.motion.move_from_here_to_there(last_node, next_node, speed = 45)
@@ -85,13 +100,15 @@ class Controller(object):
             
             toc = time.time() - tic
             self.kb.set_edge_weight(current_edge, toc)
-
+            print "goodput values for edge %s" %(str(current_edge),)
+            print self.goodput
             self.fsm_state = 'at_a_node'
 
             return
 
 
         elif self.fsm_state == 'at_a_node':
+            self.radio.control_radio_operation('pause')
             kb_state = self.kb.get_state()
 
             current_node = kb_state['next_node']
@@ -102,15 +119,16 @@ class Controller(object):
             last_edge = kb_state['current_edge']
             next_edge = (current_node, next_node)
 
-            self.lock.acquire()
+            # self.lock.acquire()
             self.kb.set_current_node(current_node)
             self.kb.set_next_node(next_node)
             self.kb.set_current_edge(current_edge)
             self.kb.set_last_edge(last_edge)
             self.kb.set_next_edge(next_edge)
-            self.lock.release()
+            # self.lock.release()
 
             self.fsm_state = 'traversing_edge'
+            self.radio.control_radio_operation('continue')
             return
 
         else:

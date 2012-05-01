@@ -40,7 +40,6 @@ class StandAloneRadioB(object):
         payload = self.data.pack_data(self.rx_packet_number, self.goodput)
         tx_packet = self.packet.make_packet(self.tx_packet_number, location, payload)
         self.tx_packet_number += 1
-        # time.sleep(0.5) # trying to avoid timeouts at the robot
         # print "processing latency = %f" %(time.time()-self.tic,)
         self.radio.transmit(tx_packet)
         # print "reply transmitted"
