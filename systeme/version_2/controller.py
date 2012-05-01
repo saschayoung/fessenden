@@ -49,9 +49,11 @@ class Controller(object):
 
 
     def radio_data_callback(self, sent_packet, ack_packet, goodput):
-        np.append(self.sent_packet, sent_packet)
-        np.append(self.ack_packet, ack_packet)
-        np.append(self.goodput, goodput)
+        # print "ack_packet, goodput", ack_packet, goodput
+        self.sent_packet = np.append(self.sent_packet, sent_packet)
+        self.ack_packet = np.append(self.ack_packet, ack_packet)
+        self.goodput = np.append(self.goodput, goodput)
+        # print "self.goodput: ", self.goodput
 
     def reset_radio_data(self):
         self.sent_packet = np.array([])
@@ -79,7 +81,6 @@ class Controller(object):
             
 
         elif self.fsm_state == 'traversing_edge':
-            self.reset_radio_data()
             kb_state = self.kb.get_state()
             current_edge = kb_state['next_edge']
             next_edge = None
@@ -100,11 +101,11 @@ class Controller(object):
                 time.sleep(0.2)
             
             toc = time.time() - tic
-            # weight = toc * 
-            self.kb.set_edge_weight(current_edge, toc)
-            # print "goodput values for edge %s" %(str(current_edge),)
+            weight = toc * np.average(self.goodput)
+            print "weight value for edge %s = %0.2f" %(str(current_edge), weight)
+            self.kb.set_edge_weight(current_edge, weight)
             # print self.goodput
-            print "average goodput for edge %s = %0.2f" %(str(current_edge), np.average(self.goodput))
+            # print "average goodput for edge %s = %0.2f" %(str(current_edge), np.average(self.goodput))
             self.fsm_state = 'at_a_node'
 
             return
@@ -132,6 +133,7 @@ class Controller(object):
 
             self.fsm_state = 'traversing_edge'
             self.rf.control_radio_operation('continue')
+            self.reset_radio_data()
             return
 
         else:

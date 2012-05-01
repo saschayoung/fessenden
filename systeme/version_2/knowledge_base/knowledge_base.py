@@ -136,7 +136,6 @@ class KnowledgeBase(object):
                 'ack_packets' : self.ack_packets,
                 'node_coordinates' : self.node_coordinates,
                 'weighted_edge_connections' : self.weighted_edge_connections,
-                # 'initial_edge_weights' : self.initial_edge_weights,
                 'current_node' : self.current_node,
                 'last_node' : self.last_node,
                 'next_node' : self.next_node,
