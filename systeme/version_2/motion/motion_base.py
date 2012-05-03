@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import time
+
 import numpy as np
 
 from nxt_base import NXTBase
@@ -128,7 +130,7 @@ class MotionBase(object):
 
     
 
-    def __line_detected(self, threshold = 500):
+    def line_detected(self, threshold = 500):
         """
         Detect line.
 
@@ -220,7 +222,60 @@ class MotionBase(object):
 
 
 
+    def go_forward_n(self, n, power = 75):
+        """
+        Move forward n inches.
 
+        This function implements forward motion for a predetermined
+        distance `n` in inches. 
+
+        Paramters
+        ---------
+        n : float
+            Desired travel distance, in inches.
+        power : int, opt
+            Speed of forward motion: 64 >= power >= 128.
+
+        Raises
+        ------
+        ValueError : If not ( 64 >= power >= 128 ).
+
+        """
+        if (power < 64) or (power > 128):
+            print "`power` must be: 64 >= power >= 128"
+            raise ValueError
+
+        motor_rotation = self.__calculate_motor_rotation(n)
+        self.nxt.motor_left.weak_turn(power, int(motor_rotation))
+        self.nxt.motor_right.weak_turn(power, int(motor_rotation))
+
+
+
+    def turn_onto_new_path(self, angle):
+        """
+        Turn onto a new path.
+
+        This function implements vehicle turning for path choice. Move
+        forward a small distance and then turn in place according to
+        `angle`. Finally reacquire path with `find_line()`.
+
+        Parameters
+        ----------
+        angle : float
+            Turn angle, in degrees, measured positive
+            clockwise, negative counter-clockwise.
+
+        """
+        
+        self.__go_forward_n(2, 75)
+        while self.__motors_busy():
+            time.sleep(0.01)
+
+        self.__turn_in_place(angle)
+        while self.__motors_busy():
+            time.sleep(0.01)
+
+        self.find_line()
 
 
 
@@ -232,11 +287,11 @@ class MotionBase(object):
         if DEBUG:
             print "Finding line"
         sweep_angle = [10, -20, 30, -40, 60, -80, 120, -160, 240, -320]
-        while not self.__line_detected():
+        while not self.line_detected():
             for sweep in sweep_angle:
                 self.__turn_in_place(sweep)
                 while self.__motors_busy():
-                    if self.__line_detected():
+                    if self.line_detected():
                         self.halt_motion()
                         if DEBUG: 
                             print "found line, stopping search"
@@ -258,8 +313,9 @@ class MotionBase(object):
             print "Following line"
         self.__go_forward()
         while True:
-            # print "line_detected", self.__line_detected()
-            if not self.__line_detected():
+            if DEBUG:
+                print "line_detected", self.line_detected()
+            if not self.line_detected():
                 self.halt_motion()
                 return
     
