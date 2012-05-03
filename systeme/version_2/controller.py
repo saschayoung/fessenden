@@ -98,7 +98,7 @@ class Controller(object):
                 print "\n\n\n\n"
                 print "Detected color: ", color
                 print "\n\n\n\n"
-                time.sleep(0.2)
+                time.sleep(0.01)
             
             toc = time.time() - tic
             weight = toc * np.average(self.goodput)

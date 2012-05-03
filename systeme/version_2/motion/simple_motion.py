@@ -78,7 +78,7 @@ class SimpleMotion(object):
         self.brick = nxt.locator.find_one_brick()
         self.__init_motors()
         self.__init_light_sensor()
-
+        self.__init_color_sensor()
 
 
     def __init_motors(self):
@@ -516,7 +516,7 @@ class SimpleMotion(object):
     def shutdown(self):
         self.halt_motion('coast')
         self.__kill_light_sensor()
-
+        self.__kill_color_sensor()
 
     def debug_test(self):
         while True:
