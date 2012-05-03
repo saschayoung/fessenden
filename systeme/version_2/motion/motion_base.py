@@ -192,7 +192,7 @@ class MotionBase(object):
 
     
 
-    def __go_forward(self, power = 25, regulated = True):
+    def go_forward(self, power = 25, regulated = True):
         """
         Move forward forever.
 
@@ -311,7 +311,7 @@ class MotionBase(object):
         """
         if DEBUG:
             print "Following line"
-        self.__go_forward()
+        self.go_forward()
         while True:
             if DEBUG:
                 print "line_detected", self.line_detected()

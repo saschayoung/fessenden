@@ -43,6 +43,8 @@ class MotionSubsystem(threading.Thread):
         self.kb = knowledge_base
         self.lock = lock
 
+        self.stop_event = threading.Event()
+
         self.motion = MotionBase()
         
 
@@ -70,6 +72,8 @@ class MotionSubsystem(threading.Thread):
         Stop radio subsystem.
 
         """
+        self.motion.shutdown()
+
         self.stop_event.set()
         threading.Thread.join(self, timeout)
 
@@ -145,7 +149,7 @@ class MotionSubsystem(threading.Thread):
         """
         if DEBUG:
             print "Following line"
-        self.motion.move_forward(speed)
+        self.motion.go_forward(speed)
         while True:
             if not self.motion.line_detected():
                 self.motion.halt_motion()
