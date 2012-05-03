@@ -163,7 +163,7 @@ class SimpleMotion(object):
         This function turns off the illumination of the light sensor.
 
         """
-        self.color.set_light_color(COLORNONE)
+        self.color.set_light_color()
         
 
     def __motors_busy(self):
@@ -516,7 +516,7 @@ class SimpleMotion(object):
     def shutdown(self):
         self.halt_motion('coast')
         self.__kill_light_sensor()
-        self.__kill_color_sensor()
+        # self.__kill_color_sensor()
 
     def debug_test(self):
         while True:

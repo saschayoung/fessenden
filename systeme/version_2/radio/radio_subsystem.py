@@ -14,7 +14,7 @@ from packet import Packet
 from radio_api import RadioAPI
 
 
-DEBUG = True
+DEBUG = False
 
 class RadioSubsystem(threading.Thread):
     """
@@ -87,18 +87,19 @@ class RadioSubsystem(threading.Thread):
         # print "processing latency = %f" %(time.time() - self.tic,)
         self.rx_packet = self.radio.receive(rx_fifo_threshold=64, timeout=0.8)
         if self.rx_packet == []: # this occurs when timeout has been exceeded
-            print "timeout exceeded"
+            # print "timeout exceeded"
             return
         else:
             rx_packet_number, time_stamp, location, flags, data = self.packet.parse_packet(self.rx_packet)
             self.ack_packet_number, self.goodput = self.data.unpack_data(data)
             if DEBUG:
-                print "rx_packet_number=%d  time_stamp=%f  location=%d  flags=0x%x" %(rx_packet_number,
-                                                                                      time_stamp,
-                                                                                      location,
-                                                                                      flags)
-                print "goodput for acknowledged packet #%d = %f bits/second" %(self.ack_packet_number,
-                                                                               self.goodput)
+                pass
+                # print "rx_packet_number=%d  time_stamp=%f  location=%d  flags=0x%x" %(rx_packet_number,
+                #                                                                       time_stamp,
+                #                                                                       location,
+                #                                                                       flags)
+                # print "goodput for acknowledged packet #%d = %f bits/second" %(self.ack_packet_number,
+                #                                                                self.goodput)
 
     def _listen(self):
         """

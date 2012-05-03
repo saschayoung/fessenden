@@ -59,6 +59,8 @@ class Controller(object):
 
     def fsm(self):
         if self.fsm_state == 'at_beginning':
+            print "\n\n\n"
+            print "at_beginning"
             start_node = self.kb.get_start_node()
             self.motion.move_until_location(start_node, speed = 25)
             while not self.kb.get_state()['current_location'] == start_node:
@@ -77,6 +79,8 @@ class Controller(object):
             
 
         elif self.fsm_state == 'traversing_edge':
+            print "\n\n\n"
+            print "traversing_edge"
             kb_state = self.kb.get_state()
             current_edge = kb_state['next_edge']
             next_edge = None
@@ -92,11 +96,20 @@ class Controller(object):
             # self.lock.release()
 
             tic = time.time()
+
+            # this is not threaded!!!!!
             self.motion.move_from_here_to_there(last_node, next_node, speed = 45)
+            # print "self.kb.get_state()['current_location'] = ", self.kb.get_state()['current_location']
+            # print "next_node = ", next_node
+            # print "self.kb.get_state()['current_location'] == next_node : ", self.kb.get_state()['current_location'] == next_node
+            print "traversing_eddge, current_node = ", current_node
+            print "traversing_edge, next_node = ", next_node
+
             while not self.kb.get_state()['current_location'] == next_node:
-                color = motion.get_color_reading()
+                # color = motion.get_color_reading()
                 print "\n\n\n\n"
-                print "Detected color: ", color
+                print "Blah blah blah"
+                # print "Detected color: ", color
                 print "\n\n\n\n"
                 time.sleep(0.01)
             
@@ -112,11 +125,16 @@ class Controller(object):
 
 
         elif self.fsm_state == 'at_a_node':
+            print "\n\n\n"
+            print "at_a_node"
             self.rf.control_radio_operation('pause')
             kb_state = self.kb.get_state()
 
             current_node = kb_state['next_node']
             next_node = self.kb.get_next_node(current_node)
+
+            print "at_a_node, current_node = ", current_node
+            print "at_a_node, next_node = ", next_node
 
             current_edge = None
             last_edge = kb_state['current_edge']
