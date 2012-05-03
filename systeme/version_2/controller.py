@@ -24,7 +24,6 @@ class Controller(object):
         self.location = Location(self.kb, self.lock)
         self.motion = SimpleMotion(self.kb, self.lock)
         self.rf = RadioSubsystem(self.kb, self.lock, self.radio_data_callback)
-        # self.route = Route(self.kb, self.lock)
 
         self.fsm_state = 'at_beginning'
 
@@ -42,18 +41,15 @@ class Controller(object):
         self.location.start()
         self.rf.start()
         
-
         while True:
             self.fsm()
 
 
 
     def radio_data_callback(self, sent_packet, ack_packet, goodput):
-        # print "ack_packet, goodput", ack_packet, goodput
         self.sent_packet = np.append(self.sent_packet, sent_packet)
         self.ack_packet = np.append(self.ack_packet, ack_packet)
         self.goodput = np.append(self.goodput, goodput)
-        # print "self.goodput: ", self.goodput
 
     def reset_radio_data(self):
         self.sent_packet = np.array([])
@@ -98,6 +94,10 @@ class Controller(object):
             tic = time.time()
             self.motion.move_from_here_to_there(last_node, next_node, speed = 45)
             while not self.kb.get_state()['current_location'] == next_node:
+                color = motion.get_color_reading()
+                print "\n\n\n\n"
+                print "Detected color: ", color
+                print "\n\n\n\n"
                 time.sleep(0.2)
             
             toc = time.time() - tic
@@ -116,7 +116,6 @@ class Controller(object):
             kb_state = self.kb.get_state()
 
             current_node = kb_state['next_node']
-            # last_node = kb_state['current_node']
             next_node = self.kb.get_next_node(current_node)
 
             current_edge = None

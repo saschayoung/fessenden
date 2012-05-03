@@ -131,6 +131,20 @@ class SimpleMotion(object):
         self.light.set_illuminated(True)
 
 
+
+    def __init_color_sensor(self):
+        """
+        Initialize light sensor.
+
+        This function initializes the light sensor and enables illumnination.
+        This is a private/internal function.
+
+        """
+        self.color = Color20(self.brick, PORT_2)
+
+
+
+
     def __kill_light_sensor(self):
         """
         Shutdown light sensor.
@@ -139,6 +153,17 @@ class SimpleMotion(object):
 
         """
         self.light.set_illuminated(False)
+
+
+
+    def __kill_color_sensor(self):
+        """
+        Shutdown light sensor.
+
+        This function turns off the illumination of the light sensor.
+
+        """
+        self.color.set_light_color(COLORNONE)
         
 
     def __motors_busy(self):
@@ -216,6 +241,22 @@ class SimpleMotion(object):
         self.light.set_illuminated(illumination)
         return self.light.get_sample()
 
+
+
+    def get_color_reading(self):
+        """
+        Get reflected light reading.
+
+        This function determines the reflected color observed by the
+        color sensor. 
+
+        Returns
+        -------
+        out : int
+            Value of reflected color from color sensor.
+
+        """
+        return self.color.get_sample()
 
 
     def __line_detected(self, threshold = 500):
