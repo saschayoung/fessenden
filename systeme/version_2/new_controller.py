@@ -29,7 +29,7 @@ class Controller(object):
         self.sent_packet = np.array([])
         self.ack_packet = np.array([])
         self.goodput = np.array([])
-        self.targets = np.array([])
+        self.color_values = np.array([])
 
         self.arrived = False
 
@@ -76,8 +76,6 @@ class Controller(object):
     def fsm(self):
         while True:
             if self.fsm_state == 'at_beginning':
-                # if DEBUG:
-                #     print "at_beginning"
                 before_start = 0
                 start_node = self.kb.get_start_node()
                 self.motion.set_source_destination(before_start, start_node)
@@ -85,16 +83,8 @@ class Controller(object):
                 self.motion.control_motion_operation('go')
 
 
-                # print "current_location: ", self.kb.get_state()['current_location']
-                # print "start_node: ", start_node
-                # while not self.kb.get_state()['current_location'] == start_node:
                 while not self.arrived:
-                    # print "current_location: ", self.kb.get_state()['current_location']
-                    # print "start_node: ", start_node
                     time.sleep(0.1)
-
-                # if DEBUG:
-                #     print "arrived at first node: %d" %(start_node,)
 
                 next_node = self.kb.get_next_node(start_node)
                 self.kb.set_current_node(start_node)
@@ -102,7 +92,6 @@ class Controller(object):
                 self.kb.set_next_edge((start_node, next_node))
 
                 self.fsm_state = 'traversing_edge'
-                # break
                 continue
 
 
@@ -114,8 +103,6 @@ class Controller(object):
                 print kb_state
                 current_edge = kb_state['next_edge']
 
-                # if DEBUG:
-                #     print "current_edge: ", current_edge
 
                 next_edge = None
                 last_node = kb_state['current_node']
@@ -127,54 +114,36 @@ class Controller(object):
                 self.kb.set_last_node(last_node)
                 self.kb.set_current_node(current_node)
                 
-                # if DEBUG:
-                #     print "current_edge: ", current_edge
-                #     print "current_edge[0]: ", current_edge[0]
-                #     print "current_edge[1]: ", current_edge[1]
 
                 self.arrived = False
                 self.motion.set_source_destination(current_edge[0], current_edge[1])
                 self.motion.set_speed(45)
                 tic = time.time()
 
-                # if DEBUG:
-                #     print "starting motion again"
                 self.motion.control_motion_operation('go')
 
-                # if DEBUG:
-                #     print "waiting to reach destination"
-                #     print "current_location: ", self.kb.get_state()['current_location']
-                #     print "current_edge[1]: ", current_edge[1]
                 while not self.arrived:
-                # while not self.kb.get_state()['current_location'] == current_edge[1]:
-                    # print "current_location: ", self.kb.get_state()['current_location']
-                    # print "current_edge[1]: ", current_edge[1]
-                    print "color = ", self.motion.color_reading()
-                    # print "\n\n\n\n"
-                    # print "Blah blah blah"
+                    self.color_values = np.append(self.color_values, self.motion.color_reading())
                     time.sleep(0.1)
 
                 toc = time.time() - tic
                 weight = toc * np.average(self.goodput)
+                targets = self.count_targets(self.color_values)
                 if DEBUG:
-                    print "weight value for edge %s = %0.2f" %(str(current_edge), weight)
-                self.kb.set_edge_weight(current_edge, weight)
+                    print "values for edge %s: weight = %0.2f, targets = %d" %(str(current_edge),
+                                                                               weight,
+                                                                               targets)
+                self.kb.set_edge_weight(current_edge, weight, targets)
 
                 self.fsm_state = 'at_a_node'
                 continue
 
 
             elif self.fsm_state == 'at_a_node':
-                # if DEBUG:
-                #     print "at_a_node"
                 self.rf.control_radio_operation('pause')
                 kb_state = self.kb.get_state()
                 current_node = kb_state['next_node']
                 next_node = self.kb.get_next_node(current_node)
-
-                # if DEBUG:
-                #     print "at_a_node, current_node = ", current_node
-                #     print "at_a_node, next_node = ", next_node
 
                 current_edge = None
                 last_edge = kb_state['current_edge']
@@ -188,6 +157,7 @@ class Controller(object):
 
                 self.fsm_state = 'traversing_edge'
                 self.reset_radio_data()
+                self.color_values = np.array([])
                 self.rf.control_radio_operation('continue')
                 continue
 
@@ -197,6 +167,16 @@ class Controller(object):
                 break
 
 
+
+
+    def count_targets(self, a):
+        a[a!=5] = 0
+        j = 0
+        for i in range(len(a)-1):
+            if a[i] == 0 and a[i+1] == 5:
+                j += 1
+        return j
+        
 
             
 

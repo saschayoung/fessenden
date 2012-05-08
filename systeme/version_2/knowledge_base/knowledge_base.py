@@ -92,11 +92,12 @@ class KnowledgeBase(object):
         return next_nodes[np.argmin(weight)]
 
 
-    def set_edge_weight(self, edge, weight):
+    def set_edge_values(self, edge, weight, targets):
         if edge == (7,1):
             pass
         else:
             self.route[edge[0]][edge[1]]['weight'] = weight
+            self.route[edge[0]][edge[1]]['targets'] = targets
 
     def set_current_node(self, node):
         self.current_node = node
