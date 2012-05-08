@@ -7,7 +7,7 @@ import numpy as np
 from nxt_base import NXTBase
 
 
-DEBUG = True
+DEBUG = False
 
 class MotionBase(object):
 

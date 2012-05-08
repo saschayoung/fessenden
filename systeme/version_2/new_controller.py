@@ -133,7 +133,7 @@ class Controller(object):
                     print "values for edge %s: weight = %0.2f, targets = %d" %(str(current_edge),
                                                                                weight,
                                                                                targets)
-                self.kb.set_edge_weight(current_edge, weight, targets)
+                self.kb.set_edge_values(current_edge, weight, targets)
 
                 self.fsm_state = 'at_a_node'
                 continue

@@ -13,7 +13,7 @@ import numpy as np
 
 from motion_base import MotionBase
 
-DEBUG = True
+DEBUG = False
 
 class MotionSubsystem(threading.Thread):
     """
