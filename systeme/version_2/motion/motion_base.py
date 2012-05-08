@@ -19,6 +19,8 @@ class MotionBase(object):
         self.wheel_diameter = 2.221
         self.axle_length = 4.5
 
+        self.stop_flag = False
+
         
 
     def __motors_busy(self):
@@ -299,7 +301,7 @@ class MotionBase(object):
 
 
 
-    def follow_line(self):
+    def follow_line(self, speed):
         """
         Follow line.
 
@@ -311,8 +313,8 @@ class MotionBase(object):
         """
         if DEBUG:
             print "Following line"
-        self.go_forward()
-        while True:
+        self.go_forward(speed)
+        while not self.stop_flag:
             if DEBUG:
                 print "line_detected", self.line_detected()
             if not self.line_detected():
@@ -327,6 +329,7 @@ class MotionBase(object):
 
 
     def shutdown(self):
+        self.stop_flag = True
         self.halt_motion('coast')
         self.nxt.kill_light_sensor()
 

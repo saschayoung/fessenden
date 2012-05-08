@@ -8,6 +8,7 @@ Threaded AV motion subsystem
 
 import threading
 import time
+import sys
 
 import numpy as np
 
@@ -59,23 +60,25 @@ class MotionSubsystem(threading.Thread):
 
         path = [(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,1)]
         
-
         while not self.stop_event.isSet():
             for p in path:
-                self.__general_motion(p[0],p[1], speed = 25)
+                if self.stop_event.isSet():
+                    break
+                else:
+                    self.__general_motion(p[0],p[1], speed = 25)
             
-
-
 
     def join(self, timeout=None):
         """
         Stop radio subsystem.
 
         """
-        self.motion.shutdown()
-
         self.stop_event.set()
+        self.motion.shutdown()
         threading.Thread.join(self, timeout)
+
+
+
 
 
     def __general_motion(self, source, destination, speed):
@@ -102,6 +105,7 @@ class MotionSubsystem(threading.Thread):
         angle = np.arctan2(dst[0] - src[0], dst[1] - src[1]) * 180/np.pi
         if np.abs(angle) >= 40 and np.abs(angle) < 50:
             self.motion.turn_onto_new_path(angle)
+
         self.__simple_motion(dst, speed)
         
         
@@ -124,41 +128,89 @@ class MotionSubsystem(threading.Thread):
         current_location = self.kb.get_state()['current_location']
 
         while not location == current_location:
-            motion_status = self.__follow_line_until_location(location, speed)
-            if motion_status == 'line lost':
-                self.motion.find_line()
-            elif motion_status == 'arrived at target':
+            if self.stop_event.isSet():
                 break
             else:
-                print "__simple_motion() error"
+                self.motion.follow_line(speed)
+                self.motion.find_line()
+                current_location = self.kb.get_state()['current_location']
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # def shutdown(self):
+    #     print "\n\n\nsetting self.stop_event"
+    #     self.stop_event.set()
+    #     print "\n\n\nself.stop_event has been set"
+    #     print "\n\n\nstopping motion"
+    #     self.motion.halt_motion('coast')
+    #     print "\n\n\nmotion has been stopped."
+            # motion_status = self.__follow_line_until_location(location, speed)
+            # if motion_status == 'line lost':
+            #     self.motion.find_line()
+            # elif motion_status == 'arrived at target':
+            #     break
+            # else:
+            #     print "__simple_motion() error"
 
                 
 
 
 
 
-    def __follow_line_until_location(self, location, speed):
-        """
-        Follow line.
+    # def __follow_line_until_location(self, location, speed):
+    #     """
+    #     Follow line.
 
-        This function moves in a forward direction following a
-        line. If the line disappears, forward motion stops. The
-        presence of the line is based on readings from the light
-        sensor.
+    #     This function moves in a forward direction following a
+    #     line. If the line disappears, forward motion stops. The
+    #     presence of the line is based on readings from the light
+    #     sensor.
 
-        """
-        if DEBUG:
-            print "Following line"
-        self.motion.go_forward(speed)
-        while True:
-            if not self.motion.line_detected():
-                self.motion.halt_motion()
-                return 'line lost'
-            current_location = self.kb.get_state()['current_location']
+    #     """
+    #     if DEBUG:
+    #         print "Following line"
+    #     self.motion.go_forward(speed)
+    #     while True:
+    #         if not self.motion.line_detected():
+    #             self.motion.halt_motion()
+    #             return 'line lost'
+    #         current_location = self.kb.get_state()['current_location']
 
-            if location == int(current_location):
-                self.motion.halt_motion()
-                return 'arrived at target'
+    #         if location == int(current_location):
+    #             self.motion.halt_motion()
+    #             return 'arrived at target'
 
 
 
