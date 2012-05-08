@@ -11,7 +11,9 @@ DEBUG = True
 
 class MotionBase(object):
 
-    def __init__(self):
+    def __init__(self, kb):
+        self.kb = kb
+        
         self.nxt = NXTBase()
         self.nxt.init_motors()
         self.nxt.init_light_sensor()
@@ -301,7 +303,7 @@ class MotionBase(object):
 
 
 
-    def follow_line(self, speed):
+    def follow_line_simple(self, speed):
         """
         Follow line.
 
@@ -311,20 +313,43 @@ class MotionBase(object):
         sensor.
 
         """
-        if DEBUG:
-            print "Following line"
+        # if DEBUG:
+        #     print "Following line"
         self.go_forward(speed)
         while not self.stop_flag:
-            if DEBUG:
-                print "line_detected", self.line_detected()
+            # if DEBUG:
+            #     print "line_detected", self.line_detected()
             if not self.line_detected():
                 self.halt_motion()
                 return
     
 
+
+
+    # def set_current_location(location):
+    #     self.current_location = location
+
+
+
+
+    def follow_line_advanced(self, destination, speed):
+        self.go_forward(speed)
+        while True:
+            if not self.line_detected():
+                self.halt_motion()
+                return 'line lost'
+            current_location = self.kb.get_state()['current_location']
+            if destination == current_location:
+                self.halt_motion()
+                return 'arrived at target'
+                
+
+
+
+
     def debug_test(self):
         while True:
-            self.follow_line()
+            self.follow_line_simple()
             self.find_line()
 
 

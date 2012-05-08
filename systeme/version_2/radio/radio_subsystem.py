@@ -135,6 +135,7 @@ class RadioSubsystem(threading.Thread):
         ----------
         command : str
             One of {`pause` | `continue` | `reconfigure` | ... }
+
         """
         self.radio_command = command
 
