@@ -101,8 +101,8 @@ class Controller(object):
                 self.kb.set_next_edge((start_node, next_node))
 
                 self.fsm_state = 'traversing_edge'
-                break
-                # continue
+                # break
+                continue
 
 
             elif self.fsm_state == 'traversing_edge':
@@ -131,6 +131,7 @@ class Controller(object):
                     print "current_edge[0]: ", current_edge[0]
                     print "current_edge[1]: ", current_edge[1]
 
+                self.arrived = False
                 self.motion.set_source_destination(current_edge[0], current_edge[1])
                 self.motion.set_speed(25)
                 tic = time.time()
@@ -143,7 +144,8 @@ class Controller(object):
                     print "waiting to reach destination"
                     print "current_location: ", self.kb.get_state()['current_location']
                     print "current_edge[1]: ", current_edge[1]
-                while not self.kb.get_state()['current_location'] == current_edge[1]:
+                while not self.arrived:
+                # while not self.kb.get_state()['current_location'] == current_edge[1]:
                     print "current_location: ", self.kb.get_state()['current_location']
                     print "current_edge[1]: ", current_edge[1]
                     # print "\n\n\n\n"
