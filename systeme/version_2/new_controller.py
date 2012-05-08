@@ -29,6 +29,7 @@ class Controller(object):
         self.sent_packet = np.array([])
         self.ack_packet = np.array([])
         self.goodput = np.array([])
+        self.targets = np.array([])
 
         self.arrived = False
 
@@ -75,8 +76,8 @@ class Controller(object):
     def fsm(self):
         while True:
             if self.fsm_state == 'at_beginning':
-                if DEBUG:
-                    print "at_beginning"
+                # if DEBUG:
+                #     print "at_beginning"
                 before_start = 0
                 start_node = self.kb.get_start_node()
                 self.motion.set_source_destination(before_start, start_node)
@@ -84,16 +85,16 @@ class Controller(object):
                 self.motion.control_motion_operation('go')
 
 
-                print "current_location: ", self.kb.get_state()['current_location']
-                print "start_node: ", start_node
+                # print "current_location: ", self.kb.get_state()['current_location']
+                # print "start_node: ", start_node
                 # while not self.kb.get_state()['current_location'] == start_node:
                 while not self.arrived:
-                    print "current_location: ", self.kb.get_state()['current_location']
-                    print "start_node: ", start_node
+                    # print "current_location: ", self.kb.get_state()['current_location']
+                    # print "start_node: ", start_node
                     time.sleep(0.1)
 
-                if DEBUG:
-                    print "arrived at first node: %d" %(start_node,)
+                # if DEBUG:
+                #     print "arrived at first node: %d" %(start_node,)
 
                 next_node = self.kb.get_next_node(start_node)
                 self.kb.set_current_node(start_node)
@@ -113,8 +114,8 @@ class Controller(object):
                 print kb_state
                 current_edge = kb_state['next_edge']
 
-                if DEBUG:
-                    print "current_edge: ", current_edge
+                # if DEBUG:
+                #     print "current_edge: ", current_edge
 
                 next_edge = None
                 last_node = kb_state['current_node']
@@ -126,31 +127,32 @@ class Controller(object):
                 self.kb.set_last_node(last_node)
                 self.kb.set_current_node(current_node)
                 
-                if DEBUG:
-                    print "current_edge: ", current_edge
-                    print "current_edge[0]: ", current_edge[0]
-                    print "current_edge[1]: ", current_edge[1]
+                # if DEBUG:
+                #     print "current_edge: ", current_edge
+                #     print "current_edge[0]: ", current_edge[0]
+                #     print "current_edge[1]: ", current_edge[1]
 
                 self.arrived = False
                 self.motion.set_source_destination(current_edge[0], current_edge[1])
-                self.motion.set_speed(25)
+                self.motion.set_speed(45)
                 tic = time.time()
 
-                if DEBUG:
-                    print "starting motion again"
+                # if DEBUG:
+                #     print "starting motion again"
                 self.motion.control_motion_operation('go')
 
-                if DEBUG:
-                    print "waiting to reach destination"
-                    print "current_location: ", self.kb.get_state()['current_location']
-                    print "current_edge[1]: ", current_edge[1]
+                # if DEBUG:
+                #     print "waiting to reach destination"
+                #     print "current_location: ", self.kb.get_state()['current_location']
+                #     print "current_edge[1]: ", current_edge[1]
                 while not self.arrived:
                 # while not self.kb.get_state()['current_location'] == current_edge[1]:
-                    print "current_location: ", self.kb.get_state()['current_location']
-                    print "current_edge[1]: ", current_edge[1]
+                    # print "current_location: ", self.kb.get_state()['current_location']
+                    # print "current_edge[1]: ", current_edge[1]
+                    print "color = ", self.motion.color_reading()
                     # print "\n\n\n\n"
                     # print "Blah blah blah"
-                    time.sleep(0.2)
+                    time.sleep(0.1)
 
                 toc = time.time() - tic
                 weight = toc * np.average(self.goodput)
@@ -163,31 +165,31 @@ class Controller(object):
 
 
             elif self.fsm_state == 'at_a_node':
-                if DEBUG:
-                    print "at_a_node"
-                    self.rf.control_radio_operation('pause')
-                    kb_state = self.kb.get_state()
-                    current_node = kb_state['next_node']
-                    next_node = self.kb.get_next_node(current_node)
+                # if DEBUG:
+                #     print "at_a_node"
+                self.rf.control_radio_operation('pause')
+                kb_state = self.kb.get_state()
+                current_node = kb_state['next_node']
+                next_node = self.kb.get_next_node(current_node)
 
-                    if DEBUG:
-                        print "at_a_node, current_node = ", current_node
-                        print "at_a_node, next_node = ", next_node
+                # if DEBUG:
+                #     print "at_a_node, current_node = ", current_node
+                #     print "at_a_node, next_node = ", next_node
 
-                    current_edge = None
-                    last_edge = kb_state['current_edge']
-                    next_edge = (current_node, next_node)
+                current_edge = None
+                last_edge = kb_state['current_edge']
+                next_edge = (current_node, next_node)
 
-                    self.kb.set_current_node(current_node)
-                    self.kb.set_next_node(next_node)
-                    self.kb.set_current_edge(current_edge)
-                    self.kb.set_last_edge(last_edge)
-                    self.kb.set_next_edge(next_edge)
+                self.kb.set_current_node(current_node)
+                self.kb.set_next_node(next_node)
+                self.kb.set_current_edge(current_edge)
+                self.kb.set_last_edge(last_edge)
+                self.kb.set_next_edge(next_edge)
 
-                    self.fsm_state = 'traversing_edge'
-                    self.reset_radio_data()
-                    self.rf.control_radio_operation('continue')
-                    continue
+                self.fsm_state = 'traversing_edge'
+                self.reset_radio_data()
+                self.rf.control_radio_operation('continue')
+                continue
 
             else:
                 print "controller.fsm() error"

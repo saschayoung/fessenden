@@ -17,6 +17,7 @@ class MotionBase(object):
         self.nxt = NXTBase()
         self.nxt.init_motors()
         self.nxt.init_light_sensor()
+        self.nxt.init_color_sensor()
 
         self.wheel_diameter = 2.221
         self.axle_length = 4.5
@@ -131,6 +132,10 @@ class MotionBase(object):
         """
         self.nxt.light.set_illuminated(illumination)
         return self.nxt.light.get_sample()
+
+
+    def get_color_reading(self):
+        return self.nxt.color.get_sample()
 
     
 
@@ -271,7 +276,7 @@ class MotionBase(object):
 
         """
         
-        self.__go_forward_n(2, 75)
+        self.go_forward_n(2, 75)
         while self.__motors_busy():
             time.sleep(0.01)
 
@@ -357,7 +362,7 @@ class MotionBase(object):
         self.stop_flag = True
         self.halt_motion('coast')
         self.nxt.kill_light_sensor()
-
+        self.nxt.kill_color_sensor()
 
 
 if __name__=='__main__':

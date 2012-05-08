@@ -198,7 +198,8 @@ class MotionSubsystem(threading.Thread):
 
 
 
-
+    def color_reading(self):
+        return self.motion.get_color_reading()
 
 
 
