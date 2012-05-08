@@ -38,14 +38,23 @@ class KnowledgeBase(object):
                             
         # weight alternative path higher to begin with to discourage
         # its use on first pass
-        self.weighted_edge_connections = [(1,2,0),
-                                          (2,3,0),
-                                          (2,8,1), (8,3,0), 
-                                          (2,9,1), (9,3,0),
-                                          (3,4,0),
-                                          (4,5,0),
-                                          (5,6,0),
-                                          (6,7,0)]
+        # self.weighted_edge_connections = [(1,2,0),
+        #                                   (2,3,0),
+        #                                   (2,8,1), (8,3,0), 
+        #                                   (2,9,1), (9,3,0),
+        #                                   (3,4,0),
+        #                                   (4,5,0),
+        #                                   (5,6,0),
+        #                                   (6,7,0)]
+
+        self.weighted_edge_connections = [(1,2,10),
+                                          (2,3,10),
+                                          (2,8,5), (8,3,0), 
+                                          (2,9,5), (9,3,0),
+                                          (3,4,10),
+                                          (4,5,10),
+                                          (5,6,10),
+                                          (6,7,10)]
 
         self.current_node = None
         self.last_node = []
@@ -89,15 +98,23 @@ class KnowledgeBase(object):
         for p in path:
             weight.append(self.route[p[0]][p[1]]['weight'])
         weight = np.array([weight])
-        return next_nodes[np.argmin(weight)]
+        return next_nodes[np.argmax(weight)]
+        # return next_nodes[np.argmin(weight)]
 
 
-    def set_edge_values(self, edge, weight, targets):
+    # def set_edge_values(self, edge, weight, targets):
+    #     if edge == (7,1):
+    #         pass
+    #     else:
+    #         self.route[edge[0]][edge[1]]['weight'] = weight
+    #         self.route[edge[0]][edge[1]]['targets'] = targets
+
+    def set_edge_values(self, edge, targets, metric_b):
         if edge == (7,1):
             pass
         else:
-            self.route[edge[0]][edge[1]]['weight'] = weight
-            self.route[edge[0]][edge[1]]['targets'] = targets
+            self.route[edge[0]][edge[1]]['weight'] = targets
+            self.route[edge[0]][edge[1]]['metric_b'] = metric_b
 
     def set_current_node(self, node):
         self.current_node = node
