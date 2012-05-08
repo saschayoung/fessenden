@@ -138,9 +138,9 @@ class Controller(object):
                 metric_b = toc * np.average(self.goodput)
                 targets = self.count_targets(self.color_values)
                 if DEBUG:
-                    print "values for edge %s: targets = %d, metric_b" %(str(current_edge),
-                                                                         targets,
-                                                                         metric_b)
+                    print "values for edge %s: targets = %d, metric_b = %f" %(str(current_edge),
+                                                                              targets,
+                                                                              metric_b)
                 self.kb.set_edge_values(current_edge, targets, metric_b)
 
                 self.fsm_state = 'at_a_node'
