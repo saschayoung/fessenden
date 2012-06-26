@@ -85,7 +85,7 @@ class Interferer(object):
                     self.radio_transmitter.set_freq(self.radio_freq)
                     self.radio_transmitter.set_radio_state(self.radio_command)
 
-                time.sleep(1)
+                time.sleep(0.01)
 
             else:
                 print "Did not receive complete file!"

@@ -190,7 +190,7 @@ class RF(object):
         self.tx_data()
         if DEBUG:
             print "transmitted packet"
-        time.sleep(0.01)
+        # time.sleep(0.01)
 
 
 
