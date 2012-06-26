@@ -33,11 +33,13 @@ class InterferenceCoordinator(object):
     def interference_logic(self):
         location = int(self.lines[0].strip('\n'))
         if location == 3:
+            print "Turning interferers ON"
             s = "432000000\n"
             s = s + "434000000\n"
             s = s + "436000000\n"
             s = s + "438000000\n"
         else:
+            print "Turning interferers OFF"
             s = "---------\n"
             s = s + "---------\n"
             s = s + "---------\n"
