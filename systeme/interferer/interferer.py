@@ -90,10 +90,14 @@ class Interferer(object):
             
 
 
+    def stop(self):
+        self.radio_transmitter.join()
 
 
 
 
+
+        
 
 class Radio(threading.Thread):
     """
@@ -160,3 +164,11 @@ class Radio(threading.Thread):
                 time.sleep(0.01)
             
         
+
+
+if __name__=='__main__':
+    main = Interferer()
+    try:
+        main.run()
+    except KeyboardInterrupt:
+        main.stop()
