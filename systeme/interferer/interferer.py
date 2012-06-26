@@ -79,14 +79,14 @@ class Interferer(object):
         while True:
             self.tftp_get()
             if self.check_file():
-                # print "Received complete file."
+                print "Received complete file."
                 self.parse_file()
                 if self.radio_command == 'off':
-                    # print "Turning radio off"
+                    print "Turning radio off"
                     self.radio_transmitter.set_radio_state('off')
 
                 else:
-                    # print "Turning radio on"
+                    print "Turning radio on"
                     self.radio_transmitter.set_freq(self.radio_freq)
                     self.radio_transmitter.set_radio_state('on')
 
@@ -134,11 +134,11 @@ class Radio(threading.Thread):
             One of {`on` | `off` }
 
         """
-        if state == 'on':
-            self.current_radio_state = 'on'
+        # if state == 'on':
+        #     self.current_radio_state = 'on'
         
         # self.radio_last_state = self.radio_current_state
-        # self.radio_current_state = state
+        self.radio_current_state = state
 
 
     def set_freq(self, freq):
