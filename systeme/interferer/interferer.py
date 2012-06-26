@@ -156,7 +156,7 @@ class Radio(threading.Thread):
         while not self.stop_event.isSet():
             if self.radio_state == 'on':
                 try:
-                    self.rf.run(freq)
+                    self.rf.run(self.freq)
                 except Exception as e:
                     print e
                     time.sleep(0.01)
