@@ -60,7 +60,7 @@ class Interferer(object):
             print "File parsing error"
         
         line = line.strip('\n')
-        if line = '---------':
+        if line == '---------':
             self.radio_command = 'off'
         else:
             self.radio_command = 'on'
