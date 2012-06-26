@@ -27,7 +27,7 @@ class InterferenceCoordinator(object):
         f = open(self.local_file, 'rt')
         self.lines = f.readlines()
         f.close()
-        if self.lines[-1] != 'fin':
+        if self.lines[-1] != 'fin\n':
             return False
         else:
             return True
@@ -43,7 +43,7 @@ class InterferenceCoordinator(object):
                 s = s + "434000000\n"
                 s = s + "436000000\n"
                 s = s + "438000000\n"
-                s = s + "fin"
+                s = s + "fin\n"
                 f = open(self.command_file, 'w+')
                 f.write(s)
                 f.close()
@@ -57,7 +57,7 @@ class InterferenceCoordinator(object):
                 s = s + "---------\n"
                 s = s + "---------\n"
                 s = s + "---------\n"
-                s = s + "fin"
+                s = s + "fin\n"
                 f = open(self.command_file, 'w+')
                 f.write(s)
                 f.close()

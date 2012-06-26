@@ -45,7 +45,7 @@ class Interferer(object):
         f = open(self.local_file, 'rt')
         self.lines = f.readlines()
         f.close()
-        if self.lines[-1] != 'fin':
+        if self.lines[-1] != 'fin\n':
             return False
         else:
             return True
