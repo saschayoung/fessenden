@@ -172,6 +172,7 @@ class Radio(threading.Thread):
                     except Exception as e:
                         print e
                         time.sleep(0.001)
+                    self.radio_last_state = 'on'
                 else:
                     print "Interferer error:"
                     print "self.radio_current_state == `on`"
@@ -180,8 +181,10 @@ class Radio(threading.Thread):
             elif self.radio_current_state == 'off':
                 if self.radio_last_state == 'on':
                     print "Interferer OFF"
+                    self.radio_last_state = 'off'
+                    continue
                 elif self.radio_last_state == 'off':
-                    pass
+                    continue
                 else:
                     print "Interferer error:"
                     print "self.radio_current_state == `off`"

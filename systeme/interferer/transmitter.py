@@ -13,7 +13,7 @@ from gpio import gpio
 
 
 
-DEBUG =True
+DEBUG =False
 
 class RF(object):
     def __init__(self):
