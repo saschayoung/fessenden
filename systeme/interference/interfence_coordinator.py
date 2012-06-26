@@ -1,0 +1,71 @@
+#!/usr/bin/env python
+
+import time
+
+import tftpy
+
+
+class InterferenceCoordinator(object):
+
+    def __init__(self, remote_file='location'):
+        self.remote_file = remote_file
+        self.local_file = 'local_file'
+        self.command_file = 'command_file'
+
+        tftp_server = '192.168.42.50'
+        tftp_port = 69
+        self.client = tftpy.TftpClient(tftp_server, tftp_port)
+    
+
+    def tftp_get(self):
+        self.client.download(self.remote_file, self.local_file)
+
+    def check_file(self):
+        f = open(self.local_file, 'rt')
+        self.lines = f.readlines()
+        f.close()
+        if self.lines[-1] != 'fin':
+            return False
+        else:
+            return True
+
+
+    def interference_logic(self):
+        location = int(self.lines[0].strip('\n'))
+        if location == 3:
+            s = "434000000\n"
+            s = s + "436000000\n"
+            s = s + "438000000\n"
+        else:
+            s = "---------\n"
+            s = s + "---------\n"
+            s = s + "---------\n"
+        s = s + "fin"
+        f = open(self.command_file, 'w+')
+        f.write(s)
+        f.close()
+
+    def run(self):
+        while True:
+            self.tftp_get()
+            if self.check_file():
+                print "Received complete file."
+                self.interference_logic()
+            else:
+                print "Did not receive complete file!"
+
+            time.sleep(1)
+            
+        
+
+
+
+
+
+    
+if __name__=='__main__':
+    main = InterferenceCoordinator()
+    try:
+        main.run()
+    except KeyboardInterrupt:
+        pass
