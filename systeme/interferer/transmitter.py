@@ -186,11 +186,11 @@ class RF(object):
             print "changing to freq: ", freq
         self.setup_rf(fc, hbsel, fb)
 
-        while True:
-            self.tx_data()
-            if DEBUG:
-                print "transmitted packet"
-            time.sleep(0.01)
+        # while True:
+        self.tx_data()
+        if DEBUG:
+            print "transmitted packet"
+        time.sleep(0.01)
 
 
 
