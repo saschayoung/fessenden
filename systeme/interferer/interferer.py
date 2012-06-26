@@ -4,7 +4,7 @@ import threading
 import time
 
 import tftpy
-import netiface
+import netifaces
 
 from transmitter import RF
 
