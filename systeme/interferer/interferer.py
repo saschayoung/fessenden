@@ -36,7 +36,7 @@ class Interferer(object):
             self.client.download(self.remote_file, self.local_file)
         except TypeError as e:
             print e
-            print "Caught error, trying to recover"
+            print "\nCaught error, trying to recover"
             time.sleep(1)
             self.client.download(self.remote_file, self.local_file)
 
@@ -83,12 +83,12 @@ class Interferer(object):
                 self.parse_file()
                 if self.radio_command == 'off':
                     # print "Turning radio off"
-                    self.radio_transmitter.set_radio_state(self.radio_command)
+                    self.radio_transmitter.set_radio_state('off')
 
                 else:
                     # print "Turning radio on"
                     self.radio_transmitter.set_freq(self.radio_freq)
-                    self.radio_transmitter.set_radio_state(self.radio_command)
+                    self.radio_transmitter.set_radio_state('on')
 
                 time.sleep(0.01)
 
@@ -134,8 +134,11 @@ class Radio(threading.Thread):
             One of {`on` | `off` }
 
         """
-        self.radio_last_state = self.radio_current_state
-        self.radio_current_state = state
+        if state == 'on':
+            self.current_radio_state = 'on'
+        
+        # self.radio_last_state = self.radio_current_state
+        # self.radio_current_state = state
 
 
     def set_freq(self, freq):
@@ -170,6 +173,7 @@ class Radio(threading.Thread):
                     except Exception as e:
                         print e
                         time.sleep(0.001)
+                    self.radio_last_state = 'on'
                 elif self.radio_last_state == 'off':
                     print "Interferer ON"
                     try:
@@ -189,6 +193,7 @@ class Radio(threading.Thread):
                     self.radio_last_state = 'off'
                     continue
                 elif self.radio_last_state == 'off':
+                    self.radio_last_state = 'off'
                     continue
                 else:
                     print "Interferer error:"
