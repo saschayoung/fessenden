@@ -13,7 +13,7 @@ from gpio import gpio
 
 
 
-
+DEBUG =True
 
 class RF(object):
     def __init__(self):
@@ -181,13 +181,16 @@ class RF(object):
     def run(self, freq):
         fc, hbsel, fb = freq_utils.carrier_freq(freq)
 
-        print "changing to freq: ", freq
+
+        if DEBUG:
+            print "changing to freq: ", freq
         self.setup_rf(fc, hbsel, fb)
 
         while True:
             self.tx_data()
-            print "transmitted packet"
-            time.sleep(0.1)
+            if DEBUG:
+                print "transmitted packet"
+            time.sleep(0.01)
 
 
 

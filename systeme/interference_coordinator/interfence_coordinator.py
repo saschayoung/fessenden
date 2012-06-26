@@ -15,6 +15,9 @@ class InterferenceCoordinator(object):
         tftp_server = '192.168.42.50'
         tftp_port = 69
         self.client = tftpy.TftpClient(tftp_server, tftp_port)
+
+        self.last_state = 'off'
+        self.current_state = 'off'
     
 
     def tftp_get(self):
@@ -33,28 +36,39 @@ class InterferenceCoordinator(object):
     def interference_logic(self):
         location = int(self.lines[0].strip('\n'))
         if location == 3:
-            print "Turning interferers ON"
-            s = "432000000\n"
-            s = s + "434000000\n"
-            s = s + "436000000\n"
-            s = s + "438000000\n"
+            self.current_state = 'on'
+            if self.last_state == 'off':
+                print "Turning interferers ON"
+                s = "432000000\n"
+                s = s + "434000000\n"
+                s = s + "436000000\n"
+                s = s + "438000000\n"
+                s = s + "fin"
+                f = open(self.command_file, 'w+')
+                f.write(s)
+                f.close()
+
+            self.last_state = 'on'
         else:
-            print "Turning interferers OFF"
-            s = "---------\n"
-            s = s + "---------\n"
-            s = s + "---------\n"
-            s = s + "---------\n"
-        s = s + "fin"
-        f = open(self.command_file, 'w+')
-        f.write(s)
-        f.close()
+            self.current_state = 'off'
+            if self.last_state == 'on':
+                print "Turning interferers OFF"
+                s = "---------\n"
+                s = s + "---------\n"
+                s = s + "---------\n"
+                s = s + "---------\n"
+                s = s + "fin"
+                f = open(self.command_file, 'w+')
+                f.write(s)
+                f.close()
+            self.last_state = 'off'
 
 
     def run(self):
         while True:
             self.tftp_get()
             if self.check_file():
-                print "Received complete file."
+                # print "Received complete file."
                 self.interference_logic()
                 time.sleep(1)
 

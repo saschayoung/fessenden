@@ -77,11 +77,11 @@ class Interferer(object):
                 # print "Received complete file."
                 self.parse_file()
                 if self.radio_command == 'off':
-                    print "Turning radio off"
+                    # print "Turning radio off"
                     self.radio_transmitter.set_radio_state(self.radio_command)
 
                 else:
-                    print "Turning radio on"
+                    # print "Turning radio on"
                     self.radio_transmitter.set_freq(self.radio_freq)
                     self.radio_transmitter.set_radio_state(self.radio_command)
 
@@ -111,7 +111,8 @@ class Radio(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.stop_event = threading.Event()
-        self.radio_state = 'off'
+        self.radio_current_state = 'off'
+        self.radio_last_state = 'off'
         self.rf = RF()
 
 
@@ -128,7 +129,8 @@ class Radio(threading.Thread):
             One of {`on` | `off` }
 
         """
-        self.radio_state = state
+        self.radio_last_state = self.radio_current_state
+        self.radio_current_state = state
 
 
     def set_freq(self, freq):
@@ -156,15 +158,40 @@ class Radio(threading.Thread):
 
         """
         while not self.stop_event.isSet():
-            if self.radio_state == 'on':
-                try:
-                    self.rf.run(self.freq)
-                except Exception as e:
-                    print e
-                    time.sleep(0.01)
-                    continue
+            if self.radio_current_state == 'on':
+                if self.radio_last_state == 'on':
+                    try:
+                        self.rf.run(self.freq)
+                    except Exception as e:
+                        print e
+                        time.sleep(0.001)
+                elif self.radio_last_state == 'off':
+                    print "Interferer ON"
+                    try:
+                        self.rf.run(self.freq)
+                    except Exception as e:
+                        print e
+                        time.sleep(0.001)
+                else:
+                    print "Interferer error:"
+                    print "self.radio_current_state == `on`"
+                    print "self.radio_current_state == ???"
+
+            elif self.radio_current_state == 'off':
+                if self.radio_last_state == 'on':
+                    print "Interferer OFF"
+                elif self.radio_last_state == 'off':
+                    pass
+                else:
+                    print "Interferer error:"
+                    print "self.radio_current_state == `off`"
+                    print "self.radio_current_state == ???"
+                    
             else:
-                time.sleep(0.01)
+                print "Interferer error:"
+                print "self.radio_current_state == `???`"
+
+
             
         
 
