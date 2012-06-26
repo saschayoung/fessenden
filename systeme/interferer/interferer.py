@@ -32,8 +32,13 @@ class Interferer(object):
 
 
     def tftp_get(self):
-        self.client.download(self.remote_file, self.local_file)
-
+        try:
+            self.client.download(self.remote_file, self.local_file)
+        except TypeError as e:
+            print e
+            print "Caught error, trying to recover"
+            time.sleep(1)
+            self.client.download(self.remote_file, self.local_file)
 
 
     def check_file(self):
