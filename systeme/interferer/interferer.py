@@ -77,7 +77,8 @@ class Interferer(object):
                 print "Received complete file."
                 self.parse_file()
                 if self.radio_command == 'off':
-                    continue
+                    self.radio_transmitter.set_radio_state(self.radio_command)
+
                 else:
                     self.radio_transmitter.set_freq(self.radio_freq)
                     self.radio_transmitter.set_radio_state(self.radio_command)
