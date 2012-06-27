@@ -55,6 +55,20 @@ class SocketInterferer(object):
         newsock.close()
         if DEBUG:
             print '\ndata: ', data
+        return data
+
+
+
+    def control_radio(self, data):
+        freq = int(data[0])
+        command = data[1]
+
+        if command == 'off':
+            self.radio_transmitter.set_radio_state('off')
+            
+        else:
+            self.radio_transmitter.set_freq(freq)
+            self.radio_transmitter.set_radio_state('on')
 
 
     def run(self):
