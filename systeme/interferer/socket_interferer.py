@@ -80,8 +80,8 @@ class SocketInterferer(object):
 
         while True:
             self.setup_socket()
-            self.open_socket()
-            
+            data = self.open_socket()
+            self.control_radio(data)
 
 
     def stop(self):
