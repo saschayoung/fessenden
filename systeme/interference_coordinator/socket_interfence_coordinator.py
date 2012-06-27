@@ -29,6 +29,7 @@ class SocketInterferenceCoordinator(object):
             print "\nCaught error, trying to recover"
             time.sleep(1)
             self.client.download(self.remote_file, self.local_file)
+            print "Recovered from error"
         # self.client.download(self.remote_file, self.local_file)
 
     def check_file(self):
@@ -112,7 +113,7 @@ class SocketInterferenceCoordinator(object):
 
             else:
                 print "Did not receive complete file!"
-                time.sleep(0.1)
+                time.sleep(1)
 
 
 

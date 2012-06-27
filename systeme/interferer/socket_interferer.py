@@ -49,7 +49,7 @@ class SocketInterferer(object):
         newsock, client_addr = self.sock.accept()
         data = newsock.recv(1024)
         # data = data.strip('\r\n')
-        # data = data.split(',')
+        data = data.split(',')
         if DEBUG:
             print newsock.getpeername()
         newsock.close()
