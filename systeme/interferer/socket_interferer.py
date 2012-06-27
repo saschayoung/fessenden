@@ -50,9 +50,10 @@ class SocketInterferer(object):
         data = newsock.recv(1024)
         # data = data.strip('\r\n')
         data = data.split(',')
-        if DEBUG:
-            print newsock.getpeername()
+        # if DEBUG:
+        #     print newsock.getpeername()
         newsock.close()
+        time.sleep(0.1)
         if DEBUG:
             print '\ndata: ', data
         return data
@@ -82,6 +83,7 @@ class SocketInterferer(object):
             self.setup_socket()
             data = self.open_socket()
             self.control_radio(data)
+            # time.sleep(0.1)
 
 
     def stop(self):
