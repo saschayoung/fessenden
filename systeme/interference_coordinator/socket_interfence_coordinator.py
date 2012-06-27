@@ -5,7 +5,7 @@ import time
 import tftpy
 
 
-class InterferenceCoordinator(object):
+class SocketInterferenceCoordinator(object):
 
     def __init__(self):
         self.remote_file = 'location'
@@ -40,35 +40,64 @@ class InterferenceCoordinator(object):
             return True
 
 
+
+    def send_command(self, command):
+        s = '[432000000, ' + command + ']'
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect(('192.168.42.61','42000'))  
+        sock.send()
+        sock.close()
+        
+
+
+
     def interference_logic(self):
         location = int(self.lines[0].strip('\n'))
         if location == 2:
             self.current_state = 'on'
             if self.last_state == 'off':
                 print "Turning interferers ON"
-                s = "432000000\n"
-                s = s + "434000000\n"
-                s = s + "436000000\n"
-                s = s + "438000000\n"
-                s = s + "fin\n"
-                f = open(self.command_file, 'w+')
-                f.write(s)
-                f.close()
-
+                self.send_command('on')
             self.last_state = 'on'
         else:
             self.current_state = 'off'
             if self.last_state == 'on':
                 print "Turning interferers OFF"
-                s = "---------\n"
-                s = s + "---------\n"
-                s = s + "---------\n"
-                s = s + "---------\n"
-                s = s + "fin\n"
-                f = open(self.command_file, 'w+')
-                f.write(s)
-                f.close()
+                self.send_command('off')
             self.last_state = 'off'
+
+
+
+
+    # def interference_logic(self):
+    #     location = int(self.lines[0].strip('\n'))
+    #     if location == 2:
+    #         self.current_state = 'on'
+    #         if self.last_state == 'off':
+    #             print "Turning interferers ON"
+    #             s = "432000000\n"
+    #             s = s + "434000000\n"
+    #             s = s + "436000000\n"
+    #             s = s + "438000000\n"
+    #             s = s + "fin\n"
+    #             f = open(self.command_file, 'w+')
+    #             f.write(s)
+    #             f.close()
+
+    #         self.last_state = 'on'
+    #     else:
+    #         self.current_state = 'off'
+    #         if self.last_state == 'on':
+    #             print "Turning interferers OFF"
+    #             s = "---------\n"
+    #             s = s + "---------\n"
+    #             s = s + "---------\n"
+    #             s = s + "---------\n"
+    #             s = s + "fin\n"
+    #             f = open(self.command_file, 'w+')
+    #             f.write(s)
+    #             f.close()
+    #         self.last_state = 'off'
 
 
     def run(self):
