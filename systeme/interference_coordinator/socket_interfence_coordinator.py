@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import socket
 import time
 
 import tftpy
@@ -42,10 +43,10 @@ class SocketInterferenceCoordinator(object):
 
 
     def send_command(self, command):
-        s = '[432000000, ' + command + ']'
+        s = '432000000,' + command 
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect(('192.168.42.61','42000'))  
-        sock.send()
+        sock.connect(('192.168.42.61', 42000))  
+        sock.send(s)
         sock.close()
         
 
@@ -117,7 +118,7 @@ class SocketInterferenceCoordinator(object):
 
     
 if __name__=='__main__':
-    main = InterferenceCoordinator()
+    main = SocketInterferenceCoordinator()
     try:
         main.run()
     except KeyboardInterrupt:
