@@ -9,7 +9,7 @@ import netifaces
 
 from transmitter import RF
 
-DEBUG = True
+DEBUG = False
 
 class SocketInterferer(object):
     """
