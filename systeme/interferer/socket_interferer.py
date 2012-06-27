@@ -208,7 +208,7 @@ class Radio(threading.Thread):
 
 
 if __name__=='__main__':
-    main = Interferer()
+    main = SocketInterferer()
     try:
         main.run()
     except KeyboardInterrupt:
