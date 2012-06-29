@@ -151,7 +151,10 @@ class DecisionMaker(object):
         unified_solution = scaled_z - scaled_t - scaled_b
 
         solution = np.max(unified_solution)
-        print solution
+        solution_index = np.where(unified_solution == solution)[0][0]
+
+        # print solution
+        # print solution_index
 
         # alternative_solution_indices = []
 
@@ -175,8 +178,8 @@ class DecisionMaker(object):
         #         continue
 
 
-        # print "\n\nDetails of `solution`: "
-        # print record_of_parameters[solution_index]
+        print "\n\nDetails of `solution`: "
+        print record_of_parameters[solution_index]
 
         # print "\n\nAlternate `solutions`: "
         # for i in alternative_solution_indices:
