@@ -62,13 +62,13 @@
 # B = Rs*(1+alpha)
 # alpha = 0.3
 
-import pickle
-import pprint
-import sys
+# import pickle
+# import pprint
+# import sys
 
 import numpy as np
-import matplotlib.mlab as mlab
-import matplotlib.pyplot as plt
+# import matplotlib.mlab as mlab
+# import matplotlib.pyplot as plt
 
 
 class DecisionMaker(object):
@@ -153,53 +153,24 @@ class DecisionMaker(object):
         solution = np.max(unified_solution)
         solution_index = np.where(unified_solution == solution)[0][0]
 
-        # print solution
-        # print solution_index
-
-        # alternative_solution_indices = []
-
-
-
-        # hist, bin_edges = np.histogram(unified_solution, 50)
-
-        # # print hist
-        # # print bin_edges
-        # # print bin_edges[-1]
-        # # print bin_edges[-2]
-
-        
-        # for i in range(len(unified_solution)):
-        #     s = unified_solution[i]
-        #     if s == solution:
-        #         solution_index = i
-        #     elif ( s <= bin_edges[-1] and s >= bin_edges[-2] ):
-        #         alternative_solution_indices.append(i)
-        #     else:
-        #         continue
-
-
         print "\n\nDetails of `solution`: "
         print record_of_parameters[solution_index]
 
-        # print "\n\nAlternate `solutions`: "
-        # for i in alternative_solution_indices:
-        #     print unified_solution[i], record_of_parameters[i]
-        # self.plot_histogram(unified_solution)
 
         
 
-    def plot_histogram(self, data):
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
+    # def plot_histogram(self, data):
+    #     fig = plt.figure()
+    #     ax = fig.add_subplot(111)
 
-        min_x = min(data)
-        max_x = max(data)
-        n, bins, patches = ax.hist(data, 50, (min_x, max_x))
-        print bins
-        print n
+    #     min_x = min(data)
+    #     max_x = max(data)
+    #     n, bins, patches = ax.hist(data, 50, (min_x, max_x))
+    #     print bins
+    #     print n
 
-        l = plt.plot(bins)
-        plt.show()
+    #     l = plt.plot(bins)
+    #     plt.show()
         
 
 
@@ -303,6 +274,38 @@ if __name__=='__main__':
     main = DecisionMaker()
     main.generate_solutions()
 
+
+
+
+        # print "\n\nAlternate `solutions`: "
+        # for i in alternative_solution_indices:
+        #     print unified_solution[i], record_of_parameters[i]
+        # self.plot_histogram(unified_solution)
+
+
+        # print solution
+        # print solution_index
+
+        # alternative_solution_indices = []
+
+
+
+        # hist, bin_edges = np.histogram(unified_solution, 50)
+
+        # # print hist
+        # # print bin_edges
+        # # print bin_edges[-1]
+        # # print bin_edges[-2]
+
+        
+        # for i in range(len(unified_solution)):
+        #     s = unified_solution[i]
+        #     if s == solution:
+        #         solution_index = i
+        #     elif ( s <= bin_edges[-1] and s >= bin_edges[-2] ):
+        #         alternative_solution_indices.append(i)
+        #     else:
+        #         continue
 
 
         # for i in range(len(unified_solution)):
