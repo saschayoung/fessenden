@@ -153,34 +153,34 @@ class DecisionMaker(object):
         solution = np.max(unified_solution)
         print solution
 
-        alternative_solution_indices = []
+        # alternative_solution_indices = []
 
 
 
-        hist, bin_edges = np.histogram(unified_solution, 50)
+        # hist, bin_edges = np.histogram(unified_solution, 50)
 
-        # print hist
-        # print bin_edges
-        # print bin_edges[-1]
-        # print bin_edges[-2]
+        # # print hist
+        # # print bin_edges
+        # # print bin_edges[-1]
+        # # print bin_edges[-2]
 
         
-        for i in range(len(unified_solution)):
-            s = unified_solution[i]
-            if s == solution:
-                solution_index = i
-            elif ( s <= bin_edges[-1] and s >= bin_edges[-2] ):
-                alternative_solution_indices.append(i)
-            else:
-                continue
+        # for i in range(len(unified_solution)):
+        #     s = unified_solution[i]
+        #     if s == solution:
+        #         solution_index = i
+        #     elif ( s <= bin_edges[-1] and s >= bin_edges[-2] ):
+        #         alternative_solution_indices.append(i)
+        #     else:
+        #         continue
 
 
-        print "\n\nDetails of `solution`: "
-        print record_of_parameters[solution_index]
+        # print "\n\nDetails of `solution`: "
+        # print record_of_parameters[solution_index]
 
-        print "\n\nAlternate `solutions`: "
-        for i in alternative_solution_indices:
-            print unified_solution[i], record_of_parameters[i]
+        # print "\n\nAlternate `solutions`: "
+        # for i in alternative_solution_indices:
+        #     print unified_solution[i], record_of_parameters[i]
         # self.plot_histogram(unified_solution)
 
         
