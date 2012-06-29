@@ -53,12 +53,10 @@ class SocketInterferer(object):
         """
         newsock, client_addr = self.sock.accept()
         data = newsock.recv(1024)
-        # data = data.strip('\r\n')
         data = data.split(',')
         # if DEBUG:
         #     print newsock.getpeername()
         newsock.close()
-        # time.sleep(0.5)
         if DEBUG:
             print '\ndata: ', data
         return data
@@ -237,6 +235,47 @@ if __name__=='__main__':
 
 
 
+
+
+
+
+            # if self.radio_current_state == 'on':
+            #     if self.radio_last_state == 'on':
+            #         try:
+            #             self.rf.run(self.freq)
+            #         except Exception as e:
+            #             print e
+            #             time.sleep(0.001)
+            #         self.radio_last_state = 'on'
+            #     elif self.radio_last_state == 'off':
+            #         print "Interferer ON"
+            #         try:
+            #             self.rf.run(self.freq)
+            #         except Exception as e:
+            #             print e
+            #             time.sleep(0.001)
+            #         self.radio_last_state = 'on'
+            #     else:
+            #         print "Interferer error:"
+            #         print "self.radio_current_state == `on`"
+            #         print "self.radio_current_state == ???"
+
+            # elif self.radio_current_state == 'off':
+            #     if self.radio_last_state == 'on':
+            #         print "Interferer OFF"
+            #         self.radio_last_state = 'off'
+            #         continue
+            #     elif self.radio_last_state == 'off':
+            #         self.radio_last_state = 'off'
+            #         continue
+            #     else:
+            #         print "Interferer error:"
+            #         print "self.radio_current_state == `off`"
+            #         print "self.radio_current_state == ???"
+                    
+            # else:
+            #     print "Interferer error:"
+            #     print "self.radio_current_state == `???`"
 
 
 
