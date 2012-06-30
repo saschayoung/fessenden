@@ -159,6 +159,8 @@ class DecisionMaker(object):
 
         hist, bin_edges = np.histogram(unified_solution, 50)
 
+        alternative_solution_indices = []
+
         for i in range(len(unified_solution)):
             s = unified_solution[i]
             if s == solution:
