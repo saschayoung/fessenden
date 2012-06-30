@@ -257,12 +257,11 @@ class DecisionMaker(object):
         # plt.show()
 
         z = solution_space[0]
-        # t = solution_space[1]
-        # b = solution_space[2]                             
+        t = solution_space[1]
+        b = solution_space[2]                             
 
         plt.rc('xtick', direction = 'out')
         plt.rc('ytick', direction = 'out')
-
 
         fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
         axes = plt.subplot(111)
@@ -270,10 +269,28 @@ class DecisionMaker(object):
 
         axes.spines['right'].set_color('none')
         axes.spines['top'].set_color('none')
-        # axes.xaxis.set_ticks_position('bottom')
-        # axes.spines['bottom'].set_position(('data', -0.05))
-        # axes.yaxis.set_ticks_position('left')
-        # axes.spines['left'].set_position(('data',-3.25))
+        axes.xaxis.set_ticks_position('bottom')
+        axes.yaxis.set_ticks_position('left')
+
+
+        fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
+        axes = plt.subplot(111)
+        axes.hist(t, 50, normed=True)
+
+        axes.spines['right'].set_color('none')
+        axes.spines['top'].set_color('none')
+        axes.xaxis.set_ticks_position('bottom')
+        axes.yaxis.set_ticks_position('left')
+
+
+        fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
+        axes = plt.subplot(111)
+        axes.hist(b, 50, normed=True)
+
+        axes.spines['right'].set_color('none')
+        axes.spines['top'].set_color('none')
+        axes.xaxis.set_ticks_position('bottom')
+        axes.yaxis.set_ticks_position('left')
 
         plt.show()
 
