@@ -235,26 +235,6 @@ class DecisionMaker(object):
             ber_vector.append(record_of_parameters[i]['BER'])
 
 
-        # plt.rc('xtick', direction = 'out')
-        # plt.rc('ytick', direction = 'out')
-
-        # data = np.random.normal(0,1,100)
-
-        # fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
-        # axes = plt.subplot(111)
-        # # axes.axvline(np.mean(data), 0, data.max(), linewidth=2, color='red')
-        # axes.hist(data, bins=50, normed=True)
-        # axes.set_ylim(0, 1)
-        # axes.set_xlim(-3, 3)
-
-        # axes.spines['right'].set_color('none')
-        # axes.spines['top'].set_color('none')
-        # axes.xaxis.set_ticks_position('bottom')
-        # axes.spines['bottom'].set_position(('data', -0.05))
-        # axes.yaxis.set_ticks_position('left')
-        # axes.spines['left'].set_position(('data',-3.25))
-
-        # plt.show()
 
         z = solution_space[0]
         t = solution_space[1]
@@ -263,70 +243,49 @@ class DecisionMaker(object):
         plt.rc('xtick', direction = 'out')
         plt.rc('ytick', direction = 'out')
 
+
+
         fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
         axes = plt.subplot(221)
         axes.hist(z, 50, normed=True)
-
+        axes.set_xlabel('Z parameter')
+        axes.set_ylabel('Instances in Solution Space')
         axes.spines['right'].set_color('none')
         axes.spines['top'].set_color('none')
         axes.xaxis.set_ticks_position('bottom')
         axes.yaxis.set_ticks_position('left')
 
 
-        fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
+
         axes = plt.subplot(222)
         axes.hist(t, 50, normed=True)
-
+        axes.set_xlabel('Time')
+        axes.set_ylabel('Instances in Solution Space')
         axes.spines['right'].set_color('none')
         axes.spines['top'].set_color('none')
         axes.xaxis.set_ticks_position('bottom')
         axes.yaxis.set_ticks_position('left')
 
 
-        fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
         axes = plt.subplot(223)
         axes.hist(b, 50, normed=True)
-
+        axes.set_xlabel('Time')
+        axes.set_ylabel('Instances in Solution Space')
         axes.spines['right'].set_color('none')
         axes.spines['top'].set_color('none')
         axes.xaxis.set_ticks_position('bottom')
         axes.yaxis.set_ticks_position('left')
 
-        plt.show()
-
-        # fig = plt.figure()
-        # ax = fig.add_subplot(111)
-        # min_x = min(time_vector)
-        # max_x = max(time_vector)
-        # time_n, time_bins, time_patches = ax.hist(time_vector, 10, (min_x, max_x))
-        # time_plot = plt.plot(time_bins)
 
 
 
+        # fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
 
-        # # print ber_vector
-        # fig = plt.figure()
-        # ax = fig.add_subplot(111)
-        # min_x = min(ber_vector)
-        # max_x = max(ber_vector)
-        # ber_n, ber_bins, ber_patches = ax.hist(ber_vector, 50, (min_x, max_x))
-        # ber_plot = plt.plot(ber_bins)
-
-        # z = solution_space[0]
-        # t = solution_space[1]
-        # b = solution_space[2]                             
-
-        # fig = plt.figure()
-        fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
-
-        ax = fig.add_subplot(224, projection='3d')
-        # X, Y, Z = axes3d.get_test_data(0.05)
-        # ax.plot_wireframe(z, t, b, rstride=10, cstride=10)
-        ax.scatter(z, t, b)
-
-        ax.set_xlabel('Z parameter')
-        ax.set_ylabel('Time')
-        ax.set_zlabel('BER')
+        # ax = fig.add_subplot(111, projection='3d')
+        # ax.scatter(z, t, b)
+        # ax.set_xlabel('Z parameter')
+        # ax.set_ylabel('Time')
+        # ax.set_zlabel('BER')
 
         plt.show()
 
@@ -510,3 +469,48 @@ if __name__=='__main__':
         # for i in solution_indices:
         #     print "Details of `solution`: "
         #     print record_of_parameters[i]
+
+
+        # fig = plt.figure()
+        # ax = fig.add_subplot(111)
+        # min_x = min(time_vector)
+        # max_x = max(time_vector)
+        # time_n, time_bins, time_patches = ax.hist(time_vector, 10, (min_x, max_x))
+        # time_plot = plt.plot(time_bins)
+
+
+
+
+        # # print ber_vector
+        # fig = plt.figure()
+        # ax = fig.add_subplot(111)
+        # min_x = min(ber_vector)
+        # max_x = max(ber_vector)
+        # ber_n, ber_bins, ber_patches = ax.hist(ber_vector, 50, (min_x, max_x))
+        # ber_plot = plt.plot(ber_bins)
+
+        # z = solution_space[0]
+        # t = solution_space[1]
+        # b = solution_space[2]                             
+
+
+        # plt.rc('xtick', direction = 'out')
+        # plt.rc('ytick', direction = 'out')
+
+        # data = np.random.normal(0,1,100)
+
+        # fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
+        # axes = plt.subplot(111)
+        # # axes.axvline(np.mean(data), 0, data.max(), linewidth=2, color='red')
+        # axes.hist(data, bins=50, normed=True)
+        # axes.set_ylim(0, 1)
+        # axes.set_xlim(-3, 3)
+
+        # axes.spines['right'].set_color('none')
+        # axes.spines['top'].set_color('none')
+        # axes.xaxis.set_ticks_position('bottom')
+        # axes.spines['bottom'].set_position(('data', -0.05))
+        # axes.yaxis.set_ticks_position('left')
+        # axes.spines['left'].set_position(('data',-3.25))
+
+        # plt.show()
