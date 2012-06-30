@@ -156,6 +156,18 @@ class DecisionMaker(object):
         print "\n\nDetails of `solution`: "
         print record_of_parameters[solution_index]
 
+        for i in range(len(unified_solution)):
+            s = unified_solution[i]
+            if s == solution:
+                continue
+            elif ( s <= bin_edges[-1] and s >= bin_edges[-2] ):
+                alternative_solution_indices.append(i)
+            else:
+                continue
+
+
+
+
         print "\n\nAlternate `solutions`: "
         for i in alternative_solution_indices:
             print unified_solution[i], record_of_parameters[i]
