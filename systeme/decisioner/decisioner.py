@@ -62,13 +62,13 @@
 # B = Rs*(1+alpha)
 # alpha = 0.3
 
-# import pickle
-# import pprint
-# import sys
+
+
+
+import time
 
 import numpy as np
-# import matplotlib.mlab as mlab
-# import matplotlib.pyplot as plt
+
 
 
 class DecisionMaker(object):
@@ -80,6 +80,7 @@ class DecisionMaker(object):
 
     
     def generate_solutions(self):
+        tic = time.time()
         record_of_parameters = {}
         
         solution_set = []
@@ -153,8 +154,8 @@ class DecisionMaker(object):
         solution = np.max(unified_solution)
         solution_index = np.where(unified_solution == solution)[0][0]
 
-        print "\n\nDetails of `solution`: "
-        print record_of_parameters[solution_index]
+        toc1 = time.time()
+
 
 
         hist, bin_edges = np.histogram(unified_solution, 50)
@@ -171,11 +172,22 @@ class DecisionMaker(object):
                 continue
 
 
+        toc2 = time.time()
+
+        base_time = toc1 - tic
+        extended_time = toc2 - toc1
+
+        print "Time of initial solution calculation: %f seconds" %(base_time,)
+        print "Time of alternative solution extension: %f seconds" %(extended_time,)
+
+        print "\n\nDetails of `solution`: "
+        print record_of_parameters[solution_index]
 
 
         print "\n\nAlternate `solutions`: "
         for i in alternative_solution_indices:
             print unified_solution[i], record_of_parameters[i]
+
 
         
 
