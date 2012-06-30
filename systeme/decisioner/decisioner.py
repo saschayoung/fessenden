@@ -98,7 +98,7 @@ class DecisionMaker(object):
         dist = [60.0, 50.0, 60.0]
         
         # our knobs
-        speed = [5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0]
+        speed = [5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 65.0, 60.0, 65.0, 70.0, 75.0]
         modulation = ['FSK', 'GFSK', 'OOK']
         alpha = 0.3
         Rs = [2.0e3, 2.4e3, 4.8e3, 9.6e3, 19.2e3, 38.4e3, 57.6e3, 125.0e3]
@@ -191,19 +191,6 @@ class DecisionMaker(object):
 
         
 
-    # def plot_histogram(self, data):
-    #     fig = plt.figure()
-    #     ax = fig.add_subplot(111)
-
-    #     min_x = min(data)
-    #     max_x = max(data)
-    #     n, bins, patches = ax.hist(data, 50, (min_x, max_x))
-    #     print bins
-    #     print n
-
-    #     l = plt.plot(bins)
-    #     plt.show()
-        
 
 
     def calculate_z(self, X, Y):
@@ -305,6 +292,33 @@ class DecisionMaker(object):
 if __name__=='__main__':
     main = DecisionMaker()
     main.generate_solutions()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # def plot_histogram(self, data):
+    #     fig = plt.figure()
+    #     ax = fig.add_subplot(111)
+
+    #     min_x = min(data)
+    #     max_x = max(data)
+    #     n, bins, patches = ax.hist(data, 50, (min_x, max_x))
+    #     print bins
+    #     print n
+
+    #     l = plt.plot(bins)
+    #     plt.show()
+        
 
 
 
