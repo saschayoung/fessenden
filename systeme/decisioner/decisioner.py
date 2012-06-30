@@ -225,38 +225,58 @@ class DecisionMaker(object):
 
 
 
+        z_vector = []
+        time_vector = []
         ber_vector = []
+
         for i in range(len(unified_solution)):
+            z_vector.append(record_of_parameters[i]['Z'])
+            time_vector.append(record_of_parameters[i]['T'])
             ber_vector.append(record_of_parameters[i]['BER'])
 
 
-        # print ber_vector
-        # fig = plt.figure()
-        # ax = fig.add_subplot(111)
 
-        # min_x = min(ber_vector)
-        # max_x = max(ber_vector)
-        # n, bins, patches = ax.hist(ber_vector, 50, (min_x, max_x))
-        # # print bins
-        # # print n
-
-        # l = plt.plot(bins)
-        # plt.show()
-
-        z = solution_space[0]
-        t = solution_space[1]
-        b = solution_space[2]                             
 
         fig = plt.figure()
+        ax = fig.add_subplot(111)
+        min_x = min(z_vector)
+        max_x = max(z_vector)
+        z_n, z_bins, z_patches = ax.hist(z_vector, 10, (min_x, max_x))
+        z_plot = plt.plot(z_bins)
 
-        ax = fig.add_subplot(111, projection='3d')
-        # X, Y, Z = axes3d.get_test_data(0.05)
-        # ax.plot_wireframe(z, t, b, rstride=10, cstride=10)
-        ax.scatter(z, t, b)
 
-        ax.set_xlabel('Z parameter')
-        ax.set_ylabel('Time')
-        ax.set_zlabel('BER')
+        # fig = plt.figure()
+        # ax = fig.add_subplot(111)
+        # min_x = min(time_vector)
+        # max_x = max(time_vector)
+        # time_n, time_bins, time_patches = ax.hist(time_vector, 10, (min_x, max_x))
+        # time_plot = plt.plot(time_bins)
+
+
+
+
+        # # print ber_vector
+        # fig = plt.figure()
+        # ax = fig.add_subplot(111)
+        # min_x = min(ber_vector)
+        # max_x = max(ber_vector)
+        # ber_n, ber_bins, ber_patches = ax.hist(ber_vector, 50, (min_x, max_x))
+        # ber_plot = plt.plot(ber_bins)
+
+        # z = solution_space[0]
+        # t = solution_space[1]
+        # b = solution_space[2]                             
+
+        # fig = plt.figure()
+
+        # ax = fig.add_subplot(111, projection='3d')
+        # # X, Y, Z = axes3d.get_test_data(0.05)
+        # # ax.plot_wireframe(z, t, b, rstride=10, cstride=10)
+        # ax.scatter(z, t, b)
+
+        # ax.set_xlabel('Z parameter')
+        # ax.set_ylabel('Time')
+        # ax.set_zlabel('BER')
 
         plt.show()
 
