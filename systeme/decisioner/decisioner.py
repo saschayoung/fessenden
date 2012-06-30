@@ -235,15 +235,47 @@ class DecisionMaker(object):
             ber_vector.append(record_of_parameters[i]['BER'])
 
 
+        # plt.rc('xtick', direction = 'out')
+        # plt.rc('ytick', direction = 'out')
+
+        # data = np.random.normal(0,1,100)
+
+        # fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
+        # axes = plt.subplot(111)
+        # # axes.axvline(np.mean(data), 0, data.max(), linewidth=2, color='red')
+        # axes.hist(data, bins=50, normed=True)
+        # axes.set_ylim(0, 1)
+        # axes.set_xlim(-3, 3)
+
+        # axes.spines['right'].set_color('none')
+        # axes.spines['top'].set_color('none')
+        # axes.xaxis.set_ticks_position('bottom')
+        # axes.spines['bottom'].set_position(('data', -0.05))
+        # axes.yaxis.set_ticks_position('left')
+        # axes.spines['left'].set_position(('data',-3.25))
+
+        # plt.show()
+
+        z = solution_space[0]
+        # t = solution_space[1]
+        # b = solution_space[2]                             
+
+        plt.rc('xtick', direction = 'out')
+        plt.rc('ytick', direction = 'out')
 
 
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        min_x = min(z_vector)
-        max_x = max(z_vector)
-        z_n, z_bins, z_patches = ax.hist(z_vector, 10, (min_x, max_x))
-        z_plot = plt.plot(z_bins)
+        fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
+        axes = plt.subplot(111)
+        axes.hist(z, 50, normed=True)
 
+        axes.spines['right'].set_color('none')
+        axes.spines['top'].set_color('none')
+        # axes.xaxis.set_ticks_position('bottom')
+        # axes.spines['bottom'].set_position(('data', -0.05))
+        # axes.yaxis.set_ticks_position('left')
+        # axes.spines['left'].set_position(('data',-3.25))
+
+        plt.show()
 
         # fig = plt.figure()
         # ax = fig.add_subplot(111)
