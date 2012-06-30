@@ -156,6 +156,9 @@ class DecisionMaker(object):
         print "\n\nDetails of `solution`: "
         print record_of_parameters[solution_index]
 
+        print "\n\nAlternate `solutions`: "
+        for i in alternative_solution_indices:
+            print unified_solution[i], record_of_parameters[i]
 
         
 
