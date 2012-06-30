@@ -156,6 +156,9 @@ class DecisionMaker(object):
         print "\n\nDetails of `solution`: "
         print record_of_parameters[solution_index]
 
+
+        hist, bin_edges = np.histogram(unified_solution, 50)
+
         for i in range(len(unified_solution)):
             s = unified_solution[i]
             if s == solution:
