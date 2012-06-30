@@ -64,10 +64,17 @@
 
 
 
-
+import pprint
 import time
 
 import numpy as np
+import matplotlib.mlab as mlab
+import matplotlib.pyplot as plt
+
+
+from mpl_toolkits.mplot3d import axes3d, Axes3D
+# import matplotlib.pyplot as plt
+# import numpy as np
 
 
 
@@ -98,7 +105,7 @@ class DecisionMaker(object):
         dist = [60.0, 50.0, 60.0]
         
         # our knobs
-        speed = [5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 65.0, 60.0, 65.0, 70.0, 75.0]
+        speed = [5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0, 70.0, 75.0]
         modulation = ['FSK', 'GFSK', 'OOK']
         alpha = 0.3
         Rs = [2.0e3, 2.4e3, 4.8e3, 9.6e3, 19.2e3, 38.4e3, 57.6e3, 125.0e3]
@@ -135,8 +142,8 @@ class DecisionMaker(object):
                                                        'mod' : m,
                                                        'BER' : b,
                                                        'SNR' : snr,
-                                                       'bitrate' : Rs[k],
-                                                       'alpha' : alpha}
+                                                       'bitrate' : Rs[k]}
+                                                       
                         index += 1
 
         solution_space = np.array(solution_set).T
@@ -145,11 +152,38 @@ class DecisionMaker(object):
         max_t = np.max(solution_space[1])
         max_b = np.max(solution_space[2])        
 
+
+        pprint.pprint(solution_set)
+
+        # this is the basic solution
+        #############################################################
         scaled_z = solution_space[0] / max_z
         scaled_t = solution_space[1] / max_t
         scaled_b = solution_space[2] / max_b
 
         unified_solution = scaled_z - scaled_t - scaled_b
+        #############################################################
+
+
+        # this changes the solution 
+        #############################################################
+        # scaled_z = 0.3333 * solution_space[0] / max_z
+        # scaled_t = 0.3333 * solution_space[1] / max_t
+        # scaled_b = 0.3333 * solution_space[2] / max_b
+
+        # unified_solution = scaled_z - scaled_t - scaled_b
+        #############################################################
+
+
+        # this changes the solution 
+        #############################################################
+        # scaled_z = 0.3333 * solution_space[0] / max_z
+        # scaled_t = 1.0 * solution_space[1] / max_t
+        # scaled_b = 0.3333 * solution_space[2] / max_b
+
+        # unified_solution = scaled_z - scaled_t - scaled_b
+        #############################################################
+
 
         solution = np.max(unified_solution)
         solution_index = np.where(unified_solution == solution)[0][0]
@@ -177,19 +211,56 @@ class DecisionMaker(object):
         base_time = toc1 - tic
         extended_time = toc2 - toc1
 
-        print "Time of initial solution calculation: %f seconds" %(base_time,)
-        print "Time of alternative solution extension: %f seconds" %(extended_time,)
+        # print "Time of initial solution calculation: %f seconds" %(base_time,)
+        # print "Time of alternative solution extension: %f seconds" %(extended_time,)
 
         print "\n\nDetails of `solution`: "
-        print record_of_parameters[solution_index]
+        print solution_index, solution, record_of_parameters[solution_index]
 
 
         print "\n\nAlternate `solutions`: "
         for i in alternative_solution_indices:
-            print unified_solution[i], record_of_parameters[i]
+            print i, unified_solution[i], record_of_parameters[i]
 
 
-        
+
+
+        ber_vector = []
+        for i in range(len(unified_solution)):
+            ber_vector.append(record_of_parameters[i]['BER'])
+
+
+        # print ber_vector
+        # fig = plt.figure()
+        # ax = fig.add_subplot(111)
+
+        # min_x = min(ber_vector)
+        # max_x = max(ber_vector)
+        # n, bins, patches = ax.hist(ber_vector, 50, (min_x, max_x))
+        # # print bins
+        # # print n
+
+        # l = plt.plot(bins)
+        # plt.show()
+
+        z = solution_space[0]
+        t = solution_space[1]
+        b = solution_space[2]                             
+
+        fig = plt.figure()
+
+        ax = fig.add_subplot(111, projection='3d')
+        # X, Y, Z = axes3d.get_test_data(0.05)
+        # ax.plot_wireframe(z, t, b, rstride=10, cstride=10)
+        ax.scatter(z, t, b)
+
+        ax.set_xlabel('Z parameter')
+        ax.set_ylabel('Time')
+        ax.set_zlabel('BER')
+
+        plt.show()
+
+
 
 
 
@@ -295,6 +366,11 @@ if __name__=='__main__':
 
 
 
+        # scaled_z = solution_space[0] / max_z
+        # scaled_t = solution_space[1] / max_t
+        # scaled_b = solution_space[2] / max_b
+
+        # unified_solution = scaled_z - scaled_t - scaled_b
 
 
 
