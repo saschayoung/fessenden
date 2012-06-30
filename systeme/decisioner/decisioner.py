@@ -264,7 +264,7 @@ class DecisionMaker(object):
         plt.rc('ytick', direction = 'out')
 
         fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
-        axes = plt.subplot(111)
+        axes = plt.subplot(221)
         axes.hist(z, 50, normed=True)
 
         axes.spines['right'].set_color('none')
@@ -274,7 +274,7 @@ class DecisionMaker(object):
 
 
         fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
-        axes = plt.subplot(111)
+        axes = plt.subplot(222)
         axes.hist(t, 50, normed=True)
 
         axes.spines['right'].set_color('none')
@@ -284,7 +284,7 @@ class DecisionMaker(object):
 
 
         fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
-        axes = plt.subplot(111)
+        axes = plt.subplot(223)
         axes.hist(b, 50, normed=True)
 
         axes.spines['right'].set_color('none')
@@ -317,15 +317,16 @@ class DecisionMaker(object):
         # b = solution_space[2]                             
 
         # fig = plt.figure()
+        fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
 
-        # ax = fig.add_subplot(111, projection='3d')
-        # # X, Y, Z = axes3d.get_test_data(0.05)
-        # # ax.plot_wireframe(z, t, b, rstride=10, cstride=10)
-        # ax.scatter(z, t, b)
+        ax = fig.add_subplot(224, projection='3d')
+        # X, Y, Z = axes3d.get_test_data(0.05)
+        # ax.plot_wireframe(z, t, b, rstride=10, cstride=10)
+        ax.scatter(z, t, b)
 
-        # ax.set_xlabel('Z parameter')
-        # ax.set_ylabel('Time')
-        # ax.set_zlabel('BER')
+        ax.set_xlabel('Z parameter')
+        ax.set_ylabel('Time')
+        ax.set_zlabel('BER')
 
         plt.show()
 
