@@ -146,14 +146,20 @@ class DecisionMaker(object):
                                                        
                         index += 1
 
+        print "index: ", index
         solution_space = np.array(solution_set).T
 
         max_z = np.max(solution_space[0])
         max_t = np.max(solution_space[1])
-        max_b = np.max(solution_space[2])        
+        max_b = np.max(solution_space[2])    
+
+        z_weight = 0.3333
+        t_weight = 1.0
+        b_weight = 1.0
 
 
-        pprint.pprint(solution_set)
+
+        # pprint.pprint(solution_set)
 
         # this is the basic solution
         #############################################################
@@ -161,7 +167,20 @@ class DecisionMaker(object):
         scaled_t = solution_space[1] / max_t
         scaled_b = solution_space[2] / max_b
 
-        unified_solution = scaled_z - scaled_t - scaled_b
+        unified_solution = z_weight*scaled_z - t_weight*scaled_t - b_weight*scaled_b
+        # unified_solution = scaled_z - scaled_t - scaled_b
+        #############################################################
+
+
+
+        # this is an unscaled solution
+        #############################################################
+        # scaled_z = solution_space[0]
+        # scaled_t = solution_space[1]
+        # scaled_b = solution_space[2]
+
+        # unified_solution = z_weight*scaled_z - t_weight*scaled_t - b_weight*scaled_b
+        # print "len(unified_solution): ", len(unified_solution)
         #############################################################
 
 
@@ -225,56 +244,56 @@ class DecisionMaker(object):
 
 
 
-        z_vector = []
-        time_vector = []
-        ber_vector = []
+        # z_vector = []
+        # time_vector = []
+        # ber_vector = []
 
-        for i in range(len(unified_solution)):
-            z_vector.append(record_of_parameters[i]['Z'])
-            time_vector.append(record_of_parameters[i]['T'])
-            ber_vector.append(record_of_parameters[i]['BER'])
-
-
-
-        z = solution_space[0]
-        t = solution_space[1]
-        b = solution_space[2]                             
-
-        plt.rc('xtick', direction = 'out')
-        plt.rc('ytick', direction = 'out')
+        # for i in range(len(unified_solution)):
+        #     z_vector.append(record_of_parameters[i]['Z'])
+        #     time_vector.append(record_of_parameters[i]['T'])
+        #     ber_vector.append(record_of_parameters[i]['BER'])
 
 
 
-        fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
-        axes = plt.subplot(221)
-        axes.hist(z, 50, normed=True)
-        axes.set_xlabel('Z parameter')
-        axes.set_ylabel('Instances in Solution Space')
-        axes.spines['right'].set_color('none')
-        axes.spines['top'].set_color('none')
-        axes.xaxis.set_ticks_position('bottom')
-        axes.yaxis.set_ticks_position('left')
+        # z = solution_space[0]
+        # t = solution_space[1]
+        # b = solution_space[2]                             
+
+        # plt.rc('xtick', direction = 'out')
+        # plt.rc('ytick', direction = 'out')
 
 
 
-        axes = plt.subplot(222)
-        axes.hist(t, 50, normed=True)
-        axes.set_xlabel('Time')
-        axes.set_ylabel('Instances in Solution Space')
-        axes.spines['right'].set_color('none')
-        axes.spines['top'].set_color('none')
-        axes.xaxis.set_ticks_position('bottom')
-        axes.yaxis.set_ticks_position('left')
+        # fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
+        # axes = plt.subplot(221)
+        # axes.hist(z, 50, normed=True)
+        # axes.set_xlabel('Z parameter')
+        # axes.set_ylabel('Instances in Solution Space')
+        # axes.spines['right'].set_color('none')
+        # axes.spines['top'].set_color('none')
+        # axes.xaxis.set_ticks_position('bottom')
+        # axes.yaxis.set_ticks_position('left')
 
 
-        axes = plt.subplot(223)
-        axes.hist(b, 50, normed=True)
-        axes.set_xlabel('Time')
-        axes.set_ylabel('Instances in Solution Space')
-        axes.spines['right'].set_color('none')
-        axes.spines['top'].set_color('none')
-        axes.xaxis.set_ticks_position('bottom')
-        axes.yaxis.set_ticks_position('left')
+
+        # axes = plt.subplot(222)
+        # axes.hist(t, 50, normed=True)
+        # axes.set_xlabel('Time')
+        # axes.set_ylabel('Instances in Solution Space')
+        # axes.spines['right'].set_color('none')
+        # axes.spines['top'].set_color('none')
+        # axes.xaxis.set_ticks_position('bottom')
+        # axes.yaxis.set_ticks_position('left')
+
+
+        # axes = plt.subplot(223)
+        # axes.hist(b, 50, normed=True)
+        # axes.set_xlabel('BER')
+        # axes.set_ylabel('Instances in Solution Space')
+        # axes.spines['right'].set_color('none')
+        # axes.spines['top'].set_color('none')
+        # axes.xaxis.set_ticks_position('bottom')
+        # axes.yaxis.set_ticks_position('left')
 
 
 
@@ -287,7 +306,7 @@ class DecisionMaker(object):
         # ax.set_ylabel('Time')
         # ax.set_zlabel('BER')
 
-        plt.show()
+        # plt.show()
 
 
 
