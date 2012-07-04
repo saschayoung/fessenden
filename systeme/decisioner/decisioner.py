@@ -68,15 +68,6 @@ import pprint
 import time
 
 import numpy as np
-import matplotlib.mlab as mlab
-import matplotlib.pyplot as plt
-
-
-from mpl_toolkits.mplot3d import axes3d, Axes3D
-# import matplotlib.pyplot as plt
-# import numpy as np
-
-
 
 class DecisionMaker(object):
 
@@ -130,7 +121,7 @@ class DecisionMaker(object):
                 for k in range(len(Rs)):
                     for m in modulation:
                         b = self.calculate_ber(snr, m, Rs[k], alpha)
-                        g = self.calculate_goodput(Rs[k])
+                        g = self.calculate_goodput(Rs[k], t)
                         solution_set.append([z, t, b, g])
 
                         record_of_parameters[index] = {'path' : p,
@@ -143,12 +134,12 @@ class DecisionMaker(object):
                                                        'mod' : m,
                                                        'BER' : b,
                                                        'SNR' : snr,
-                                                       'bitrate' : Rs[k]
+                                                       'bitrate' : Rs[k],
                                                        'goodput' : g}
                                                        
                         index += 1
 
-        print "index: ", index
+        # print "index: ", index
         solution_space = np.array(solution_set).T
 
         max_z = np.max(solution_space[0])
@@ -161,10 +152,6 @@ class DecisionMaker(object):
         b_weight = 1.0
         g_weight = 1.0
 
-
-
-        # pprint.pprint(solution_set)
-
         # this is the basic solution
         #############################################################
         scaled_z = solution_space[0] / max_z
@@ -176,47 +163,12 @@ class DecisionMaker(object):
                             - b_weight*scaled_b + g_weight* scaled_g)
         #############################################################
 
-
-
-        # this is an unscaled solution
-        #############################################################
-        # scaled_z = solution_space[0]
-        # scaled_t = solution_space[1]
-        # scaled_b = solution_space[2]
-
-        # unified_solution = z_weight*scaled_z - t_weight*scaled_t - b_weight*scaled_b
-        # print "len(unified_solution): ", len(unified_solution)
-        #############################################################
-
-
-        # this changes the solution 
-        #############################################################
-        # scaled_z = 0.3333 * solution_space[0] / max_z
-        # scaled_t = 0.3333 * solution_space[1] / max_t
-        # scaled_b = 0.3333 * solution_space[2] / max_b
-
-        # unified_solution = scaled_z - scaled_t - scaled_b
-        #############################################################
-
-
-        # this changes the solution 
-        #############################################################
-        # scaled_z = 0.3333 * solution_space[0] / max_z
-        # scaled_t = 1.0 * solution_space[1] / max_t
-        # scaled_b = 0.3333 * solution_space[2] / max_b
-
-        # unified_solution = scaled_z - scaled_t - scaled_b
-        #############################################################
-
-
         solution = np.max(unified_solution)
         solution_index = np.where(unified_solution == solution)[0][0]
 
         toc1 = time.time()
 
-
-
-        hist, bin_edges = np.histogram(unified_solution, 50)
+        hist, bin_edges = np.histogram(unified_solution, 100)
 
         alternative_solution_indices = []
 
@@ -228,8 +180,6 @@ class DecisionMaker(object):
                 alternative_solution_indices.append(i)
             else:
                 continue
-
-
 
         toc2 = time.time()
 
@@ -248,87 +198,13 @@ class DecisionMaker(object):
             print i, unified_solution[i], record_of_parameters[i]
 
             
+        # self.plot_data(unified_solution, solution_space)
+
+        
 
 
 
 
-
-
-
-        z_vec = solution_space[0]
-        t_vec = solution_space[1]
-        b_vec = solution_space[2]                             
-        g_vec = solution_space[3]                             
-
-        plt.rc('xtick', direction = 'out')
-        plt.rc('ytick', direction = 'out')
-
-        fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
-        axes = plt.subplot(111)
-        axes.hist(unified_solution, 50)
-        # axes.hist(unified_solution, 50, normed=True)
-        axes.set_xlabel('Unified Solution')
-        axes.set_ylabel('Instances in Solution Space')
-        axes.spines['right'].set_color('none')
-        axes.spines['top'].set_color('none')
-        axes.xaxis.set_ticks_position('bottom')
-        axes.yaxis.set_ticks_position('left')
-
-
-
-
-        fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
-        axes = plt.subplot(221)
-        axes.hist(z_vec, 50)
-        axes.set_xlabel('Z parameter')
-        axes.set_ylabel('Instances in Solution Space')
-        axes.spines['right'].set_color('none')
-        axes.spines['top'].set_color('none')
-        axes.xaxis.set_ticks_position('bottom')
-        axes.yaxis.set_ticks_position('left')
-
-
-
-        axes = plt.subplot(222)
-        axes.hist(t_vec, 50)
-        axes.set_xlabel('Time')
-        axes.set_ylabel('Instances in Solution Space')
-        axes.spines['right'].set_color('none')
-        axes.spines['top'].set_color('none')
-        axes.xaxis.set_ticks_position('bottom')
-        axes.yaxis.set_ticks_position('left')
-
-
-        axes = plt.subplot(223)
-        axes.hist(b_vec, 50)
-        axes.set_xlabel('BER')
-        axes.set_ylabel('Instances in Solution Space')
-        axes.spines['right'].set_color('none')
-        axes.spines['top'].set_color('none')
-        axes.xaxis.set_ticks_position('bottom')
-        axes.yaxis.set_ticks_position('left')
-
-
-        axes = plt.subplot(224)
-        axes.hist(g_vec, 50)
-        axes.set_xlabel('Goodput')
-        axes.set_ylabel('Instances in Solution Space')
-        axes.spines['right'].set_color('none')
-        axes.spines['top'].set_color('none')
-        axes.xaxis.set_ticks_position('bottom')
-        axes.yaxis.set_ticks_position('left')
-
-
-
-        fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
-
-        ax = fig.add_subplot(111, projection='3d')
-        ax.scatter(z, t, b)
-        ax.set_xlabel('Z parameter')
-        ax.set_ylabel('Time')
-        ax.set_zlabel('BER')
-
-        plt.show()
 
 
 
@@ -403,16 +279,19 @@ class DecisionMaker(object):
 
 
 
-    def calculate_goodput(self, Rs):
+    def calculate_goodput(self, Rs, t):
         """
         Calculate goodput.
+
+        Maximum number of packets in time t.
 
         """
         propogation_distance = 10.0
         speed_of_light = 3.0e8
         packet_size = 512.0
 
-        goodput = (propogation_distance / speed_of_light) + (packet_size / Rs)
+        goodput = t / ((propogation_distance / speed_of_light) + (packet_size / Rs))
+        
         return goodput
 
 
@@ -444,6 +323,85 @@ class DecisionMaker(object):
         erf = 1.0 - (a1*t + a2*t**2 + a3+t**3)*np.exp(-x**2)
 
         return erf
+
+
+
+
+
+    def plot_data(unified_solution, solution_space):
+        """
+        Plot data for visualization.
+
+        """
+        import matplotlib.mlab as mlab
+        import matplotlib.pyplot as plt
+        from mpl_toolkits.mplot3d import axes3d, Axes3D
+
+        z_vec = solution_space[0]
+        t_vec = solution_space[1]
+        b_vec = solution_space[2]                             
+        g_vec = solution_space[3]                             
+
+        plt.rc('xtick', direction = 'out')
+        plt.rc('ytick', direction = 'out')
+
+        fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
+        axes = plt.subplot(111)
+        axes.hist(unified_solution, 50)
+        axes.set_xlabel('Unified Solution')
+        axes.set_ylabel('Instances in Solution Space')
+        axes.spines['right'].set_color('none')
+        axes.spines['top'].set_color('none')
+        axes.xaxis.set_ticks_position('bottom')
+        axes.yaxis.set_ticks_position('left')
+
+        fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
+        axes = plt.subplot(221)
+        axes.hist(z_vec, 50)
+        axes.set_xlabel('Z parameter')
+        axes.set_ylabel('Instances in Solution Space')
+        axes.spines['right'].set_color('none')
+        axes.spines['top'].set_color('none')
+        axes.xaxis.set_ticks_position('bottom')
+        axes.yaxis.set_ticks_position('left')
+
+        axes = plt.subplot(222)
+        axes.hist(t_vec, 50)
+        axes.set_xlabel('Time')
+        axes.set_ylabel('Instances in Solution Space')
+        axes.spines['right'].set_color('none')
+        axes.spines['top'].set_color('none')
+        axes.xaxis.set_ticks_position('bottom')
+        axes.yaxis.set_ticks_position('left')
+
+        axes = plt.subplot(223)
+        axes.hist(b_vec, 50)
+        axes.set_xlabel('BER')
+        axes.set_ylabel('Instances in Solution Space')
+        axes.spines['right'].set_color('none')
+        axes.spines['top'].set_color('none')
+        axes.xaxis.set_ticks_position('bottom')
+        axes.yaxis.set_ticks_position('left')
+
+        axes = plt.subplot(224)
+        axes.hist(g_vec, 50)
+        axes.set_xlabel('Goodput')
+        axes.set_ylabel('Instances in Solution Space')
+        axes.spines['right'].set_color('none')
+        axes.spines['top'].set_color('none')
+        axes.xaxis.set_ticks_position('bottom')
+        axes.yaxis.set_ticks_position('left')
+
+
+        fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
+        ax = fig.add_subplot(111, projection='3d')
+        ax.scatter(z_vec, t_vec, b_vec)
+        ax.set_xlabel('Z parameter')
+        ax.set_ylabel('Time')
+        ax.set_zlabel('BER')
+
+        plt.show()
+
 
 
 if __name__=='__main__':
@@ -608,4 +566,37 @@ if __name__=='__main__':
         #     z_vector.append(record_of_parameters[i]['Z'])
         #     time_vector.append(record_of_parameters[i]['T'])
         #     ber_vector.append(record_of_parameters[i]['BER'])
+
+
+
+        # this is an unscaled solution
+        #############################################################
+        # scaled_z = solution_space[0]
+        # scaled_t = solution_space[1]
+        # scaled_b = solution_space[2]
+
+        # unified_solution = z_weight*scaled_z - t_weight*scaled_t - b_weight*scaled_b
+        # print "len(unified_solution): ", len(unified_solution)
+        #############################################################
+
+
+        # this changes the solution 
+        #############################################################
+        # scaled_z = 0.3333 * solution_space[0] / max_z
+        # scaled_t = 0.3333 * solution_space[1] / max_t
+        # scaled_b = 0.3333 * solution_space[2] / max_b
+
+        # unified_solution = scaled_z - scaled_t - scaled_b
+        #############################################################
+
+
+        # this changes the solution 
+        #############################################################
+        # scaled_z = 0.3333 * solution_space[0] / max_z
+        # scaled_t = 1.0 * solution_space[1] / max_t
+        # scaled_b = 0.3333 * solution_space[2] / max_b
+
+        # unified_solution = scaled_z - scaled_t - scaled_b
+        #############################################################
+
 
