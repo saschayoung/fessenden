@@ -130,7 +130,8 @@ class DecisionMaker(object):
                 for k in range(len(Rs)):
                     for m in modulation:
                         b = self.calculate_ber(snr, m, Rs[k], alpha)
-                        solution_set.append([z, t, b])
+                        g = self.calculate_goodput(Rs[k])
+                        solution_set.append([z, t, b, g])
 
                         record_of_parameters[index] = {'path' : p,
                                                        'X' : x,
@@ -142,7 +143,8 @@ class DecisionMaker(object):
                                                        'mod' : m,
                                                        'BER' : b,
                                                        'SNR' : snr,
-                                                       'bitrate' : Rs[k]}
+                                                       'bitrate' : Rs[k]
+                                                       'goodput' : g}
                                                        
                         index += 1
 
@@ -151,11 +153,13 @@ class DecisionMaker(object):
 
         max_z = np.max(solution_space[0])
         max_t = np.max(solution_space[1])
-        max_b = np.max(solution_space[2])    
+        max_b = np.max(solution_space[2])
+        max_g = np.max(solution_space[3])
 
         z_weight = 1.0
         t_weight = 1.0
         b_weight = 1.0
+        g_weight = 1.0
 
 
 
@@ -166,9 +170,10 @@ class DecisionMaker(object):
         scaled_z = solution_space[0] / max_z
         scaled_t = solution_space[1] / max_t
         scaled_b = solution_space[2] / max_b
+        scaled_g = solution_space[3] / max_g
 
-        unified_solution = z_weight*scaled_z - t_weight*scaled_t - b_weight*scaled_b
-        # unified_solution = scaled_z - scaled_t - scaled_b
+        unified_solution = (z_weight*scaled_z - t_weight*scaled_t
+                            - b_weight*scaled_b + g_weight* scaled_g)
         #############################################################
 
 
@@ -231,8 +236,8 @@ class DecisionMaker(object):
         base_time = toc1 - tic
         extended_time = toc2 - toc1
 
-        # print "Time of initial solution calculation: %f seconds" %(base_time,)
-        # print "Time of alternative solution extension: %f seconds" %(extended_time,)
+        print "Time of initial solution calculation: %f seconds" %(base_time,)
+        print "Time of alternative solution extension: %f seconds" %(extended_time,)
 
         print "\n\nDetails of `solution`: "
         print solution_index, solution, record_of_parameters[solution_index]
@@ -250,15 +255,16 @@ class DecisionMaker(object):
 
 
 
-        z = solution_space[0]
-        t = solution_space[1]
-        b = solution_space[2]                             
+        z_vec = solution_space[0]
+        t_vec = solution_space[1]
+        b_vec = solution_space[2]                             
+        g_vec = solution_space[3]                             
 
         plt.rc('xtick', direction = 'out')
         plt.rc('ytick', direction = 'out')
 
         fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
-        axes = plt.subplot(221)
+        axes = plt.subplot(111)
         axes.hist(unified_solution, 50)
         # axes.hist(unified_solution, 50, normed=True)
         axes.set_xlabel('Unified Solution')
@@ -269,9 +275,11 @@ class DecisionMaker(object):
         axes.yaxis.set_ticks_position('left')
 
 
-        axes = plt.subplot(222)
-        axes.hist(z, 50)
-        # axes.hist(z, 50, normed=True)
+
+
+        fig = plt.figure(figsize=(8,6), dpi=72, facecolor='w')
+        axes = plt.subplot(221)
+        axes.hist(z_vec, 50)
         axes.set_xlabel('Z parameter')
         axes.set_ylabel('Instances in Solution Space')
         axes.spines['right'].set_color('none')
@@ -281,9 +289,8 @@ class DecisionMaker(object):
 
 
 
-        axes = plt.subplot(223)
-        axes.hist(t, 50)
-        # axes.hist(t, 50, normed=True)
+        axes = plt.subplot(222)
+        axes.hist(t_vec, 50)
         axes.set_xlabel('Time')
         axes.set_ylabel('Instances in Solution Space')
         axes.spines['right'].set_color('none')
@@ -292,9 +299,8 @@ class DecisionMaker(object):
         axes.yaxis.set_ticks_position('left')
 
 
-        axes = plt.subplot(224)
-        axes.hist(b, 50)
-        # axes.hist(b, 50, normed=True)
+        axes = plt.subplot(223)
+        axes.hist(b_vec, 50)
         axes.set_xlabel('BER')
         axes.set_ylabel('Instances in Solution Space')
         axes.spines['right'].set_color('none')
@@ -302,6 +308,15 @@ class DecisionMaker(object):
         axes.xaxis.set_ticks_position('bottom')
         axes.yaxis.set_ticks_position('left')
 
+
+        axes = plt.subplot(224)
+        axes.hist(g_vec, 50)
+        axes.set_xlabel('Goodput')
+        axes.set_ylabel('Instances in Solution Space')
+        axes.spines['right'].set_color('none')
+        axes.spines['top'].set_color('none')
+        axes.xaxis.set_ticks_position('bottom')
+        axes.yaxis.set_ticks_position('left')
 
 
 
@@ -385,6 +400,20 @@ class DecisionMaker(object):
             Pb = (0.5)-(0.5)*self._erf(x/np.sqrt(2.0))
 
         return Pb
+
+
+
+    def calculate_goodput(self, Rs):
+        """
+        Calculate goodput.
+
+        """
+        propogation_distance = 10.0
+        speed_of_light = 3.0e8
+        packet_size = 512.0
+
+        goodput = (propogation_distance / speed_of_light) + (packet_size / Rs)
+        return goodput
 
 
 
