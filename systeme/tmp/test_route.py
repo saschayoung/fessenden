@@ -52,7 +52,8 @@ class Route(object):
         self.paths['c'] = c.get_path()
 
 
-
+        for i in self.paths:
+            print self.paths[i]
 
     
 
