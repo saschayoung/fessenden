@@ -2,7 +2,7 @@
 
 import time
 
-from utils import nxt
+from utils import nxt_utils
 
 # from location.location import Location
 
@@ -39,7 +39,7 @@ from utils import nxt
 class Test(object):
 
     def __init__(self):
-        brick = nxt.connect_to_brick()
+        brick = nxt_utils.connect_to_brick()
         self.color = Color20(brick, PORT_2)
         self.color.set_light_color(13)
         

@@ -123,7 +123,7 @@ class DecisionMaker(object):
             print i, unified_solution[i], record_of_parameters[i]
 
             
-        # self.plot_data(unified_solution, solution_space)
+        self.plot_data(unified_solution, solution_space)
 
 
 
