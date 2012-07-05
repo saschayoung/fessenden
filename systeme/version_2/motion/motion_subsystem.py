@@ -164,15 +164,6 @@ class MotionSubsystem(threading.Thread):
 
         """
 
-
-        # current_location = self.kb.get_state()['current_location']
-        # if DEBUG:
-        #     print "location: ", location
-        #     print "current_location: ", current_location
-        
-        
-
-        # while not location == current_location:
         while True:
             if self.stop_event.isSet():
                 break
@@ -189,7 +180,6 @@ class MotionSubsystem(threading.Thread):
 
         if DEBUG:
             print "motion.__simple_motion(), pausing motion"
-
 
 
 
@@ -216,145 +206,4 @@ class MotionSubsystem(threading.Thread):
 
 
             
-
-            # else:
-            #     self.motion.find_line()
-            #     self.motion.follow_line(speed)
-            #     current_location = self.kb.get_state()['current_location']
-            #     print "location: ", location
-            #     print "current_location: ", current_location
-
-
-
-
-        # path = [(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,1)]
-        
-        # while not self.stop_event.isSet():
-
-            
-        #     for p in path:
-        #         if self.stop_event.isSet():
-        #             break
-        #         else:
-        #             self.__general_motion(p[0],p[1], speed = 25)
-
-
-
-
-
-
-    # def shutdown(self):
-    #     print "\n\n\nsetting self.stop_event"
-    #     self.stop_event.set()
-    #     print "\n\n\nself.stop_event has been set"
-    #     print "\n\n\nstopping motion"
-    #     self.motion.halt_motion('coast')
-    #     print "\n\n\nmotion has been stopped."
-            # motion_status = self.__follow_line_until_location(location, speed)
-            # if motion_status == 'line lost':
-            #     self.motion.find_line()
-            # elif motion_status == 'arrived at target':
-            #     break
-            # else:
-            #     print "__simple_motion() error"
-
-                
-
-
-
-
-    # def __follow_line_until_location(self, location, speed):
-    #     """
-    #     Follow line.
-
-    #     This function moves in a forward direction following a
-    #     line. If the line disappears, forward motion stops. The
-    #     presence of the line is based on readings from the light
-    #     sensor.
-
-    #     """
-    #     if DEBUG:
-    #         print "Following line"
-    #     self.motion.go_forward(speed)
-    #     while True:
-    #         if not self.motion.line_detected():
-    #             self.motion.halt_motion()
-    #             return 'line lost'
-    #         current_location = self.kb.get_state()['current_location']
-
-    #         if location == int(current_location):
-    #             self.motion.halt_motion()
-    #             return 'arrived at target'
-
-
-
-
-
-
-    # def move_until_location(self, location, speed):
-    #     state = self.kb.get_state()
-    #     current_location = state['current_location']
-        
-    #     while not location == current_location:
-    #         motion_status = self.follow_line_until_location(location, speed)
-    #         if motion_status == 'line lost':
-    #             self.find_line()
-    #         elif motion_status == 'arrived at target':
-    #             break
-    #         else:
-    #             print "move_until_location() error"
-
-
-        # while not destination == current_location:
-        #     self.motion.go_forward(speed)
-        #     while True:
-        #         if not self.motion.line_detected():
-        #             self.motion.halt_motion()
-        #             if DEBUG:
-        #                 print "line_lost"
-        #             self.find_line()
-        #             continue
-        #         self.
-
-
-        # state = self.kb.get_state()
-        # current_location = state['current_location']
-        
-        # while not location == current_location:
-        #     self.__move_forward(speed)
-        #     while True:
-        #         if not self.__line_detected():
-        #             self.halt_motion()
-        #             self.find_line()
-        #         current_location = self.kb.get_state()['current_location']
-
-        #         if location == int(current_location):
-        #             self.halt_motion()
-        #             return 'arrived at target'
-        #         motion_status = self.follow_line_until_location(location, speed)
-
-
-
-        #     if motion_status == 'line lost':
-        #         self.find_line()
-        #     elif motion_status == 'arrived at target':
-        #         break
-        #     else:
-        #         print "move_until_location() error"
-
-
-
-
-
-
-        # self.__move_forward(speed)
-        # while True:
-        #     if not self.__line_detected():
-        #         self.halt_motion()
-        #         return 'line lost'
-        #     current_location = self.kb.get_state()['current_location']
-
-        #     if location == int(current_location):
-        #         self.halt_motion()
-        #         return 'arrived at target'
 
