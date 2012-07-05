@@ -4,21 +4,46 @@ import time
 
 import utils 
 
-import nxt.locator
+from sensor.color_sensor import ColorSensor
 
-def connect_to_brick():
-    """
-    Connect to NXT Brick.
+class Test(object):
+
+    def __init__(self):
+        brick = utils.connect_to_brick()
+        self.color = ColorSensor(brick)
+
+    def run(self):
+        print self.color.get_color_reading()
+
+    def shutdown(self):
+        
+        self.color.kill_color_sensor()
     
-    """
-    return nxt.locator.find_one_brick()
     
+
+
+if __name__ == '__main__':
+    main = Test()
+    while True:
+        try:
+            main.run()
+            time.sleep(0.5)
+        except KeyboardInterrupt:
+            break
+    main.shurdown()
+
+
+
 
 
 
 # from location.location import Location
 
 # from motion.motion_subsystem import MotionSubsystem
+
+
+
+
 
 # class Controller(object):
 
@@ -48,38 +73,6 @@ def connect_to_brick():
 
 
 
-class Test(object):
-
-    def __init__(self):
-        brick = connect_to_brick()
-        from nxt.sensor import *
-        self.color = Color20(brick, PORT_2)
-        self.color.set_light_color(13)
-        
-    
-    def get_color_reading(self):
-        """
-        Get color value from NXT color sensor.
-
-        """
-        return self.color.get_sample()
-
-
-    def kill_color_sensor(self):
-        """
-        Turn off NXT color sensor
-
-        """
-        self.color.set_color(17)
 
 
 
-if __name__ == '__main__':
-    main = Test()
-    while True:
-        try:
-            print main.get_color_reading()
-            time.sleep(0.5)
-        except KeyboardInterrupt:
-            break
-    main.kill_color_sensor()
