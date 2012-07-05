@@ -4,6 +4,19 @@ import time
 
 import utils 
 
+import nxt.locator
+
+
+def connect_to_brick():
+    """
+    Connect to NXT Brick.
+    
+    """
+    return nxt.locator.find_one_brick()
+    
+
+
+
 # from location.location import Location
 
 # from motion.motion_subsystem import MotionSubsystem
@@ -39,7 +52,7 @@ import utils
 class Test(object):
 
     def __init__(self):
-        brick = utils.nxt_utils.connect_to_brick()
+        brick = connect_to_brick()
         self.color = Color20(brick, PORT_2)
         self.color.set_light_color(13)
         
