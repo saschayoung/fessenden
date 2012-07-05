@@ -6,7 +6,6 @@ import utils
 
 import nxt.locator
 
-
 def connect_to_brick():
     """
     Connect to NXT Brick.
@@ -53,6 +52,7 @@ class Test(object):
 
     def __init__(self):
         brick = connect_to_brick()
+        from nxt.sensor import *
         self.color = Color20(brick, PORT_2)
         self.color.set_light_color(13)
         
