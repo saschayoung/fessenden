@@ -6,7 +6,7 @@ from nxt.motor import *
 from nxt.sensor import *
 
 
-DEBUG = True
+DEBUG = False
 
 class MotionAPI(object):
 

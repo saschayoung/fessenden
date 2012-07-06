@@ -60,8 +60,10 @@ class Controller(object):
         Shutdown subsytems before stopping.
 
         """
-        self.target.kill_sensor()
+        self.tracker.kill_sensor()
+        self.motion.join()
         self.location.join()  # shut this down last
+        
 
 
 
@@ -76,22 +78,15 @@ class Controller(object):
                 print "fsm: motion.set_State('go')"
                 self.motion.set_speed(25)
                 self.motion.set_state('go')
-                # while True:
-                #     if self.current_location == destination:
-                #         print "current_location = %s" %(self.current_location,)
-                #         self.motion.set_state('stop')
-                #         break
-                #     else:
-                #         continue
                 while not self.current_location == destination:
-                    self.target.run()
+                    self.tracker.run()
                     time.sleep(0.1)
                 else:
                     print "current_location = %s" %(self.current_location,)
                     self.motion.set_state('stop')
                     print "arrived at destination"
 
-                    x, y = self.target.tally_results()
+                    x, y = self.tracker.tally_results()
                     print "Targets found = %d" %(x,)
                     print "Anti-targets found = %d" %(y,)
 
@@ -109,6 +104,13 @@ if __name__ == '__main__':
 
 
 
+                # while True:
+                #     if self.current_location == destination:
+                #         print "current_location = %s" %(self.current_location,)
+                #         self.motion.set_state('stop')
+                #         break
+                #     else:
+                #         continue
 
 
 

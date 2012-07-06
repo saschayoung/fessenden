@@ -32,7 +32,8 @@ class TargetTracker(object):
         self.anti_target_color = self._color_to_number(Y)
 
         self.sensor.set_light_color(13)
-        self.tracking_array = np.array([])
+        
+        self.tracking_array = []
 
 
 
@@ -100,7 +101,7 @@ class TargetTracker(object):
         Reset coounters.
 
         """
-        self.tracking_array = np.array([])
+        self.tracking_array = np.array([0])
 
 
     def run(self):
@@ -108,7 +109,10 @@ class TargetTracker(object):
         Count targets and anti_targets.
 
         """
-        self.tracking_array = np.append(self.tracking_array, self._get_value())
+        r = self._get_value()
+        # print r
+        self.tracking_array.append(r)
+        # = np.append(self.tracking_array, self._get_value())
 
 
     def tally_results(self):
@@ -126,12 +130,15 @@ class TargetTracker(object):
             Number of anti_targets tracked.
 
         """
-        a = self.tracking_array
-        b = self.tracking_array
+        # print self.tracking_array
+        a = np.array(self.tracking_array)
+        b = np.array(self.tracking_array)
 
         a[a!=self.target_color] = 0
         b[b!=self.anti_target_color] = 0
 
+        # print a
+        # print b
         x = 0
         for i in range(len(a)-1):
             if a[i] == 0 and a[i+1] == self.target_color:
