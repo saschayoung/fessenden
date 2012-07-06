@@ -245,7 +245,7 @@ class DecisionMaker(object):
 
 
 
-    def plot_data(unified_solution, solution_space):
+    def plot_data(self, unified_solution, solution_space):
         """
         Plot data for visualization.
 

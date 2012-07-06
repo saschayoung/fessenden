@@ -101,7 +101,7 @@ class TargetTracker(object):
         Reset coounters.
 
         """
-        self.tracking_array = np.array([0])
+        self.tracking_array = []
 
 
     def run(self):

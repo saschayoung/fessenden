@@ -78,15 +78,15 @@ class Controller(object):
                 print "fsm: motion.set_State('go')"
                 self.motion.set_speed(25)
                 self.motion.set_state('go')
+                
                 while not self.current_location == destination:
                     self.tracker.run()
                     time.sleep(0.1)
-                else:
-                    print "current_location = %s" %(self.current_location,)
-                    self.motion.set_state('stop')
-                    print "arrived at destination"
 
+                else:
+                    self.motion.set_state('stop')
                     x, y = self.tracker.tally_results()
+                    self.tracker.reset()
                     print "Targets found = %d" %(x,)
                     print "Anti-targets found = %d" %(y,)
 
