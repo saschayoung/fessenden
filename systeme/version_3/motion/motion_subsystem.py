@@ -83,7 +83,7 @@ class MotionSubsystem(threading.Thread):
                     self.general_motion()
                     continue
                 
-                elif self.last_state = 'go':
+                elif self.last_state == 'go':
                     continue
 
                 else:
