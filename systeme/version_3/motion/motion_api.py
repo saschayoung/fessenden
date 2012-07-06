@@ -127,7 +127,7 @@ class MotionAPI(object):
 
         This function is responsible for forward motion, causing the
         motors to run indefinitely, until the motors are stopped by a
-        `__halt_motion` command. Control should return to calling
+        `halt_motion` command. Control should return to calling
         function immediately. Motors *should* synchronize for forward
         motion in a straight line. This is a private/internal
         function.
