@@ -60,7 +60,7 @@ class Controller(object):
         Shutdown subsytems before stopping.
 
         """
-        self.color.kill_color_sensor()
+        # self.color.kill_color_sensor()
         self.location.join()  # shut this down last
 
 
