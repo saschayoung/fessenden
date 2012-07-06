@@ -69,7 +69,7 @@ class Controller(object):
         destination = 7
         while True:
             if self.fsm_state == 'beginning':
-                self.fsm_state == 'traverse_path':
+                self.fsm_state = 'traverse_path'
                 continue
 
             if self.fsm_state == 'traverse_path':
