@@ -148,8 +148,8 @@ class MotionAPI(object):
         if (power < 5) or (power > 128):
             print "`power` must be: 5 >= power >= 128"
             raise ValueError
-        self.nxt.motor_left.run(power, regulated)
-        self.nxt.motor_right.run(power, regulated)
+        self.motor_left.run(power, regulated)
+        self.motor_right.run(power, regulated)
 
 
 
@@ -176,11 +176,11 @@ class MotionAPI(object):
             raise ValueError
 
         if method == 'brake':
-            self.nxt.motor_left.brake()
-            self.nxt.motor_right.brake()
+            self.motor_left.brake()
+            self.motor_right.brake()
         else:
-            self.nxt.motor_left.idle()
-            self.nxt.motor_right.idle()
+            self.motor_left.idle()
+            self.motor_right.idle()
 
 
 
