@@ -22,7 +22,7 @@ class Controller(object):
         self.fsm_state = 'beginning'
         brick = utils.connect_to_brick()
         
-        self.color = ColorSensor(brick)
+        # self.color = ColorSensor(brick)
         self.location = Location(self.location_callback)
         self.motion = MotionSubsystem(brick)
 
@@ -74,6 +74,7 @@ class Controller(object):
 
             if self.fsm_state == 'traverse_path':
                 print "fsm: motion.set_State('go')"
+                self.motion.set_speed(25)
                 self.motion.set_state('go')
                 while True:
                     if self.current_location == destination:
