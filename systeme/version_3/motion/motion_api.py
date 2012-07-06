@@ -129,8 +129,7 @@ class MotionAPI(object):
         motors to run indefinitely, until the motors are stopped by a
         `halt_motion` command. Control should return to calling
         function immediately. Motors *should* synchronize for forward
-        motion in a straight line. This is a private/internal
-        function.
+        motion in a straight line. 
 
         Paramters
         ---------

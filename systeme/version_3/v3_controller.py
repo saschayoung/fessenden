@@ -4,7 +4,7 @@ import time
 
 import utils 
 
-from sensor.color_sensor import ColorSensor
+from sensor.target_tracker import TargetTracker
 
     
 from location.location import Location
@@ -22,7 +22,7 @@ class Controller(object):
         self.fsm_state = 'beginning'
         brick = utils.connect_to_brick()
         
-        # self.color = ColorSensor(brick)
+        self.tracker = TargetTracker(brick)
         self.location = Location(self.location_callback)
         self.motion = MotionSubsystem(brick)
 
@@ -60,7 +60,7 @@ class Controller(object):
         Shutdown subsytems before stopping.
 
         """
-        # self.color.kill_color_sensor()
+        self.target.kill_sensor()
         self.location.join()  # shut this down last
 
 
@@ -76,14 +76,25 @@ class Controller(object):
                 print "fsm: motion.set_State('go')"
                 self.motion.set_speed(25)
                 self.motion.set_state('go')
-                while True:
-                    if self.current_location == destination:
-                        print "current_location = %s" %(self.current_location,)
-                        self.motion.set_state('stop')
-                        break
-                    else:
-                        continue
-                print "arrived at destination"
+                # while True:
+                #     if self.current_location == destination:
+                #         print "current_location = %s" %(self.current_location,)
+                #         self.motion.set_state('stop')
+                #         break
+                #     else:
+                #         continue
+                while not self.current_location == destination:
+                    self.target.run()
+                    time.sleep(0.1)
+                else:
+                    print "current_location = %s" %(self.current_location,)
+                    self.motion.set_state('stop')
+                    print "arrived at destination"
+
+                    x, y = self.target.tally_results()
+                    print "Targets found = %d" %(x,)
+                    print "Anti-targets found = %d" %(y,)
+
                 break
         
         
