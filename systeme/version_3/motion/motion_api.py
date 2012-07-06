@@ -205,7 +205,7 @@ class MotionAPI(object):
         """
         self.light.set_illuminated(True)
         light_reading = self.light.get_sample()
-        if (light_reading() < threshold):
+        if (light_reading < threshold):
             return True
         else:
             return False
