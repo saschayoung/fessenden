@@ -24,7 +24,7 @@ class Controller(object):
         
         self.color = ColorSensor(brick)
         self.location = Location(self.location_callback)
-        self.motion = MotionSubsystem(self.motion_callback, brick)
+        self.motion = MotionSubsystem(brick)
 
 
     def location_callback(self, current_location):
