@@ -92,6 +92,7 @@ class Location(threading.Thread):
 
         """
         while not self.stop_event.isSet():
+            location = self._get_location()
             self.callback(location)
             
             # location = self._get_location()

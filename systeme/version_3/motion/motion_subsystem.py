@@ -125,14 +125,14 @@ class MotionSubsystem(threading.Thread):
         self.motion.go_forward(self.speed)
         while True:
             if self.stop_event.isSet():
-                self.motion.stop_motion()
+                self.motion.halt_motion()
                 break
             if self.current_state == 'stop':
                 self.motion.halt_motion()
                 break
             if not self.motion.line_detected():
                 self.motion.halt_motion()
-                self.find_line()
+                self.motion.find_line()
                 self.motion.go_forward()
                 continue
                 
