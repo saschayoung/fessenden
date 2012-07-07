@@ -91,11 +91,11 @@ class Controller(object):
                 self.motion.set_speed(speed)
                 self.motion.set_state('go')
                 while not self.current_location == start:
-                    time.sleep(0.01)
+                    time.sleep(0.1)
                 else:
                     self.motion.set_state('stop')
                     self.fsm_state = 'traverse_path'
-                    continue
+                    break
 
             if self.fsm_state == 'traverse_path':
                 print "fsm: motion.set_State('go')"

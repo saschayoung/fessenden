@@ -114,6 +114,7 @@ class MotionSubsystem(threading.Thread):
             Vehicle speed
 
         """
+        print "speed set to %d" %(speed,)
         self.speed = speed
 
 
