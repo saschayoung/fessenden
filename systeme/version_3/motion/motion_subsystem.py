@@ -134,7 +134,7 @@ class MotionSubsystem(threading.Thread):
             if not self.motion.line_detected():
                 self.motion.halt_motion()
                 self.motion.find_line()
-                self.motion.go_forward()
+                self.motion.go_forward(self.speed)
                 continue
                 
             
