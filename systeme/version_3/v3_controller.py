@@ -83,7 +83,7 @@ class Controller(object):
         Determine actual speed of AV.
 
         """
-        speed = 75
+        speed = 35
         start = 1
         destination = 2
         while True:
@@ -91,11 +91,13 @@ class Controller(object):
                 self.motion.set_speed(speed)
                 self.motion.set_state('go')
                 while not self.current_location == start:
-                    time.sleep(0.1)
+                    time.sleep(0.01)
                 else:
                     self.motion.set_state('stop')
+                    time.sleep(0.1)
+
                     self.fsm_state = 'traverse_path'
-                    break
+                    continue
 
             if self.fsm_state == 'traverse_path':
                 print "fsm: motion.set_State('go')"
