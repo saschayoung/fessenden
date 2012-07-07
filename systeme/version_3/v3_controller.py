@@ -47,7 +47,7 @@ class Controller(object):
 
     def build_route(self):
         self.path_a = Path(name='A', distance=62.0, direction='left')
-        self.path_b = Path(name='B', distance=48.0.0, direction='straight')
+        self.path_b = Path(name='B', distance=48.0, direction='straight')
         self.path_c = Path(name='C', distance=87.5, direction='right')
 
 
