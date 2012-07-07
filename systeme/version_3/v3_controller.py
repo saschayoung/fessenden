@@ -4,13 +4,13 @@ import time
 
 import utils 
 
-from sensor.target_tracker import TargetTracker
 
     
 from location.location import Location
 
 from motion.motion_subsystem import MotionSubsystem
-
+from route.path import Path
+from sensor.target_tracker import TargetTracker
 
 
 
@@ -45,6 +45,16 @@ class Controller(object):
 
 
 
+    def build_route(self):
+        self.path_a = Path(name='A', distance=62.0, direction='left')
+        self.path_b = Path(name='B', distance=48.0.0, direction='straight')
+        self.path_c = Path(name='C', distance=87.5, direction='right')
+
+
+
+
+
+
     def run(self):
         """
         Run AV controller.
@@ -52,8 +62,9 @@ class Controller(object):
         """
         self.location.start()
         self.motion.start()
-        self.fsm()
-
+        self.profile_speed()
+        # self.fsm()
+ 
 
     def shutdown(self):
         """
@@ -63,14 +74,59 @@ class Controller(object):
         self.tracker.kill_sensor()
         self.motion.join()
         self.location.join()  # shut this down last
+
+
+
+
+    def profile_speed(self):
+        """
+        Determine actual speed of AV.
+
+        """
+        speed = 25
+        start = 1
+        destination = 2
+        while True:
+            if self.fsm_state == 'beginning':
+                self.motion.set_speed(speed)
+                self.motion.set_state('go')
+                while not self.current_location == start:
+                    time.sleep(0.01)
+                self.fsm_state = 'traverse_path'
+                continue
+
+            if self.fsm_state == 'traverse_path':
+                print "fsm: motion.set_State('go')"
+
+                self.motion.set_speed(speed)
+                self.motion.set_state('go')
+                tic = time.time()
+                
+                while not self.current_location == destination:
+                    time.sleep(0.01)
+
+                else:
+                    self.motion.set_state('stop')
+                    toc = time.time()
+                    print "speed = %d   time = %f" %(speed, toc-tic)
+
+                break
         
 
 
 
     def fsm(self):
-        destination = 7
+        """
+        AV finite state machine.
+
+        """
+        start = 1
+        destination = 2
         while True:
             if self.fsm_state == 'beginning':
+                self.motion.set_speed(25)
+                self.motion.set_state('go')
+                
                 self.fsm_state = 'traverse_path'
                 continue
 
@@ -101,49 +157,6 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
     main.shutdown()
-
-
-
-                # while True:
-                #     if self.current_location == destination:
-                #         print "current_location = %s" %(self.current_location,)
-                #         self.motion.set_state('stop')
-                #         break
-                #     else:
-                #         continue
-
-
-
-    # def motion_callback(self, has_arrived):
-    #     """
-    #     Callback for motion module.
-
-    #     This function is used by the motion subsystem to relay the
-    #     current status--whether the robot has arrived at the desired
-    #     destination--back to the controller.
-
-    #     Parameters
-    #     ----------
-    #     has_arrived : bool
-    #         `True` if robot has arrived at desired destination.
-
-    #     """
-    #     self.has_arrived = has_arrived
-
-
-# class Test(object):
-
-#     def __init__(self):
-#         brick = utils.connect_to_brick()
-#         self.color = ColorSensor(brick)
-
-#     def run(self):
-#         print self.color.get_color_reading()
-
-#     def shutdown(self):
-        
-#         self.color.kill_color_sensor()
-
 
 
 

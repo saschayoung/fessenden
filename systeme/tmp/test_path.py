@@ -12,6 +12,7 @@ class Path(object):
     - a name,
     - an explored value,
     - a distance,
+    - a direction
     - a start node,
     - an end node,
     - a direction,
