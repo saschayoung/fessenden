@@ -83,7 +83,7 @@ class Controller(object):
         Determine actual speed of AV.
 
         """
-        speed = 35
+        speed = 75
         start = 1
         destination = 2
         while True:
