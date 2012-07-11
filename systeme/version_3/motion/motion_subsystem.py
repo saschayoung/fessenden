@@ -80,6 +80,7 @@ class MotionSubsystem(threading.Thread):
                 if self.last_state == 'stop':
                     self.last_state = 'go'
                     print "motion: go"
+                    self.make_turn()
                     self.general_motion()
                     continue
                 
@@ -127,32 +128,31 @@ class MotionSubsystem(threading.Thread):
 
 
     def make_turn(self):
-        pass
-    # def turn_onto_new_path(self, angle):
-    #     """
-    #     Turn onto a new path.
+        """
+        Make vehicle turn on selected path.
 
-    #     This function implements vehicle turning for path choice. Move
-    #     forward a small distance and then turn in place according to
-    #     `angle`. Finally reacquire path with `find_line()`.
+        """
+        if self.direction = 'straight':
+            return
+        elif direction = 'left':
+            turn_angle = -90
+        elif direction 'right':
+            turn_angle = 90
+        else:
+            print "direction not set, going straight"
+            return        
 
-    #     Parameters
-    #     ----------
-    #     angle : float
-    #         Turn angle, in degrees, measured positive
-    #         clockwise, negative counter-clockwise.
+        self.motion.go_forward_n(5)
+        while self.motion.motors_busy():
+            time.sleep(0.01)
 
-    #     """
+        self.motion.turn_in_place(turn_angle)
+        while self.motion.motors_busy():
+            time.sleep(0.01)
+
+        self.motion.find_line()
         
-    #     self.go_forward_n(2, 75)
-    #     while self.__motors_busy():
-    #         time.sleep(0.01)
 
-    #     self.__turn_in_place(angle)
-    #     while self.__motors_busy():
-    #         time.sleep(0.01)
-
-    #     self.find_line()
 
 
 

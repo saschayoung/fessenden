@@ -93,7 +93,6 @@ class Controller(object):
                     self.motion.set_state('stop')
                     time.sleep(0.1)
                     fsm_state = 'before_traverse'
-                    break
                     continue
 
 
@@ -106,6 +105,8 @@ class Controller(object):
 
             if fsm_state == 'traverse_path':
                 print "fsm: motion.set_State('go')"
+                
+                self.motion.set_direction(current_path.direction)
                 self.motion.set_speed(25)
                 self.motion.set_state('go')
                 while not self.current_location == destination:
