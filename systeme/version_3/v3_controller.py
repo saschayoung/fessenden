@@ -19,7 +19,7 @@ class Controller(object):
 
     def __init__(self):
         self.current_location = 0
-        self.fsm_state = 'beginning'
+        # self.fsm_state = 'beginning'
         brick = utils.connect_to_brick()
         
         self.tracker = TargetTracker(brick)
@@ -51,10 +51,6 @@ class Controller(object):
         self.path_c = Path(name='C', distance=87.5, direction='right')
 
 
-
-
-
-
     def run(self):
         """
         Run AV controller.
@@ -62,8 +58,7 @@ class Controller(object):
         """
         self.location.start()
         self.motion.start()
-        self.profile_speed()
-        # self.fsm()
+        self.fsm()
  
 
     def shutdown(self):
@@ -77,80 +72,73 @@ class Controller(object):
 
 
 
-
-    def profile_speed(self):
+    def fsm(self):
         """
-        Determine actual speed of AV.
+        AV finite state machine.
 
         """
-        speed = 75
+        fsm_state = 'first_time'
         start = 1
         destination = 2
+        
+
         while True:
-            if self.fsm_state == 'beginning':
-                self.motion.set_speed(speed)
+            if fsm_state == 'first_time':
+                self.motion.set_speed(25)
                 self.motion.set_state('go')
                 while not self.current_location == start:
                     time.sleep(0.01)
                 else:
                     self.motion.set_state('stop')
                     time.sleep(0.1)
-
-                    self.fsm_state = 'traverse_path'
+                    fsm_state = 'before_traverse'
                     continue
 
-            if self.fsm_state == 'traverse_path':
-                print "fsm: motion.set_State('go')"
 
-                self.motion.set_speed(speed)
-                self.motion.set_state('go')
-                tic = time.time()
-                
-                while not self.current_location == destination:
-                    time.sleep(0.01)
-
-                else:
-                    self.motion.set_state('stop')
-                    toc = time.time()
-                    print "speed = %d   time = %f" %(speed, toc-tic)
-
-                break
-        
-
-
-
-    def fsm(self):
-        """
-        AV finite state machine.
-
-        """
-        start = 1
-        destination = 2
-        while True:
-            if self.fsm_state == 'beginning':
-                self.motion.set_speed(25)
-                self.motion.set_state('go')
-                
-                self.fsm_state = 'traverse_path'
+            if fsm_state == 'before_traverse':
+                fsm_state = 'traverse_path'
                 continue
+                
 
-            if self.fsm_state == 'traverse_path':
+            if fsm_state == 'traverse_path':
                 print "fsm: motion.set_State('go')"
                 self.motion.set_speed(25)
                 self.motion.set_state('go')
-                
                 while not self.current_location == destination:
                     self.tracker.run()
                     time.sleep(0.1)
-
                 else:
                     self.motion.set_state('stop')
                     x, y = self.tracker.tally_results()
                     self.tracker.reset()
-                    print "Targets found = %d" %(x,)
-                    print "Anti-targets found = %d" %(y,)
+                    # print "Targets found = %d" %(x,)
+                    # print "Anti-targets found = %d" %(y,)
+                    fsm_state = 'before_traverse'
+                    continue
 
-                break
+
+            if fsm_state == 'after_traverse':
+                fsm_state = 'go_to_beginning'
+                continue
+
+
+
+            if fsm_state == 'go_to_beginning':
+                self.motion.set_speed(25)
+                self.motion.set_state('go')
+                while not self.current_location == start:
+                    time.sleep(0.01)
+                else:
+                    self.motion.set_state('stop')
+                    time.sleep(0.1)
+                    fsm_state = 'before_traverse'
+                    continue
+
+            
+
+
+
+
         
         
 
@@ -164,3 +152,41 @@ if __name__ == '__main__':
 
 
 
+    # def profile_speed(self):
+    #     """
+    #     Determine actual speed of AV.
+
+    #     """
+    #     speed = 75
+    #     start = 1
+    #     destination = 2
+    #     while True:
+    #         if self.fsm_state == 'beginning':
+    #             self.motion.set_speed(speed)
+    #             self.motion.set_state('go')
+    #             while not self.current_location == start:
+    #                 time.sleep(0.01)
+    #             else:
+    #                 self.motion.set_state('stop')
+    #                 time.sleep(0.1)
+
+    #                 self.fsm_state = 'traverse_path'
+    #                 continue
+
+    #         if self.fsm_state == 'traverse_path':
+    #             print "fsm: motion.set_State('go')"
+
+    #             self.motion.set_speed(speed)
+    #             self.motion.set_state('go')
+    #             tic = time.time()
+                
+    #             while not self.current_location == destination:
+    #                 time.sleep(0.01)
+
+    #             else:
+    #                 self.motion.set_state('stop')
+    #                 toc = time.time()
+    #                 print "speed = %d   time = %f" %(speed, toc-tic)
+
+    #             break
+        
