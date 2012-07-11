@@ -93,6 +93,7 @@ class Controller(object):
                     self.motion.set_state('stop')
                     time.sleep(0.1)
                     fsm_state = 'before_traverse'
+                    break
                     continue
 
 

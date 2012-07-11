@@ -121,6 +121,7 @@ class MotionAPI(object):
             print "desired yaw angle is 0, nothing to do"
 
 
+
     def go_forward(self, power = 25, regulated = True):
         """
         Move forward forever.
@@ -149,6 +150,35 @@ class MotionAPI(object):
             raise ValueError
         self.motor_left.run(power, regulated)
         self.motor_right.run(power, regulated)
+
+
+
+    def go_forward_n(self, n, power = 75):
+        """
+        Move forward n inches.
+
+        This function implements forward motion for a predetermined
+        distance `n` in inches. 
+
+        Paramters
+        ---------
+        n : float
+            Desired travel distance, in inches.
+        power : int, opt
+            Speed of forward motion: 64 >= power >= 128.
+
+        Raises
+        ------
+        ValueError : If not ( 64 >= power >= 128 ).
+
+        """
+        if (power < 64) or (power > 128):
+            print "`power` must be: 64 >= power >= 128"
+            raise ValueError
+
+        motor_rotation = self.calculate_motor_rotation(n)
+        self.motor_left.weak_turn(power, int(motor_rotation))
+        self.motor_right.weak_turn(power, int(motor_rotation))
 
 
 
@@ -236,3 +266,15 @@ class MotionAPI(object):
      #    # self.stop_flag = True
      #    # self.halt_motion('coast')
      #    self.nxt.kill_light_sensor()
+
+
+
+
+if __name__=='__main__':
+    import nxt.locator
+
+    brick = nxt.locator.find_one_brick()
+
+    motion = MotionAPI(brick)
+    motion.go_forward_n(2)
+    
