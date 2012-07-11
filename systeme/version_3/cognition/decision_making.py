@@ -28,8 +28,21 @@ class DecisionMaker(object):
 
 
 
-    def generate_solutions(self, path_a, path_b, path_c):
-        paths = [path_a, path_b, path_c]
+    def generate_solutions(self, paths):
+        """
+        Generate solutions.
+
+        This would be where the GA or other guided search thingy would
+        go.
+
+        Parameters
+        ----------
+        paths : list
+            List of path objects.
+
+        """
+        
+        # paths = [path_a, path_b, path_c]
 
         # our `meters`
         dist = []
@@ -151,9 +164,64 @@ class DecisionMaker(object):
             print i, unified_solution[i], record_of_parameters[i]
 
 
+
+
+
+
+    def choose_path(self, paths):
+        """
+        Determine which path to take.
+
+        This function implements decision making as necessary.
+        
+        Parameters
+        ----------
+        paths : list
+            List of path objects.
+
+
+        Returns
+        -------
+        out : int
+            Path which to take, indicated by index of element in `paths`
+            representing appropriate path choice.
+
+        """
+        has_been_explored = []
+
+        for p in paths:
+            has_been_explored.append(p.has_been_explored)
+
+        if False in has_been_explored:
+            return has_been_explored.index(False)
+        else:
+            return 1
+
+
+
 if __name__=='__main__':
     main = DecisionMaker()
     main.generate_solutions()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -5,9 +5,8 @@ import time
 import utils 
 
 
-    
+from cognition.decision_making import DecisionMaker    
 from location.location import Location
-
 from motion.motion_subsystem import MotionSubsystem
 from route.path import Path
 from sensor.target_tracker import TargetTracker
@@ -21,10 +20,11 @@ class Controller(object):
         self.current_location = 0
         # self.fsm_state = 'beginning'
         brick = utils.connect_to_brick()
-        
-        self.tracker = TargetTracker(brick)
+
+        self.cognition = DecisionMaker()
         self.location = Location(self.location_callback)
         self.motion = MotionSubsystem(brick)
+        self.tracker = TargetTracker(brick)
 
 
     def location_callback(self, current_location):
@@ -46,9 +46,10 @@ class Controller(object):
 
 
     def build_route(self):
-        self.path_a = Path(name='A', distance=62.0, direction='left')
-        self.path_b = Path(name='B', distance=48.0, direction='straight')
-        self.path_c = Path(name='C', distance=87.5, direction='right')
+        path_a = Path(name='A', distance=62.0, direction='left')
+        path_b = Path(name='B', distance=48.0, direction='straight')
+        path_c = Path(name='C', distance=87.5, direction='right')
+        self.paths = [path_a, path_b, path_c]
 
 
     def run(self):
@@ -96,6 +97,8 @@ class Controller(object):
 
 
             if fsm_state == 'before_traverse':
+                i = self.cognition.choose_paths(self.paths)
+                current_path = self.paths[i]
                 fsm_state = 'traverse_path'
                 continue
                 
@@ -111,13 +114,12 @@ class Controller(object):
                     self.motion.set_state('stop')
                     x, y = self.tracker.tally_results()
                     self.tracker.reset()
-                    # print "Targets found = %d" %(x,)
-                    # print "Anti-targets found = %d" %(y,)
                     fsm_state = 'after_traverse'
                     continue
 
 
             if fsm_state == 'after_traverse':
+                current_path.has_been_explored = True
                 fsm_state = 'go_to_beginning'
                 continue
 
