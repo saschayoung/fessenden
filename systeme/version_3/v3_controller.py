@@ -124,7 +124,7 @@ class Controller(object):
 
 
             if fsm_state == 'go_to_beginning':
-                self.motion.set_speed(65)
+                self.motion.set_speed(55)
                 self.motion.set_state('go')
                 while not self.current_location == start:
                     time.sleep(0.01)
