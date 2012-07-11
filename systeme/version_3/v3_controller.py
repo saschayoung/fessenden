@@ -8,7 +8,7 @@ import utils
 from cognition.decision_making import DecisionMaker    
 from location.location import Location
 from motion.motion_subsystem import MotionSubsystem
-from route.path import Path
+from route.new_path import Path
 from sensor.target_tracker import TargetTracker
 
 
@@ -57,6 +57,7 @@ class Controller(object):
         Run AV controller.
 
         """
+        self.build_route()
         self.location.start()
         self.motion.start()
         self.fsm()
@@ -97,7 +98,7 @@ class Controller(object):
 
 
             if fsm_state == 'before_traverse':
-                i = self.cognition.choose_paths(self.paths)
+                i = self.cognition.choose_path(self.paths)
                 current_path = self.paths[i]
                 fsm_state = 'traverse_path'
                 continue

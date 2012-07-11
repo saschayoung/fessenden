@@ -30,7 +30,7 @@ class MotionSubsystem(threading.Thread):
 
         self.last_state = 'stop'
         self.current_state = 'stop'
-
+        self.direction = 'straight'
 
 
     def set_state(self, current_state):
@@ -132,11 +132,11 @@ class MotionSubsystem(threading.Thread):
         Make vehicle turn on selected path.
 
         """
-        if self.direction = 'straight':
+        if self.direction == 'straight':
             return
-        elif direction = 'left':
+        elif self.direction == 'left':
             turn_angle = -90
-        elif direction 'right':
+        elif self.direction == 'right':
             turn_angle = 90
         else:
             print "direction not set, going straight"
