@@ -113,7 +113,7 @@ class Controller(object):
                     self.tracker.reset()
                     # print "Targets found = %d" %(x,)
                     # print "Anti-targets found = %d" %(y,)
-                    fsm_state = 'before_traverse'
+                    fsm_state = 'after_traverse'
                     continue
 
 
@@ -124,7 +124,7 @@ class Controller(object):
 
 
             if fsm_state == 'go_to_beginning':
-                self.motion.set_speed(25)
+                self.motion.set_speed(65)
                 self.motion.set_state('go')
                 while not self.current_location == start:
                     time.sleep(0.01)
