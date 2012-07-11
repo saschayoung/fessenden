@@ -72,6 +72,8 @@ class Controller(object):
 
         """
         self.tracker.kill_sensor()
+        # self.motion.motion.halt_motion()
+        # time.sleep(0.1)
         self.motion.join()
         self.location.join()  # shut this down last
 
