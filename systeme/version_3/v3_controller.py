@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
+import logging
 import time
 
+
 import utils 
-
-
 from cognition.decision_making import DecisionMaker    
 from location.location import Location
 from motion.motion_subsystem import MotionSubsystem
@@ -14,11 +14,14 @@ from sensor.target_tracker import TargetTracker
 
 
 
+
+
 class Controller(object):
 
     def __init__(self):
+        logging.basicConfig(filename='example.log',level=logging.DEBUG)
+
         self.current_location = 0
-        # self.fsm_state = 'beginning'
         brick = utils.connect_to_brick()
 
         self.cognition = DecisionMaker()
@@ -107,7 +110,7 @@ class Controller(object):
                 
 
             if fsm_state == 'traverse_path':
-                print "fsm: motion.set_State('go')"
+                logging.info("v3_controller::fsm: motion.set_State('go')")
                 
                 self.motion.set_direction(current_path.direction)
                 self.motion.set_speed(25)
@@ -158,7 +161,14 @@ if __name__ == '__main__':
         main.run()
     except KeyboardInterrupt:
         pass
-    main.shutdown()
+    finally:
+        main.shutdown()
+
+
+    # main.run()
+    
+
+
 
 
 

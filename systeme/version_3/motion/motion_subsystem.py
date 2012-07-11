@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import logging
 import threading
 import time
 
@@ -67,19 +68,24 @@ class MotionSubsystem(threading.Thread):
                 
                 elif self.last_state == 'go':
                     self.last_state = 'stop'
-                    print "motion: stop"
+                    logging.info("motion_subsystem::motion: stop")
+                    # print "motion: stop"
                     continue
 
                 else:
-                    print "Error 1 in MotionSubsystem.run()"
-                    print "self.current_state == %s" %(self.current_state,)
-                    print "last state == %s" %(self.last_state,)
+                    logging.debug("motion_subsystem::Error 1 in MotionSubsystem.run()")
+                    logging.debug("motion_subsystem::self.current_state == %s" %(self.current_state,))
+                    logging.debug("motion_subsystem::last state == %s" %(self.last_state,))
+                    # print "Error 1 in MotionSubsystem.run()"
+                    # print "self.current_state == %s" %(self.current_state,)
+                    # print "last state == %s" %(self.last_state,)
                     continue
 
             if self.current_state  == 'go':
                 if self.last_state == 'stop':
                     self.last_state = 'go'
-                    print "motion: go"
+                    logging.debug("motion_subsystem::motion: go")
+                    # print "motion: go"
                     self.make_turn()
                     self.general_motion()
                     continue
@@ -88,9 +94,12 @@ class MotionSubsystem(threading.Thread):
                     continue
 
                 else:
-                    print "Error 2 in MotionSubsystem.run()"
-                    print "self.current_state == %s" %(self.current_state,)
-                    print "last state == %s" %(self.last_state,)
+                    logging.debug("motion_subsystem::Error 2 in MotionSubsystem.run()")
+                    logging.debug("motion_subsystem::self.current_state == %s" %(self.current_state,))
+                    logging.debug("motion_subsystem::last state == %s" %(self.last_state,))
+                    # print "Error 2 in MotionSubsystem.run()"
+                    # print "self.current_state == %s" %(self.current_state,)
+                    # print "last state == %s" %(self.last_state,)
                     continue
 
 
@@ -123,7 +132,8 @@ class MotionSubsystem(threading.Thread):
             Vehicle speed
 
         """
-        print "speed set to %d" %(speed,)
+        logging.info("motion_subsystem::speed set to %d" %(speed,))
+        # print "speed set to %d" %(speed,)
         self.speed = speed
 
 
@@ -139,7 +149,8 @@ class MotionSubsystem(threading.Thread):
         elif self.direction == 'right':
             turn_angle = 90
         else:
-            print "direction not set, going straight"
+            logging.info("motion_subsystem::direction not set, going straight")
+            # print "direction not set, going straight"
             return        
 
         self.motion.go_forward_n(5)

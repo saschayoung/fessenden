@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import logging
 import time
 
 import numpy as np
@@ -7,7 +8,7 @@ import numpy as np
 from nxt_base import NXTBase
 
 
-DEBUG = False
+# DEBUG = False
 
 class MotionBase(object):
 
@@ -107,7 +108,8 @@ class MotionBase(object):
             self.nxt.motor_left.weak_turn(-power, int(motor_rotation))
             self.nxt.motor_right.weak_turn(power, int(motor_rotation))
         else:
-            print "desired yaw angle is 0, nothing to do"
+            logging.info("motion_api::desired yaw angle is 0, nothing to do")
+            # print "desired yaw angle is 0, nothing to do"
 
 
     def __get_light_reading(self, illumination = True):
@@ -293,8 +295,7 @@ class MotionBase(object):
         Find line.
 
         """
-        if DEBUG:
-            print "Finding line"
+        logging.info("motion_api::Finding line")
         sweep_angle = [10, -20, 30, -40, 60, -80, 120, -160, 240, -320]
         while not self.line_detected():
             for sweep in sweep_angle:
@@ -302,8 +303,7 @@ class MotionBase(object):
                 while self.__motors_busy():
                     if self.line_detected():
                         self.halt_motion()
-                        if DEBUG: 
-                            print "found line, stopping search"
+                        logging.info("motion_api::found line, stopping search")
                         return
 
 
