@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import time
 import numpy as np
 
 from nxt.motor import *
@@ -276,5 +277,7 @@ if __name__=='__main__':
     brick = nxt.locator.find_one_brick()
 
     motion = MotionAPI(brick)
-    motion.go_forward_n(4)
-    
+    motion.go_forward_n(5)
+    while motion.motors_busy():
+        time.sleep(0.01)
+    motion.turn_in_place(-90)
