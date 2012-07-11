@@ -86,8 +86,10 @@ class Controller(object):
 
         while True:
             if fsm_state == 'first_time':
+                self.motion.set_direction('straight')
                 self.motion.set_speed(25)
                 self.motion.set_state('go')
+
                 while not self.current_location == start:
                     time.sleep(0.01)
                 else:
@@ -110,6 +112,7 @@ class Controller(object):
                 self.motion.set_direction(current_path.direction)
                 self.motion.set_speed(25)
                 self.motion.set_state('go')
+
                 while not self.current_location == destination:
                     self.tracker.run()
                     time.sleep(0.1)
@@ -129,8 +132,10 @@ class Controller(object):
 
 
             if fsm_state == 'go_to_beginning':
+                self.motion.set_direction('straight')
                 self.motion.set_speed(55)
                 self.motion.set_state('go')
+
                 while not self.current_location == start:
                     time.sleep(0.01)
                 else:
