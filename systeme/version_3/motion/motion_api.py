@@ -276,5 +276,5 @@ if __name__=='__main__':
     brick = nxt.locator.find_one_brick()
 
     motion = MotionAPI(brick)
-    motion.go_forward_n(2)
+    motion.go_forward_n(4)
     
