@@ -110,25 +110,28 @@ class StandAloneRadioA(object):
 
 
         while True:
-            if state == "listen":
-                self._listen()
-                state = "send"
-                time.sleep(0.1)
+            self._send_packet()
 
-            elif state == "send":
-                self._send_packet()
-                state = "receive"
-                # state = "receive"
-                time.sleep(0.1)
+        # while True:
+        #     if state == "listen":
+        #         self._listen()
+        #         state = "send"
+        #         time.sleep(0.1)
 
-            elif state == "receive":
-                self._receive_packet()
-                state = "listen"
-                time.sleep(0.1)
+        #     elif state == "send":
+        #         self._send_packet()
+        #         state = "receive"
+        #         # state = "receive"
+        #         time.sleep(0.1)
 
-            else:
-                print "+++ Melon melon melon +++"
-                state = "listen"
+        #     elif state == "receive":
+        #         self._receive_packet()
+        #         state = "listen"
+        #         time.sleep(0.1)
+
+        #     else:
+        #         print "+++ Melon melon melon +++"
+        #         state = "listen"
 
 
 
