@@ -71,7 +71,7 @@ class StandAloneRadioA(object):
 
         """
         parser = argparse.ArgumentParser()
-        parser.add_argument("-f" "--frequency", type=float, default=434e6,
+        parser.add_argument("-f" "--frequency", type=float, default=434e6, metavar=frequency,
                             help="Transmit frequency")
         # parser.add_argument("-m" "--modulation", type=str, default="gfsk",
         #                     help="Select modulation from {`gfsk` | `fsk` | `ask`} [default=%default]")
