@@ -110,6 +110,7 @@ class MotionSubsystem(threading.Thread):
 
         """
         self.stop_event.set()
+        self.motion.halt_motion()
         self.motion.kill_light_sensor()
         threading.Thread.join(self, timeout)
 
