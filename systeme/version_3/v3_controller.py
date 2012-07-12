@@ -72,8 +72,6 @@ class Controller(object):
 
         """
         self.tracker.kill_sensor()
-        # self.motion.motion.halt_motion()
-        # time.sleep(0.1)
         self.motion.join()
         self.location.join()  # shut this down last
 
@@ -117,12 +115,14 @@ class Controller(object):
                 self.motion.set_direction(current_path.direction)
                 self.motion.set_speed(25)
                 self.motion.set_state('go')
+                tic = time.time()
 
                 while not self.current_location == destination:
                     self.tracker.run()
                     time.sleep(0.1)
                 else:
                     self.motion.set_state('stop')
+                    toc = time.time()
                     x, y = self.tracker.tally_results()
                     self.tracker.reset()
                     fsm_state = 'after_traverse'
@@ -131,6 +131,10 @@ class Controller(object):
 
             if fsm_state == 'after_traverse':
                 current_path.has_been_explored = True
+                current_path.current_meters['X'] = x
+                current_path.current_meters['Y'] = y
+                current_path.solution_as_observed['T'] = toc - tic
+
                 fsm_state = 'go_to_beginning'
                 continue
 
