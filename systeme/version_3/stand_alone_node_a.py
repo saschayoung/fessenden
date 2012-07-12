@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import argparse
 import time
 
 from radio.packet import Packet
@@ -69,17 +70,36 @@ class StandAloneRadioA(object):
         Run the radio subsystem.
 
         """
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-f" "--frequency", type=float, default=434e6,
+                            help="Transmit frequency")
+        parser.add_argument("-m" "--modulation", type=str, default="gfsk",
+                            help="Select modulation from {`gfsk` | `fsk` | `ask`} [default=%default]")
+        parser.add_argument("-p" "--power", type=int, default=17,
+                            help="Select transmit power from {8 | 11 | 14 | 17} [default=%default]")
+        parser.add_argument("-r" "--bitrate", type=float, 4.8e3,
+                            help="Set bitrate [default=%default]")
+        args = parser.parse_args()
+
         self.radio.startup()
 
-        default_radio_profile = {'power': 14,
-                                 'frequency' : 434e6,
-                                 'data_rate' : 4.8e3,
-                                 'modulation' : "gfsk"}
+        # default_radio_profile = {'power': 14,
+        #                          'frequency' : 434e6,
+        #                          'data_rate' : 4.8e3,
+        #                          'modulation' : "gfsk"}
 
-        power = default_radio_profile['power']
-        frequency = default_radio_profile['frequency']
-        data_rate = default_radio_profile['data_rate']
-        modulation = default_radio_profile['modulation']
+        # power = default_radio_profile['power']
+        # frequency = default_radio_profile['frequency']
+        # data_rate = default_radio_profile['data_rate']
+        # modulation = default_radio_profile['modulation']
+
+        power = arg.power
+        frequency = arg.frequency
+        data_rate = arg.bitrate
+        modulation = arg.modulation
+
+
+
         self._configure_radio(power, frequency, data_rate, modulation)
 
         state = "listen"
@@ -113,6 +133,7 @@ class StandAloneRadioA(object):
 
 
 if __name__=='__main__':
+
     node_a = StandAloneRadioA()
     try:
         node_a.run()
