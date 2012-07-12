@@ -71,32 +71,36 @@ class StandAloneRadioA(object):
 
         """
         parser = argparse.ArgumentParser()
-        parser.add_argument("-f" "--frequency", type=float, default=434e6, metavar='frequency', 
-                            nargs=1, help="Transmit frequency")
-        # parser.add_argument("-m" "--modulation", type=str, default="gfsk",
-        #                     help="Select modulation from {`gfsk` | `fsk` | `ask`} [default=%default]")
-        # parser.add_argument("-p" "--power", type=int, default=17,
-        #                     help="Select transmit power from {8 | 11 | 14 | 17} [default=%default]")
-        # parser.add_argument("-r" "--bitrate", type=float, default=4.8e3,
-        #                     help="Set bitrate [default=%default]")
+        # parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        parser.add_argument("-f", type=float, default=434e6, metavar='frequency', dest='frequency', 
+                            nargs=1, help="Transmit frequency (default: %(default)s)")
+        parser.add_argument("-m", type=str, default='gfsk', metavar='modulation', dest='modulation',
+                            choices=['gfsk', 'fsk', 'ask'],
+                            help="Select modulation from [%(choices)s] (default: %(default)s)")
+        parser.add_argument("-p" "--power", type=int, default=17, metavar='power', dest='power',
+                            choices=[8, 11, 14, 17],
+                            help="Select transmit power from [%(choices)s] (default: %(default)s)")
+        parser.add_argument("-r" "--bitrate", type=float, default=4.8e3, metavar='bitrate',
+                            dest='bitrate', help="Set bitrate (default: %(default)s)")
         args = parser.parse_args()
 
+        
         self.radio.startup()
 
-        default_radio_profile = {'power': 14,
-                                 'frequency' : 434e6,
-                                 'data_rate' : 4.8e3,
-                                 'modulation' : "gfsk"}
+        # default_radio_profile = {'power': 14,
+        #                          'frequency' : 434e6,
+        #                          'data_rate' : 4.8e3,
+        #                          'modulation' : "gfsk"}
 
         # frequency = default_radio_profile['frequency']
-        modulation = default_radio_profile['modulation']
-        power = default_radio_profile['power']
-        data_rate = default_radio_profile['data_rate']
+        # modulation = default_radio_profile['modulation']
+        # power = default_radio_profile['power']
+        # data_rate = default_radio_profile['data_rate']
 
-        frequency = arg.frequency
-        # modulation = arg.modulation
-        # power = arg.power
-        # data_rate = arg.bitrate
+        frequency = args.frequency
+        modulation = args.modulation
+        power = args.power
+        data_rate = args.bitrate
 
 
 
