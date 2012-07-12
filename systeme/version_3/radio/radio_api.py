@@ -418,3 +418,34 @@ class RadioAPI(object):
         self.rfm22.set_frequency(frequency)
         self.rfm22.set_data_rate(data_rate)
         self.rfm22.set_modulation(modulation)
+
+
+
+
+
+    def get_rssi_raw(self):
+        """
+        Get the raw RSSI reading.
+
+        Returns
+        -------
+        out : float
+            RSSI value read directly from RFIC
+
+        """
+        return float('{0:d}'.format(spi.read(0x26)))
+
+
+
+    def get_rssi_dBm(self):
+        """
+        Get the RSSI reading in dBm.
+
+        Returns
+        -------
+        out : float
+            RSSI value read converted into dBm.
+
+        """
+        rssi = self.get_rssi_raw()
+        return ((rssi - 125.0)/2.0) - 60.0
