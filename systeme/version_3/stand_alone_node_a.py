@@ -32,7 +32,8 @@ class StandAloneRadioA(object):
 
         """
         self.packet.set_flags_node_a()
-        location = self.kb.get_state()['current_location']
+        # location = self.kb.get_state()['current_location']
+        location = 1
         tx_packet = self.packet.make_packet(self.tx_packet_number, location, self.data)
         self.radio.transmit(tx_packet)
         self.tx_packet_number += 1
