@@ -71,7 +71,7 @@ class StandAloneRadioA(object):
         """
         self.radio.startup()
 
-        default_radio_profile = {'power': 17,
+        default_radio_profile = {'power': 14,
                                  'frequency' : 434e6,
                                  'data_rate' : 4.8e3,
                                  'modulation' : "gfsk"}
