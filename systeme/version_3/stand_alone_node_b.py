@@ -102,7 +102,7 @@ class StandAloneRadioB(object):
             rssi = self.radio.get_rssi_raw()
             RSSI = self.radio.get_rssi_dBm()
             print "RSSI (raw) : %f  RSSI (dBm) : %f" %(rssi, RSSI)
-            time.sleep(0.1)
+            # time.sleep(0.1)
 
 
         # while True:
