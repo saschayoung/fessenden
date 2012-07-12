@@ -433,6 +433,20 @@ class RadioAPI(object):
             RSSI value read directly from RFIC
 
         """
+        self.rfm22.set_op_mode('ready')
+
+        self.rfm22.disable_interrupts()
+        self.rfm22.clear_interrupts()
+        self.rfm22.clear_rx_fifo()
+
+
+        self._tx_rx_switch('rx')
+
+        self.rfm22.set_op_mode('rx')
+
+
+        time.sleep(0.01) # need a bit of time before we read rssi values
+
         return float('{0:d}'.format(spi.read(0x26)))
 
 
