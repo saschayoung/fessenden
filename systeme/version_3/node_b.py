@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
 import argparse
+import struct
 import time
 
+from radio.data import NodeBData
 from radio.packet import Packet
 from radio.radio_api import RadioAPI
 
@@ -17,12 +19,16 @@ class NodeB(object):
     """
 
     def __init__(self):
-        self.radio = RadioAPI
+        self.data = NodeBData()
         self.packet = Packet('B')
+        self.radio = RadioAPI
 
         self.tx_packet_number = 1
         self.rx_packet_list = []
 
+        self.reconfigure = False
+        self.receive_stream = False
+        self.send_data = False
 
 
     def run(self):
@@ -47,17 +53,15 @@ class NodeB(object):
                             dest='bitrate', help="Set bitrate (default: %(default)s)")
         args = parser.parse_args()
 
-        frequency = args.frequency
+        self.frequency = args.frequency
         modulation = args.modulation
         power = args.power
         data_rate = args.bitrate
 
         self.radio.startup()
-        self.radio.configure_radio(power, frequency, data_rate, modulation)
+        self.radio.configure_radio(power, self.frequency, data_rate, modulation)
 
-        
-
-
+        self.fsm()
 
 
     def _receive_packet(self):
@@ -69,8 +73,45 @@ class NodeB(object):
         """
         rx_packet = self.radio.receive(rx_fifo_threshold=64, timeout=None)
         pkt_num, t, loc, flags, data = self.packet.parse_packet(rx_packet)
-        
 
+        return pkt_num, loc, flags, data
+
+
+
+    def _send_packet(self, mode, received_packets = None):
+        """
+        Transmit data.
+
+        Parameters
+        ----------
+        mode : str
+            Mode of operation, used to create appropriate packet header.
+            One of {`ack_command` | `send_data`}.
+        data : list
+            Data to transmit
+
+        """
+        location = 44
+
+        if mode == 'ack_command':
+            self.packet.set_flags_node_b(ack_command = True)
+            payload = self.data.pack_data(mode)
+
+        elif mode == 'send_data':
+            if received_packets == None:
+                print "mode is `send_data`, but `received_packets` is `None`"
+                raise ValueError
+            self.packet.set_flags_node_b(send_data = True)
+            payload = self.data.pack_data(mode, received_packets)
+
+        else:
+            print 'error in _send_packet, no mode specified'
+            raise ValueError
+        
+        tx_packet = self.packet.make_packet(self.tx_packet_number, location, payload)
+        self.tx_packet_number += 1
+        self.radio.transmit(tx_packet)
+        
 
 
     def fsm(self):
@@ -78,6 +119,26 @@ class NodeB(object):
         Node B finite state machine.
 
         """
+        while True:
+            pkt_num, loc, flags, data = self._receive_packet()
+        
+            if (flags & 0x80) == 0x80:  # receive stream of packets
+                self.rx_packet_list.append(pkt_num)
+                continue
 
-        
-        
+            elif (flags & 0x40) == 0x40: # receive data update request
+                received_packets = len(self.rx_packet_list)
+                self._send_packet('send_data', received_packets)
+                self.rx_packet_list = []
+                continue
+
+            elif (flags & 0x20) == 0x20: # receive reconfiguration request
+                self._send_packet('ack_command')
+                self.rx_packet_list = []
+                mod, eirp, bitrate = self.data.unpack_data(data)
+                self.radio.configure_radio(eirp, self.frequency, bitrate, mod)
+                continue
+
+            else:
+                print "error in Node B FSM, will reset and continue"
+                continue

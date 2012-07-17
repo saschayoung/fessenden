@@ -72,7 +72,7 @@ class Packet(object):
         # self.packet_number = 1
 
 
-    def set_flags_node_b(self, ack_packet = False, ack_command = False):
+    def set_flags_node_b(self, ack_packet = False, ack_command = False, send_data = False):
         """
         Set header flags for node b.
 
@@ -88,6 +88,10 @@ class Packet(object):
         ack_command : bool
             Used to acknowledge receipt of a command sent from the UAV
             to the base station.
+        send_data : bool
+            Used to indicate that packet contains summary of RF information
+            gathered by Node B.
+            
 
         Notes
         -----
@@ -101,7 +105,7 @@ class Packet(object):
         +---------+-----------------+
         |    2    | ack_command     |
         +---------+-----------------+
-        |    3    |  unused         |
+        |    3    | send_data       |
         +---------+-----------------+
         |    4    |                 |
         +---------+                 |
@@ -118,10 +122,12 @@ class Packet(object):
             self.flags = self.flags | 0x02
         if ack_command:
             self.flags = self.flags | 0x04
+        if send_data:
+            self.flags = self.flags | 0x08
 
 
 
-    def set_flags_node_a(self, send_command = False):
+    def set_flags_node_a(self, send_command = False, request_data = False, send_stream = False):
         """
         Set header flags for UAV.
 
@@ -152,9 +158,9 @@ class Packet(object):
         +---------+-----------------+
         |    5    | send_command    |
         +---------+-----------------+
-        |    6    |  unused         |
+        |    6    | request_data    |
         +---------+-----------------+
-        |    7    |  unused         |
+        |    7    | send_stream     |
         +---------+-----------------+
 
         """
