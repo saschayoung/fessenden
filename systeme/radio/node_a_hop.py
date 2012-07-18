@@ -1,115 +1,251 @@
 #!/usr/bin/env python
 
-from mid_level import MidLevel
+
+import argparse
+import time
+
+from radio.data import NodeAData
+from radio.packet import Packet
+from radio.radio_api import RadioAPI
 
 
 class NodeA(object):
+    """
+    Node A radio.
+
+    """
+
     def __init__(self):
-        self.radio = MidLevel()
-        self.flag_node_a_freq_change_req = False
-        self.flag_node_a_freq_change_ack = False
+        self.data = NodeAData()
+        self.packet = PAcket('B')
+        self.radio = RadioAPI
 
-    def startup(self):
+        self.tx_packet_number = 1
+
+
+    def run(self):
+        """
+        Run Node A.
+
+        """
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-f", type=float, default=434e6, metavar='frequency', dest='frequency', 
+                            nargs=1, help="Transmit frequency (default: %(default)s)")
+        parser.add_argument("-m", type=str, default='gfsk', metavar='modulation', dest='modulation',
+                            choices=['gfsk', 'fsk', 'ask'],
+                            help="Select modulation from [%(choices)s] (default: %(default)s)")
+        parser.add_argument("-p" "--power", type=int, default=17, metavar='power', dest='power',
+                            choices=[8, 11, 14, 17],
+                            help="Select transmit power from [%(choices)s] (default: %(default)s)")
+        parser.add_argument("-r" "--bitrate", type=float, default=4.8e3, metavar='bitrate',
+                            dest='bitrate', help="Set bitrate (default: %(default)s)")
+        args = parser.parse_args()
+
+        self.frequency = args.frequency
+        modulation = args.modulation
+        power = args.power
+        data_rate = args.bitrate
+
         self.radio.startup()
+        self.radio.configure_radio(power, self.frequency, data_rate, modulation)
 
-    def shutdown(self):
-        self.radio.shutdown()
+        self.fsm()
+        
 
 
     def _listen(self, freq):
-        status = self.radio.listen(freq, rssi_threshold=100, timeout=1.0)
+        status = self.radio.listen(freq, rssi_threshold=100, timeout=0.1)
         if status == 'clear':
             print "channel clear"
-    
 
 
-    def _receive(self, freq):
-        ack = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-               0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-               0xff, 0xff, 0xff]
-        packet = self.radio.receive(freq, rx_fifo_threshold=17, timeout=2.0)
-        if packet == []:
-            return
+
+
+    def _receive_packet(self):
+        """
+        Receive packet
+
+        """
+        rx_packet = self.radio.receive(rx_fifo_threshold=64, timeout=None)
+        pkt_num, t, loc, flags, data = self.packet.parse_packet(rx_packet)
+
+        return pkt_num, loc, flags, data
+
+
+
+    def _send_packet(self, mode, mod=None, eirp=None, bitrate=None):
+        """
+        Transmit data.
+
+        Parameters
+        ----------
+        mode : str
+            Mode of operation. Used to create appropriate packet header and payload.
+            {`send_reconfig_command` | `request_data` | `stream_data`}.
+        mod : str, opt
+            Modulation, one of {`fsk` | `gfsk` | `ook` }.
+        eirp : int, opt
+            Transmit power, one of { 8 | 11 | 14 | 17 }.
+        bitrate : float, opt
+            Radio bitrate, one of {...}
+            
+        """
+        location = 1
+
+        if mode == 'stream_data':
+            self.packet.set_flags_node_a(send_stream=True)
+            payload = self.data.pack_data(mode)
+        elif mode = 'send_reconfig_command':
+            self.packet.set_flags_node_a(send_command=True)
+            payload = self.data.pack_data(mode, mod, eirp, bitrate)
+        elif mode = 'request_data':
+            self.packet.set_flags_node_a(request_data=True)
+            payload = self.data.pack_data(mode)
         else:
-            if (packet[0] == 0xff):
-                print "ACK received"
-            if (packet[0] == 0x01):
-                print "change freq request acknowledged"
-                self.flag_node_a_freq_change_ack = True
+            print 'error in _send_packet, no mode specified'
+            raise ValueError
+
+        tx_packet = self.packet.make_packet(self.tx_packet_number, location, payload)
+        self.tx_packet_number += 1
+        self.radio.transmit(tx_packet)
             
 
 
-
-    def _transmit(self, freq):
-        data = [0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 
-                0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D,
-                0x3E, 0x3F, 0x78]
-        if self.flag_node_a_freq_change_req == True:
-            print "requesting frequency change"
-            data[0] = 0x01
-        self.radio.transmit(data, freq)
 
 
 
     def fsm(self):
         """
-        Primary control loop.
-
-        This function is the finite state machine that controls the
-        operation of the system.
+        Node A finite state machine.
+        
         """
-
-        self.startup()
-
-        packet_counter = 1
-        state = "listen"
-        # f = 434e6
-        f = [431e6, 432e6, 433e6, 434e6, 435e6, 436e6, 437e6, 438e6, 439e6]
-        g = 0
-
-
         while True:
-            print "set frequency to %d" %(f[g],)
-            if packet_counter % 30 == 0:
-                self.flag_node_a_freq_change_req = True
-                
-            if state == "listen":
-                self._listen(f[g])
-                state = "transmit"
-
-            elif state == "transmit":
-                self._transmit(f[g])
-                packet_counter += 1
-                state = "receive"
-
-            elif state == "receive":
-                self._receive(f[g])
-                state = "listen"
-
-            else:
-                print "+++ Melon melon melon +++"
-                state = "listen"
-
-            if ((self.flag_node_a_freq_change_req == True)  
-                and (self.flag_node_a_freq_change_ack == True)):
-                
-                self.flag_node_a_freq_change_req = False
-                self.flag_node_a_freq_change_ack = False
-                g += 1
-                if (g == 9):
-                    g = 0
-
+            self._listen()
+            self._send_packet('stream_data')
 
 
 
 if __name__=='__main__':
+    node_a = NodeA()
+    node_a.run()
 
-    try:
-        main = NodeA()
-        main.fsm()
-        main.shutdown()
-    except KeyboardInterrupt:
-        main.shutdown()
+
+
+
+    # def _send_packet(self, mode)
+
+
+
+# from mid_level import MidLevel
+
+
+# class NodeA(object):
+#     def __init__(self):
+#         self.radio = MidLevel()
+#         self.flag_node_a_freq_change_req = False
+#         self.flag_node_a_freq_change_ack = False
+
+#     def startup(self):
+#         self.radio.startup()
+
+#     def shutdown(self):
+#         self.radio.shutdown()
+
+
+#     def _listen(self, freq):
+#         status = self.radio.listen(freq, rssi_threshold=100, timeout=1.0)
+#         if status == 'clear':
+#             print "channel clear"
+    
+
+
+#     def _receive(self, freq):
+#         ack = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+#                0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+#                0xff, 0xff, 0xff]
+#         packet = self.radio.receive(freq, rx_fifo_threshold=17, timeout=2.0)
+#         if packet == []:
+#             return
+#         else:
+#             if (packet[0] == 0xff):
+#                 print "ACK received"
+#             if (packet[0] == 0x01):
+#                 print "change freq request acknowledged"
+#                 self.flag_node_a_freq_change_ack = True
+            
+
+
+
+#     def _transmit(self, freq):
+#         data = [0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 
+#                 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D,
+#                 0x3E, 0x3F, 0x78]
+#         if self.flag_node_a_freq_change_req == True:
+#             print "requesting frequency change"
+#             data[0] = 0x01
+#         self.radio.transmit(data, freq)
+
+
+
+#     def fsm(self):
+#         """
+#         Primary control loop.
+
+#         This function is the finite state machine that controls the
+#         operation of the system.
+#         """
+
+#         self.startup()
+
+#         packet_counter = 1
+#         state = "listen"
+#         # f = 434e6
+#         f = [431e6, 432e6, 433e6, 434e6, 435e6, 436e6, 437e6, 438e6, 439e6]
+#         g = 0
+
+
+#         while True:
+#             print "set frequency to %d" %(f[g],)
+#             if packet_counter % 30 == 0:
+#                 self.flag_node_a_freq_change_req = True
+                
+#             if state == "listen":
+#                 self._listen(f[g])
+#                 state = "transmit"
+
+#             elif state == "transmit":
+#                 self._transmit(f[g])
+#                 packet_counter += 1
+#                 state = "receive"
+
+#             elif state == "receive":
+#                 self._receive(f[g])
+#                 state = "listen"
+
+#             else:
+#                 print "+++ Melon melon melon +++"
+#                 state = "listen"
+
+#             if ((self.flag_node_a_freq_change_req == True)  
+#                 and (self.flag_node_a_freq_change_ack == True)):
+                
+#                 self.flag_node_a_freq_change_req = False
+#                 self.flag_node_a_freq_change_ack = False
+#                 g += 1
+#                 if (g == 9):
+#                     g = 0
+
+
+
+
+# if __name__=='__main__':
+
+#     try:
+#         main = NodeA()
+#         main.fsm()
+#         main.shutdown()
+#     except KeyboardInterrupt:
+#         main.shutdown()
 
 
 

@@ -142,7 +142,7 @@ class NodeA(object):
                 self._send_packet('send_reconfig_command', mod, eirp, bitrate)
                 index += 1
                 pkt_num, loc, flags, data = self._receive_packet()
-                if (flags & 0x40) == 0x40:
+                if (flags & 0x03) == 0x03:
                     print "node B acknowledged request, changing to new waveform"
                     self.radio.configure_radio(eirp, self.frequency, bitrate, mod)
                     self._send_packet('stream_data')

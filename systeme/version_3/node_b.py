@@ -135,9 +135,9 @@ class NodeB(object):
                 continue
 
             elif (flags & 0x20) == 0x20: # receive reconfiguration request
-                self._send_packet('ack_command')
                 self.rx_packet_list = []
-                mod, eirp, bitrate = self.data.unpack_data(data)
+                mod, eirp, bitrate = self.data.unpack_data('reconfig', data)
+                self._send_packet('ack_command')
                 self.radio.configure_radio(eirp, self.frequency, bitrate, mod)
                 continue
 
