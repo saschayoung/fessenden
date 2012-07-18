@@ -314,7 +314,7 @@ class RF(object):
             result = self.irq.read()
             rssi = '{0:d}'.format(spi.read(0x26))
             self.rssi_data.append([time.time(), rssi])
-            print "RSSI Indicator: ", rssi
+            # print "RSSI Indicator: ", rssi
             # print "interrupt: ", int(result)
             if ( int(result) == 0 ):
                 rx_buffer = []
