@@ -94,6 +94,7 @@ class NodeA(object):
         location = 1
 
         if mode == 'stream_data':
+            print "streaming data packets"
             self.packet.set_flags_node_a(send_stream=True)
             payload = self.data.pack_data(mode)
         elif mode == 'send_reconfig_command':
