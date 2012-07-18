@@ -26,9 +26,9 @@ class NodeB(object):
         self.tx_packet_number = 1
         self.rx_packet_list = []
 
-        self.reconfigure = False
-        self.receive_stream = False
-        self.send_data = False
+        # self.reconfigure = False
+        # self.receive_stream = False
+        # self.send_data = False
 
 
     def run(self):
@@ -142,3 +142,9 @@ class NodeB(object):
             else:
                 print "error in Node B FSM, will reset and continue"
                 continue
+
+
+
+if __name__=='__main__':
+    node_b = NodeB()
+    node_b.run()
