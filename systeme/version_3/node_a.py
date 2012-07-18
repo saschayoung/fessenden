@@ -95,10 +95,10 @@ class NodeA(object):
         if mode == 'stream_data':
             self.packet.set_flags_node_a(send_stream=True)
             payload = self.data.pack_data(mode)
-        elif mode = 'send_reconfig_command':
+        elif mode == 'send_reconfig_command':
             self.packet.set_flags_node_a(send_command=True)
             payload = self.data.pack_data(mode, mod, eirp, bitrate)
-        elif mode = 'request_data':
+        elif mode == 'request_data':
             self.packet.set_flags_node_a(request_data=True)
             payload = self.data.pack_data(mode)
         else:

@@ -87,8 +87,8 @@ class NodeB(object):
         mode : str
             Mode of operation, used to create appropriate packet header.
             One of {`ack_command` | `send_data`}.
-        data : list
-            Data to transmit
+        received_packets : int, opt
+            Number of packets received.
 
         """
         location = 44
