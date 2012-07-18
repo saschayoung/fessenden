@@ -54,7 +54,7 @@ class NodeA(object):
 
 
     def _listen(self):
-        status = self.radio.listen(freq, rssi_threshold=100, timeout=0.1)
+        status = self.radio.listen(rssi_threshold=100, timeout=0.1)
         if status == 'clear':
             print "channel clear"
 
