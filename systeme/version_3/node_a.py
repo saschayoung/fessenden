@@ -123,38 +123,45 @@ class NodeA(object):
         
         """
         index = 1
-        while True:
-            if index % 20 == 0:
-                print "requesting data"
-                self._send_packet('request_data')
-                index += 1
-                pkt_num, loc, flags, data = self._receive_packet()
-                packets_received = self.data.unpack_data(data)
-                print "packets received by Node B", packets_received
-                time.sleep(1)
 
-            elif index == 35:
-                print "changing waveform"
-                mod='gfsk'
-                eirp=11
-                bitrate=57.6e3
+        while True:
+            self._send_packet('stream_data')
+            index += 1
+
+
+
+        # while True:
+        #     if index % 20 == 0:
+        #         print "requesting data"
+        #         self._send_packet('request_data')
+        #         index += 1
+        #         pkt_num, loc, flags, data = self._receive_packet()
+        #         packets_received = self.data.unpack_data(data)
+        #         print "packets received by Node B", packets_received
+        #         time.sleep(1)
+
+        #     elif index == 35:
+        #         print "changing waveform"
+        #         mod='gfsk'
+        #         eirp=11
+        #         bitrate=57.6e3
                 
-                self._send_packet('send_reconfig_command', mod, eirp, bitrate)
-                index += 1
-                pkt_num, loc, flags, data = self._receive_packet()
-                if (flags & 0x04) == 0x04:
-                    print "node B acknowledged request, changing to new waveform"
-                    self.radio.configure_radio(eirp, self.frequency, bitrate, mod)
-                    self._send_packet('stream_data')
-                    index += 1
-                else:
-                    print "node B did not acknowledge request, continuing with current waveform"
-                    continue
+        #         self._send_packet('send_reconfig_command', mod, eirp, bitrate)
+        #         index += 1
+        #         pkt_num, loc, flags, data = self._receive_packet()
+        #         if (flags & 0x04) == 0x04:
+        #             print "node B acknowledged request, changing to new waveform"
+        #             self.radio.configure_radio(eirp, self.frequency, bitrate, mod)
+        #             self._send_packet('stream_data')
+        #             index += 1
+        #         else:
+        #             print "node B did not acknowledge request, continuing with current waveform"
+        #             continue
                 
             
-            else:
-                self._send_packet('stream_data')
-                index += 1
+        #     else:
+        #         self._send_packet('stream_data')
+        #         index += 1
 
 
 if __name__=='__main__':
