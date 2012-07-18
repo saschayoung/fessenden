@@ -140,6 +140,7 @@ class NodeB(object):
                 print "received request for reconfiguration"
                 self.rx_packet_list = []
                 mod, eirp, bitrate = self.data.unpack_data('reconfig', data)
+                print mod, eirp, bitrate
                 self._send_packet('ack_command')
                 self.radio.configure_radio(eirp, self.frequency, bitrate, mod)
                 continue
