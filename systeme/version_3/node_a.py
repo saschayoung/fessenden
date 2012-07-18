@@ -122,10 +122,17 @@ class NodeA(object):
         Node A finite state machine.
         
         """
+        index = 1
         while True:
-            # self._listen()
-            self._send_packet('stream_data')
-
+            if index % 20 == 0:
+                self._send_packet('request_data')
+                index += 1
+                pkt_num, loc, flags, data = self._receive_packet()
+                packets_received = self.data.unpack_data(data)
+                print "packets received by Node B", packets_received
+            else:
+                self._send_packet('stream_data')
+                index += 1
 
 
 if __name__=='__main__':
