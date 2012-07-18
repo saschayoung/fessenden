@@ -40,7 +40,8 @@ class SimpleRadio(RadioBaseClass):
 
 
 
-    def setup_rf(self, fc, hbsel, fb):        spi.write(0x07, 0x80)           # reset all the registers
+    def setup_rf(self, fc, hbsel, fb):
+        spi.write(0x07, 0x80)           # reset all the registers
         spi.write(0x05, 0x00)           # Disable interrupts in IntStatReg1
         spi.write(0x06, 0x00)           # Disable interrupts in IntStatReg2
 
