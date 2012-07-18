@@ -73,7 +73,8 @@ class NodeB(object):
         """
         rx_packet = self.radio.receive(rx_fifo_threshold=64, timeout=None)
         pkt_num, t, loc, flags, data = self.packet.parse_packet(rx_packet)
-
+        print "packet received"
+        print pkt_num, loc, flags, data
         return pkt_num, loc, flags, data
 
 
@@ -124,7 +125,7 @@ class NodeB(object):
         
             if (flags & 0x80) == 0x80:  # receive stream of packets
                 self.rx_packet_list.append(pkt_num)
-                print "received data stream packet"
+                # print "received data stream packet"
                 continue
 
             elif (flags & 0x40) == 0x40: # receive data update request
