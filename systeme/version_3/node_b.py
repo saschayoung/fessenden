@@ -142,6 +142,7 @@ class NodeB(object):
                 continue
 
             else:
+                print bin(flags)
                 print "error in Node B FSM, will reset and continue"
                 continue
 
