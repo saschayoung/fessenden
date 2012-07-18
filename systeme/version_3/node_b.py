@@ -73,8 +73,8 @@ class NodeB(object):
         """
         rx_packet = self.radio.receive(rx_fifo_threshold=64, timeout=None)
         pkt_num, t, loc, flags, data = self.packet.parse_packet(rx_packet)
-        print "packet received"
-        print pkt_num, loc, flags, data
+        # print "packet received"
+        # print pkt_num, loc, flags, data
         return pkt_num, loc, flags, data
 
 
@@ -124,17 +124,20 @@ class NodeB(object):
             pkt_num, loc, flags, data = self._receive_packet()
         
             if (flags & 0x80) == 0x80:  # receive stream of packets
+                print "receiving stream of packets"
                 self.rx_packet_list.append(pkt_num)
                 # print "received data stream packet"
                 continue
 
             elif (flags & 0x40) == 0x40: # receive data update request
+                print "received request for data update"
                 received_packets = len(self.rx_packet_list)
                 self._send_packet('send_data', received_packets)
                 self.rx_packet_list = []
                 continue
 
             elif (flags & 0x20) == 0x20: # receive reconfiguration request
+                print "received request for reconfiguration"
                 self.rx_packet_list = []
                 mod, eirp, bitrate = self.data.unpack_data('reconfig', data)
                 self._send_packet('ack_command')
