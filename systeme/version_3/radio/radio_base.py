@@ -1174,3 +1174,8 @@ class RadioBase(object):
             # TODO: add error/exception handling
             print "+++ Melon melon melon +++"
             
+
+
+# if __name__=='__main__':
+#     driver = RadioBase()
+#     drive.default_setup()
