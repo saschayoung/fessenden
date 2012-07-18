@@ -124,6 +124,7 @@ class NodeB(object):
         
             if (flags & 0x80) == 0x80:  # receive stream of packets
                 self.rx_packet_list.append(pkt_num)
+                print "received data stream packet"
                 continue
 
             elif (flags & 0x40) == 0x40: # receive data update request
