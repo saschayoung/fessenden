@@ -167,6 +167,10 @@ class Packet(object):
         self.flags = 0x10
         if send_command:
             self.flags = self.flags | 0x20
+        if request_data:
+            self.flags = self.flags | 0x40
+        if send_stream:
+            self.flags = self.flags | 0x80
 
         
 
