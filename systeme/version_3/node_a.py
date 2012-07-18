@@ -56,7 +56,8 @@ class NodeA(object):
     def _listen(self):
         status = self.radio.listen(rssi_threshold=100, timeout=0.1)
         if status == 'clear':
-            print "channel clear"
+            pass
+            # print "channel clear"
 
 
 
@@ -108,6 +109,7 @@ class NodeA(object):
         tx_packet = self.packet.make_packet(self.tx_packet_number, location, payload)
         self.tx_packet_number += 1
         self.radio.transmit(tx_packet)
+        print "packet sent"
             
 
 
