@@ -123,7 +123,7 @@ class NodeA(object):
         
         """
         while True:
-            self._listen()
+            # self._listen()
             self._send_packet('stream_data')
 
 
