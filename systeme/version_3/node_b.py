@@ -132,6 +132,7 @@ class NodeB(object):
             elif (flags & 0x40) == 0x40: # receive data update request
                 print "received request for data update"
                 received_packets = len(self.rx_packet_list)
+                time.sleep(0.5)
                 self._send_packet('send_data', received_packets)
                 self.rx_packet_list = []
                 continue
@@ -141,6 +142,7 @@ class NodeB(object):
                 # self.rx_packet_list = []
                 mod, eirp, bitrate = self.data.unpack_data('reconfig', data)
                 print mod, eirp, bitrate
+                time.sleep(0.5)
                 self._send_packet('ack_command')
                 self.radio.configure_radio(eirp, self.frequency, bitrate, mod)
                 print "reconfigured radio with new waveform, waiting for more packets..."
