@@ -31,7 +31,7 @@ class ModemConfiguration(object):
 
 
 
-    def find_modem_config_key(modulation, bitrate):
+    def find_modem_config_key(self, modulation, bitrate):
         if modulation == 'fsk':
             index = self.fsk_bitrate.index(bitrate)
             settings = self.fsk_modem_settings(index)
