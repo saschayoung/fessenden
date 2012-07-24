@@ -416,9 +416,9 @@ class RadioAPI(object):
         """
         self.rfm22.set_output_power(power)
         self.rfm22.set_frequency(frequency)
-        self.rfm22.set_data_rate(data_rate)
-        self.rfm22.set_modulation(modulation)
-
+        # self.rfm22.set_data_rate(data_rate)
+        # self.rfm22.set_modulation(modulation)
+        self.rfm22.use_preset_config(modulation, data_rate)
 
 
 

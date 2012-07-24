@@ -17,7 +17,7 @@ class NodeA(object):
 
     def __init__(self):
         self.data = NodeAData()
-        self.packet = Packet('B')
+        self.packet = Packet('A')
         self.radio = RadioAPI()
 
         self.tx_packet_number = 1
