@@ -34,11 +34,11 @@ class ModemConfiguration(object):
     def find_modem_config_key(self, modulation, bitrate):
         if modulation == 'fsk':
             index = self.fsk_bitrate.index(bitrate)
-            settings = self.fsk_modem_settings(index)
+            settings = self.fsk_modem_settings[index]
 
         elif modulation == 'gfsk':
             index = self.gfsk_bitrate.index(bitrate)
-            settings = self.gfsk_modem_settings(index)
+            settings = self.gfsk_modem_settings[index]
     
         else:
             print "error, modulation not set properly"
