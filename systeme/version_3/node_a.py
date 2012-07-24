@@ -151,9 +151,11 @@ class NodeA(object):
                 pkt_num, loc, flags, data = self._receive_packet()
                 if (flags & 0x04) == 0x04:
                     print "node B acknowledged request, changing to new waveform"
+                    time.sleep(1)
                     self.radio.configure_radio(eirp, self.frequency, bitrate, mod)
                     self._send_packet('stream_data')
                     index += 1
+                    continue
                 else:
                     print "node B did not acknowledge request, continuing with current waveform"
                     continue

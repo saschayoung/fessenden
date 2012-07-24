@@ -138,11 +138,12 @@ class NodeB(object):
 
             elif (flags & 0x20) == 0x20: # receive reconfiguration request
                 print "received request for reconfiguration"
-                self.rx_packet_list = []
+                # self.rx_packet_list = []
                 mod, eirp, bitrate = self.data.unpack_data('reconfig', data)
                 print mod, eirp, bitrate
                 self._send_packet('ack_command')
                 self.radio.configure_radio(eirp, self.frequency, bitrate, mod)
+                print "reconfigured radio with new waveform, waiting for more packets..."
                 continue
 
             else:
