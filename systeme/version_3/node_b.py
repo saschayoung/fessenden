@@ -49,7 +49,7 @@ class NodeB(object):
         parser.add_argument("-p" "--power", type=int, default=17, metavar='power', dest='power',
                             choices=[8, 11, 14, 17],
                             help="Select transmit power from [%(choices)s] (default: %(default)s)")
-        parser.add_argument("-r" "--bitrate", type=float, default=57.6e3, metavar='bitrate',
+        parser.add_argument("-r" "--bitrate", type=float, default=4.8e3, metavar='bitrate',
                             dest='bitrate', help="Set bitrate (default: %(default)s)")
         args = parser.parse_args()
 
