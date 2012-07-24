@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-
+import numpy as np
 
 import eggs as spi
 import rf_utils
