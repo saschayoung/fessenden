@@ -36,7 +36,7 @@ class ModemConfiguration(object):
             index = self.fsk_bitrate.index(bitrate)
             settings = self.fsk_modem_settings(index)
 
-        elif modulation = 'gfsk':
+        elif modulation == 'gfsk':
             index = self.gfsk_bitrate.index(bitrate)
             settings = self.gfsk_modem_settings(index)
     
