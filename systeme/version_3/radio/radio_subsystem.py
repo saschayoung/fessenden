@@ -90,7 +90,6 @@ class RadioSubsystem(threading.Thread):
         index = 0
 
         # TODO: record RSSI before every tranmission
-        # TODO: does index need to be incremented with reconfig requests or update requests?
         while not self.stop_event.isSet():
             if self.current_state == 'stop':
                 if self.last_state == 'stop':
@@ -140,8 +139,8 @@ class RadioSubsystem(threading.Thread):
                     logging.info("radio_subsystem::packets received by Node B = %d", %(packets_received,))
                     logging.info("radio_subsystem::packets sent by Node A = %d", %(index,))
                     self.current_state = 'stop'
-                    self.callback_flag(flag=True)
                     self.callback_data(tx_packets=index, rx_packets=packets_received, rssi=0)
+                    self.callback_flag(flag=True)
                     # self.index = 0
                     continue
 

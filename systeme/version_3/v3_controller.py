@@ -107,10 +107,15 @@ class Controller(object):
 
         
     def build_route(self):
+        """
+        Build route graph.
+
+        """
         path_a = Path(name='A', distance=62.0, direction='left')
         path_b = Path(name='B', distance=48.0, direction='straight')
         path_c = Path(name='C', distance=87.5, direction='right')
         self.paths = [path_a, path_b, path_c]
+
 
 
     def run(self):
@@ -118,9 +123,28 @@ class Controller(object):
         Run AV controller.
 
         """
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-f", type=float, default=434e6, metavar='frequency', dest='frequency', 
+                            nargs=1, help="Transmit frequency (default: %(default)s)")
+        parser.add_argument("-m", type=str, default='gfsk', metavar='modulation', dest='modulation',
+                            choices=['gfsk', 'fsk', 'ask'],
+                            help="Select modulation from [%(choices)s] (default: %(default)s)")
+        parser.add_argument("-p" "--power", type=int, default=17, metavar='power', dest='power',
+                            choices=[8, 11, 14, 17],
+                            help="Select transmit power from [%(choices)s] (default: %(default)s)")
+        parser.add_argument("-r" "--bitrate", type=float, default=4.8e3, metavar='bitrate',
+                            dest='bitrate', help="Set bitrate (default: %(default)s)")
+        args = parser.parse_args()
+
+        self.frequency = args.frequency
+        self.modulation = args.modulation
+        self.eirp = args.power
+        self.bitrate = args.bitrate
+
         self.build_route()
         self.location.start()
         self.motion.start()
+        self.radio.start()
         self.fsm()
  
 
@@ -146,7 +170,9 @@ class Controller(object):
         
 
         while True:
+            ###################################################################
             if fsm_state == 'first_time':
+                
                 self.motion.set_direction('straight')
                 self.motion.set_speed(25)
                 self.motion.set_state('go')
@@ -158,20 +184,31 @@ class Controller(object):
                     time.sleep(0.1)
                     fsm_state = 'before_traverse'
                     continue
+            ###################################################################
 
 
+
+            ###################################################################
             if fsm_state == 'before_traverse':
                 i = self.cognition.choose_path(self.paths)
                 current_path = self.paths[i]
                 fsm_state = 'traverse_path'
                 continue
+            ###################################################################
                 
 
+            ###################################################################
             if fsm_state == 'traverse_path':
                 logging.info("v3_controller::fsm: motion.set_State('go')")
+
+                self.radio.set_current_location(self.current_location)
+                self.radio.set_radio_configuration(self.modulation, self.eirp,
+                                                   self.bitrate, self.frequency)
                 
                 self.motion.set_direction(current_path.direction)
                 self.motion.set_speed(25)
+
+                self.radio.set_state('stream')
                 self.motion.set_state('go')
                 tic = time.time()
 
@@ -180,24 +217,36 @@ class Controller(object):
                     time.sleep(0.1)
                 else:
                     self.motion.set_state('stop')
+                    self.radio.set_state('stop')
                     toc = time.time()
                     x, y = self.tracker.tally_results()
                     self.tracker.reset()
                     fsm_state = 'after_traverse'
                     continue
+            ###################################################################
 
 
+            ###################################################################
             if fsm_state == 'after_traverse':
                 current_path.has_been_explored = True
                 current_path.current_meters['X'] = x
                 current_path.current_meters['Y'] = y
                 current_path.solution_as_observed['T'] = toc - tic
 
+                self.radio.set_state('update')
+                while not self.radio_update_flag:
+                    time.sleep(0.1)
+                else:
+                    current_path.current_meters['RSSI'] = rssi
+                    current_path.solution_as_observed[
+                
+
                 fsm_state = 'go_to_beginning'
                 continue
+            ###################################################################
 
 
-
+            ###################################################################
             if fsm_state == 'go_to_beginning':
                 self.motion.set_direction('straight')
                 self.motion.set_speed(55)
@@ -210,6 +259,7 @@ class Controller(object):
                     time.sleep(0.1)
                     fsm_state = 'before_traverse'
                     continue
+            ###################################################################
 
             
 
