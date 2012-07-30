@@ -8,6 +8,7 @@ import utils
 from cognition.decision_making import DecisionMaker    
 from location.location import Location
 from motion.motion_subsystem import MotionSubsystem
+from radio.radio_subsystem import RadioSubsystem
 from route.new_path import Path
 from sensor.target_tracker import TargetTracker
 
@@ -27,6 +28,8 @@ class Controller(object):
         self.cognition = DecisionMaker()
         self.location = Location(self.location_callback)
         self.motion = MotionSubsystem(brick)
+        self.radio = RadioSubsystem(self.radio_update_flag, self.radio_update_data,
+                                    self.radio_reconfig_flag)
         self.tracker = TargetTracker(brick)
 
 
@@ -47,7 +50,62 @@ class Controller(object):
         self.current_location = current_location
 
 
+    def radio_update_flag(self, flag=False):
+        """
+        Callback for radio subsystem.
 
+        This function simply sets a flag true or false, to indicate if
+        there is data from the radio subsystem.
+
+        Parameters
+        ----------
+        flag : bool
+            `True` if radio subsystem has passed data through the
+            `radio_callback_data`.
+
+        """
+        self.radio_update_flag = flag
+
+
+    def radio_update_data(self, tx_packets=0, rx_packets=0, rssi=0):
+        """
+        Callback for radio subsystem.
+
+        This function is used for the radio susbsytem to pass data
+        back to the controller.
+
+        Parameters
+        ----------
+        tx_packets : int
+            Number of streamed packets sent by radio.
+        rx_packets : int
+            Number of streamed packets received by Node B.
+        rssi : int
+
+        """
+        self.tx_packets = tx_packets
+        self.rx_packets = rx_packets
+        self.rssi = rssi
+        
+
+    def radio_reconfig_flag(self, flag=False):
+        """
+        Callback for radio subsystem.
+
+        This function is use by the radio subsystem to indicate that a
+        reconfiguration request has been acknowledged by Node B.
+
+        Parameters
+        ----------
+        flag : bool
+            `True` if radio subsystem has received an acknowledgment from
+            Node B for a reconfiguration request.
+
+        """
+        self.flag = flag
+        
+
+        
     def build_route(self):
         path_a = Path(name='A', distance=62.0, direction='left')
         path_b = Path(name='B', distance=48.0, direction='straight')

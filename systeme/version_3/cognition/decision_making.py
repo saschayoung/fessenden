@@ -194,8 +194,12 @@ class DecisionMaker(object):
 
         if False in has_been_explored:
             return has_been_explored.index(False)
+
+        # TODO: I will need to add additional logic here, this (above)
+        # just covers choosing a path that hasn't been explored yet. I
+        # will need to add the decision making stuff.
         else:
-            return 1
+            return 2
 
 
 
