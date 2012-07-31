@@ -43,11 +43,6 @@ class DecisionMaker(object):
         self.possible_eirp = [8.0, 11.0, 14.0, 17.0]
         self.possible_Rs = [2.0e3, 2.4e3, 4.8e3, 9.6e3, 19.2e3, 38.4e3, 57.6e3, 125.0e3]
     
-        # self.rf_objectives = RadioObjectives()
-        # self.time_objective = TimeObjective()
-        # self.z_objective = ZObjective()
-
-
 
     def generate_solutions(self, paths):
         """
@@ -71,6 +66,7 @@ class DecisionMaker(object):
         Y = []
         RSSI = []
 
+
         for p in paths:
             dist.append(p.distance)
             X.append(p.previous_meters['X'])
@@ -85,7 +81,7 @@ class DecisionMaker(object):
         
         index = 0
         for i in range(3):
-            p = paths[i].name
+            name = paths[i].name
             x = X[i]
             y = Y[i]
 
@@ -102,41 +98,30 @@ class DecisionMaker(object):
                             b = self.calculate_ber(rssi, e, m, self.possible_Rs[k])
                             g = self.calculate_goodput(self.possible_Rs[k], t)
 
-                            solution_set.append([z, t, b, g])
-                            record_of_parameters[index] = {'path' : p,
-                                                           'X' : x,
-                                                           'Y' : y,
-                                                           'Z' : z,
-                                                           'T' : t,
-                                                           'dist' : d,
-                                                           'speed' : self.possible_speeds[j],
-                                                           'mod' : m,
-                                                           'BER' : b,
-                                                           'EIRP' : e,
-                                                           'RSSI' : rssi,
-                                                           'bitrate' : self.possible_Rs[k],
-                                                           'goodput' : g}
-                                                       
-                            index += 1
-        
-        print index
-        solution_space = np.array(solution_set).T
+                            soln = [z, t, b, g]
 
+                            params = {'path' : name, 'X' : x, 'Y' : y, 'Z' : z, 'T' : t,
+                                      'dist' : d, 'speed' : self.possible_speeds[j],
+                                      'mod' : m, 'BER' : b, 'EIRP' : e, 'RSSI' : rssi,
+                                      'bitrate' : self.possible_Rs[k], 'goodput' : g}
+
+                            solution_set.append(soln)
+                            record_of_parameters[index] = params
+
+                            index += 1
+
+        solution_space = np.array(solution_set).T
 
         max_z = np.max(solution_space[0])
         max_t = np.max(solution_space[1])
         max_b = np.max(solution_space[2])
         max_g = np.max(solution_space[3])
 
-        # print max_z, max_t, max_b, max_g
-
         z_weight = 1.0
         t_weight = 1.0
         b_weight = 1.0
         g_weight = 1.0
 
-        # this is the basic solution
-        #############################################################
         scaled_z = solution_space[0] / max_z
         scaled_t = solution_space[1] / max_t
         scaled_b = solution_space[2] / max_b
@@ -144,45 +129,62 @@ class DecisionMaker(object):
 
         unified_solution = (z_weight*scaled_z - t_weight*scaled_t
                             - b_weight*scaled_b + g_weight* scaled_g)
-        #############################################################
 
+        solution_rank = np.max(unified_solution)
+        solution_index = np.where(unified_solution == solution_rank)[0][0]
 
-        # print unified_solution
+        a_solution_set = []
+        a_parameter_set = []
+        
+        b_solution_set = []
+        b_parameter_set = []
 
-        solution = np.max(unified_solution)
-
-
-        solution_index = np.where(unified_solution == solution)[0][0]
-
-        toc1 = time.time()
-
-        hist, bin_edges = np.histogram(unified_solution, 100)
-
-        alternative_solution_indices = []
+        c_solution_set = []
+        c_parameter_set = []
 
         for i in range(len(unified_solution)):
-            s = unified_solution[i]
-            if s == solution:
-                continue
-            elif ( s <= bin_edges[-1] and s >= bin_edges[-2] ):
-                alternative_solution_indices.append(i)
-            else:
-                continue
+            if record_of_parameters[i]['path'] == 'A':
+                a_solution_set.append(unified_solution[i])
+                a_parameter_set.append(record_of_parameters[i])
+            if record_of_parameters[i]['path'] == 'B':
+                b_solution_set.append(unified_solution[i])
+                b_parameter_set.append(record_of_parameters[i])
+            if record_of_parameters[i]['path'] == 'C':
+                c_solution_set.append(unified_solution[i])
+                c_parameter_set.append(record_of_parameters[i])
 
-        toc2 = time.time()
+        a_solution_set = np.array(a_solution_set)
+        a_rank = np.max(a_solution_set)
+        a_idx = np.where(a_solution_set == a_rank)[0][0]
 
-        base_time = toc1 - tic
-        extended_time = toc2 - toc1
+        b_solution_set = np.array(b_solution_set)
+        b_rank = np.max(b_solution_set)
+        b_idx = np.where(b_solution_set == b_rank)[0][0]
 
-        print "Time of initial solution calculation: %f seconds" %(base_time,)
-        print "Time of alternative solution extension: %f seconds" %(extended_time,)
+        c_solution_set = np.array(c_solution_set)
+        c_rank = np.max(c_solution_set)
+        c_idx = np.where(c_solution_set == c_rank)[0][0]
 
-        print "\n\nDetails of `solution`: "
-        print solution_index, solution, record_of_parameters[solution_index]
+        ranking_result = np.array([a_rank, b_rank, c_rank])
+        winner = np.argwhere(ranking_result == np.max(ranking_result))[0][0]
 
-        print "\n\nAlternate `solutions`: "
-        for i in alternative_solution_indices:
-            print i, unified_solution[i], record_of_parameters[i]
+        parameters = [a_parameter_set[a_idx], b_parameter_set[b_idx], c_parameter_set[c_idx]]
+
+        for par in parameters:
+            par['Z_scaled'] = par['Z'] / max_z
+            par['T_scaled'] = par['T'] / max_t
+            par['BER_scaled'] = par['BER'] / max_b
+            par['goodput_scaled'] = par['goodput'] / max_g
+
+        i = 0
+        for p in paths:
+            p.solution_parameters = parameters[i]
+            i += 1
+        
+        return winner
+
+
+
 
 
 
@@ -220,7 +222,7 @@ class DecisionMaker(object):
         # just covers choosing a path that hasn't been explored yet. I
         # will need to add the decision making stuff.
         else:
-            return 2
+            return self.generate_solutions(paths)
 
 
 
@@ -415,12 +417,207 @@ if __name__=='__main__':
 
 
 
+        # if winner = 0:
+        #     parameters = a_parameters
+
+        # if winner = 1:
+        #     parameters = b_parameters
+
+        # if winner = 2:
+        #     parameters = c_parameters
+
+
+
+        # a_parameters = a_parameter_set[a_idx]
+        # b_parameters = b_parameter_set[b_idx]
+        # c_parameters = c_parameter_set[c_idx]
+
+
+        # print "a_result: \n", a_result
+        # print "b_result: \n", b_result
+        # print "c_result: \n", c_result
+
+        # # a_max = [np.max(np.array(a_solutions)), 
+
+
+        # print "\n\nDetails of `solution`: "
+        # print solution_index, solution_rank, record_of_parameters[solution_index]
+
+
+        # print np.max(np.array(b_solutions))
+
+        # toc1 = time.time()
+
+        # hist, bin_edges = np.histogram(unified_solution, 100)
+
+        # alternative_solution_indices = []
+
+        # for i in range(len(unified_solution)):
+        #     s = unified_solution[i]
+        #     if s == solution:
+        #         continue
+        #     elif ( s <= bin_edges[-1] and s >= bin_edges[-2] ):
+        #         alternative_solution_indices.append(i)
+        #     else:
+        #         continue
+
+        # toc2 = time.time()
+
+        # base_time = toc1 - tic
+        # extended_time = toc2 - toc1
+
+        # print "Time of initial solution calculation: %f seconds" %(base_time,)
+        # print "Time of alternative solution extension: %f seconds" %(extended_time,)
+
+
+        # print "\n\nAlternate `solutions`: "
+        # for i in alternative_solution_indices:
+        #     print i, unified_solution[i], record_of_parameters[i]
+
+
+
+        
 
 
 
 
 
 
+
+
+
+
+
+
+    #     best = []
+    #     for i in [a_solutions, b_solutions, c_solutions]:
+    #         self.find_best_solution(i)
+    #     #     rank, idx = self.find_best_solution(i)
+    #     #     best.append((rank, idx))
+    #     # print best
+
+                      
+        
+
+
+
+                            # if p == 'A':
+                            #     a_params.append(params)
+                            #     a_solutions.append(soln)
+                            # elif p == 'B':
+                            #     b_params.append(params)
+                            #     b_solutions.append(soln)
+                            # else:
+                            #     c_params.append(params)
+                            #     c_solutions.append(soln)
+
+
+
+
+
+
+    # def find_best_solution(self, solution_set):
+    #     """
+    #     Find the highest ranking solution.
+
+    #     Parameters
+    #     ----------
+    #     solution : array
+    #         2D array of successive [z, t, b, g] values.
+
+    #     Returns
+    #     -------
+    #     solution_rank : float
+    #         Numerical value of ranked solution, a weighted sum of
+    #         scaled `z`, `t`, `b`, and `g` values.
+    #     solution_index : int
+    #         Index of solution_set (and paramater set) entry that
+    #         corresponds to highest ranked solution.
+            
+    #     """
+    #     solution_space = np.array(solution_set).T
+
+    #     max_z = np.max(solution_space[0])
+    #     max_t = np.max(solution_space[1])
+    #     max_b = np.max(solution_space[2])
+    #     max_g = np.max(solution_space[3])
+
+    #     z_weight = 1.0
+    #     t_weight = 1.0
+    #     b_weight = 1.0
+    #     g_weight = 1.0
+
+    #     # this is the basic solution
+    #     #############################################################
+    #     scaled_z = solution_space[0] / max_z
+    #     scaled_t = solution_space[1] / max_t
+    #     scaled_b = solution_space[2] / max_b
+    #     scaled_g = solution_space[3] / max_g
+
+    #     unified_solution = (z_weight*scaled_z - t_weight*scaled_t
+    #                         - b_weight*scaled_b + g_weight* scaled_g)
+    #     #############################################################
+
+    #     solution_rank = np.max(unified_solution)
+    #     print solution_rank
+    #     # solution_index = np.where(unified_solution == solution_rank)[0][0]
+
+    #     # return solution_rank, solution_index
+
+
+
+
+
+
+
+    # def find_best_solution(self, solution_set):
+    #     """
+    #     Find the highest ranking solution.
+
+    #     Parameters
+    #     ----------
+    #     solution : array
+    #         2D array of successive [z, t, b, g] values.
+
+    #     Returns
+    #     -------
+    #     solution_rank : float
+    #         Numerical value of ranked solution, a weighted sum of
+    #         scaled `z`, `t`, `b`, and `g` values.
+    #     solution_index : int
+    #         Index of solution_set (and paramater set) entry that
+    #         corresponds to highest ranked solution.
+            
+    #     """
+    #     solution_space = np.array(solution_set).T
+
+    #     max_z = np.max(solution_space[0])
+    #     max_t = np.max(solution_space[1])
+    #     max_b = np.max(solution_space[2])
+    #     max_g = np.max(solution_space[3])
+
+    #     z_weight = 1.0
+    #     t_weight = 1.0
+    #     b_weight = 1.0
+    #     g_weight = 1.0
+
+    #     # this is the basic solution
+    #     #############################################################
+    #     scaled_z = solution_space[0] / max_z
+    #     scaled_t = solution_space[1] / max_t
+    #     scaled_b = solution_space[2] / max_b
+    #     scaled_g = solution_space[3] / max_g
+
+    #     unified_solution = (z_weight*scaled_z - t_weight*scaled_t
+    #                         - b_weight*scaled_b + g_weight* scaled_g)
+    #     #############################################################
+
+    #     solution_rank = np.max(unified_solution)
+    #     # print solution_rank
+    #     # print unified_solution
+    #     solution_index = np.where(unified_solution == solution_rank)[0][0]
+
+    #     return solution_rank, solution_index
 
 
 

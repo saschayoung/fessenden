@@ -43,6 +43,8 @@ class Path(object):
         # then `True` thereafter
         self.has_been_explored = False
 
+        self.solution_parameters = {}
+
         
         self.solution_as_implemented = {'Z' : '',
                                         'T' : '',

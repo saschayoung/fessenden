@@ -10,6 +10,8 @@ import logging
 import threading
 import time
 
+import numpy as np
+
 from data import NodeAData
 from packet import Packet
 from radio_api import RadioAPI
@@ -88,9 +90,12 @@ class RadioSubsystem(threading.Thread):
         self.radio.startup()
 
         index = 0
+        rssi = []
 
         # TODO: record RSSI before every tranmission
         while not self.stop_event.isSet():
+
+            ###################################################################
             if self.current_state == 'stop':
                 if self.last_state == 'stop':
                     continue
@@ -99,7 +104,6 @@ class RadioSubsystem(threading.Thread):
                 elif self.last_state == 'stream':  
                     self.last_state = 'stop'
                     logging.info("radio_subsystem::run: stop")
-                    index = 0
                     continue
                 
                 else:
@@ -107,15 +111,19 @@ class RadioSubsystem(threading.Thread):
                     logging.debug("radio_subsystem::self.current_state == %s" %(self.current_state,))
                     logging.debug("radio_subsystem::last state == %s" %(self.last_state,))
                     continue
+            ###################################################################
 
-                
+
+            ###################################################################
             elif self.current_state == 'stream':
                 if self.last_state in ['stop', 'stream']
                     self.last_state = 'stream'
                     logging.info("radio_subsystem::run: stream")
+
                     self.radio.configure(self.eirp, self.frequency, self.bitrate, self.modulation)
+                    rssi.append(self.radio.get_rssi_dBm())
                     self._send_packet('stream_data')
-                    # index += 1
+
                     continue
 
                 else:
@@ -123,25 +131,35 @@ class RadioSubsystem(threading.Thread):
                     logging.debug("radio_subsystem::self.current_state == %s" %(self.current_state,))
                     logging.debug("radio_subsystem::last state == %s" %(self.last_state,))
                     continue
+            ###################################################################
+                
 
 
+            ###################################################################
             elif self.current_state == 'update':
                 if self.last_state == 'stop':
                     self.last_state = 'update'
                     logging.info("radio_subsystem::run: update")
-                    # may not need this all the time, but could be
-                    # difficult to figure out if i don't use it every time
+
                     self.radio.configure(self.eirp, self.frequency, self.bitrate, self.modulation)
                     self._send_packet('request_data')
-                    # index += 1
+
                     pkt_num, loc, flags, data = self._receive_packet()
                     packets_received = self.data.unpack_data(data)
+
                     logging.info("radio_subsystem::packets received by Node B = %d", %(packets_received,))
                     logging.info("radio_subsystem::packets sent by Node A = %d", %(index,))
+
+                    rssi = np.array(rssi)
+                    rssi = np.mean(rssi)
+
+                    self.update_data(tx_packets=index, rx_packets=packets_received, rssi)
+                    self.update_flag(flag=True)
+
+                    index = 0
+                    rssi = []
+
                     self.current_state = 'stop'
-                    self.callback_data(tx_packets=index, rx_packets=packets_received, rssi=0)
-                    self.callback_flag(flag=True)
-                    # self.index = 0
                     continue
 
                 else:
@@ -149,8 +167,10 @@ class RadioSubsystem(threading.Thread):
                     logging.debug("radio_subsystem::self.current_state == %s" %(self.current_state,))
                     logging.debug("radio_subsystem::last state == %s" %(self.last_state,))
                     continue
+            ###################################################################
                     
 
+            ###################################################################
             elif self.current_state == 'reconfigure':
                 if self.last_state == 'stop':
                     self.last_state = 'reconfigure'
@@ -162,8 +182,8 @@ class RadioSubsystem(threading.Thread):
                     pkt_num, loc, flags, data = self._receive_packet()
                     if (flags & 0x04) == 0x04:
                         logging.info("radio_subsystem::run: reconfigure acknowledged")
-                        self.current_state = 'stop'
                         self.reconfig_flag(flag=True)
+                        self.current_state = 'stop'
                         continue
 
                     else:
@@ -177,13 +197,16 @@ class RadioSubsystem(threading.Thread):
                     logging.debug("radio_subsystem::self.current_state == %s" %(self.current_state,))
                     logging.debug("radio_subsystem::last state == %s" %(self.last_state,))
                     continue
+            ###################################################################
 
 
+            ###################################################################
             else:
                 logging.debug("radio_subsystem::Error 5 in RadioSubsystem.run()")
                 logging.debug("radio_subsystem::self.current_state == %s" %(self.current_state,))
                 logging.debug("radio_subsystem::last state == %s" %(self.last_state,))
                 continue
+            ###################################################################
                     
 
 

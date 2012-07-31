@@ -192,6 +192,27 @@ class Controller(object):
             if fsm_state == 'before_traverse':
                 i = self.cognition.choose_path(self.paths)
                 current_path = self.paths[i]
+                # get solution
+                # self.modulation, self.eirp, self.bitrate = ???
+                
+                # current_path.solution_as_implemented['Z'] = 0
+                # current_path.solution_as_implemented['T'] = 0
+                # current_path.solution_as_implemented['B'] = 0
+                # current_path.solution_as_implemented['G'] = 0
+
+                # current_path.current_knobs['Modulation'] = 0
+                # current_path.current_knobs['Rs'] = 0
+                # current_path.current_knobs['EIRP'] = 0
+                # current_path.current_knobs['Speed'] = 0
+
+                self.radio.set_current_location(self.current_location)
+                self.radio.set_radio_configuration(self.modulation, self.eirp,
+                                                   self.bitrate, self.frequency)
+                
+                self.motion.set_direction(current_path.direction)
+                self.motion.set_speed(25)
+
+
                 fsm_state = 'traverse_path'
                 continue
             ###################################################################
@@ -200,13 +221,6 @@ class Controller(object):
             ###################################################################
             if fsm_state == 'traverse_path':
                 logging.info("v3_controller::fsm: motion.set_State('go')")
-
-                self.radio.set_current_location(self.current_location)
-                self.radio.set_radio_configuration(self.modulation, self.eirp,
-                                                   self.bitrate, self.frequency)
-                
-                self.motion.set_direction(current_path.direction)
-                self.motion.set_speed(25)
 
                 self.radio.set_state('stream')
                 self.motion.set_state('go')
@@ -237,7 +251,7 @@ class Controller(object):
                 while not self.radio_update_flag:
                     time.sleep(0.1)
                 else:
-                    current_path.current_meters['RSSI'] = rssi
+                    current_path.current_meters['RSSI'] = self.rssi
                     current_path.solution_as_observed[
                 
 
