@@ -181,6 +181,20 @@ class DecisionMaker(object):
             p.solution_parameters = parameters[i]
             i += 1
         
+
+        chosen_path = paths[winner]
+        chosen_parameters = parameters[winner]
+
+        chosen_path.solution_as_implemented['Z'] = chosen_parameters['Z']
+        chosen_path.solution_as_implemented['T'] = chosen_parameters['T']
+        chosen_path.solution_as_implemented['B'] = chosen_parameters['BER']
+        chosen_path.solution_as_implemented['G'] = chosen_parameters['goodput']
+        
+        chosen_path.current_knobs['Modulation'] = chosen_parameters['mod']
+        chosen_path.current_knobs['Rs'] = chosen_parameters['bitrate']
+        chosen_path.current_knobs['EIRP'] = chosen_parameters['EIRP']
+        chosen_path.current_knobs['Speed'] = chosen_parameters['speed']
+
         return winner
 
 
@@ -217,10 +231,6 @@ class DecisionMaker(object):
 
         if False in has_been_explored:
             return has_been_explored.index(False)
-
-        # TODO: I will need to add additional logic here, this (above)
-        # just covers choosing a path that hasn't been explored yet. I
-        # will need to add the decision making stuff.
         else:
             return self.generate_solutions(paths)
 
@@ -413,6 +423,28 @@ class DecisionMaker(object):
 if __name__=='__main__':
     main = DecisionMaker()
     main.generate_solutions()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

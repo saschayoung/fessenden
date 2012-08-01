@@ -20,10 +20,14 @@ path_c.previous_meters['Y'] = 2
 path_c.previous_meters['RSSI'] = 300
 
 dm = DecisionMaker()
-choice = dm.generate_solutions([path_a, path_b, path_c])
+paths = [path_a, path_b, path_c]
+choice = dm.generate_solutions(paths)
 
 print choice
 
-for p in [path_a, path_b, path_c]:
-    print p.name
-    print p.solution_parameters
+# for p in paths:
+#     print p.name
+#     print p.solution_parameters
+
+print paths[choice].solution_as_implemented
+print paths[choice].current_knobs
