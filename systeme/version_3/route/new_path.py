@@ -79,3 +79,33 @@ class Path(object):
 
     
         
+
+
+    def update_knobs(self):
+        """
+        Update knob settings.
+
+        This function copies the current knob settings into
+        previous_knobs and resets current_knobs.
+
+        """
+        self.previous_knobs = self.current_knobs
+        self.current_knobs = {'Modulation' : '',
+                              'Rs' : '',
+                              'EIRP' : '',
+                              'Speed' : ''}
+
+
+
+    def update_meters(self):
+        """
+        Update meter settings.
+
+        This function copies the current meter settings into
+        previous_meters and resets current_meters.
+
+        """
+        self.previous_meters = self.current_meters
+        self.current_meters = {'X' : '',
+                               'Y' : '',
+                               'RSSI' : ''}

@@ -348,6 +348,33 @@ class RadioSubsystem(threading.Thread):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         # while not self.stop_event.isSet():
         #     if self.command == 'pause':
         #         if self._fsm_state == 'recieve':

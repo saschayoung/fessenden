@@ -32,6 +32,9 @@ class Controller(object):
                                     self.radio_reconfig_flag)
         self.tracker = TargetTracker(brick)
 
+        self.radio_update_flag = False
+        self.reconfig_flag = False
+
 
     def location_callback(self, current_location):
         """
@@ -102,7 +105,7 @@ class Controller(object):
             Node B for a reconfiguration request.
 
         """
-        self.flag = flag
+        self.reconfig_flag = flag
         
 
         
@@ -182,6 +185,12 @@ class Controller(object):
                 else:
                     self.motion.set_state('stop')
                     time.sleep(0.1)
+
+                    self.radio.set_current_location(self.current_location)
+                    self.radio.set_radio_configuration(self.modulation, self.eirp,
+                                                       self.bitrate, self.frequency)
+
+
                     fsm_state = 'before_traverse'
                     continue
             ###################################################################
@@ -190,28 +199,26 @@ class Controller(object):
 
             ###################################################################
             if fsm_state == 'before_traverse':
+                self.path.update_meters()
+                
                 i = self.cognition.choose_path(self.paths)
                 current_path = self.paths[i]
-                # get solution
-                # self.modulation, self.eirp, self.bitrate = ???
-                
-                # current_path.solution_as_implemented['Z'] = 0
-                # current_path.solution_as_implemented['T'] = 0
-                # current_path.solution_as_implemented['B'] = 0
-                # current_path.solution_as_implemented['G'] = 0
 
-                # current_path.current_knobs['Modulation'] = 0
-                # current_path.current_knobs['Rs'] = 0
-                # current_path.current_knobs['EIRP'] = 0
-                # current_path.current_knobs['Speed'] = 0
-
-                self.radio.set_current_location(self.current_location)
-                self.radio.set_radio_configuration(self.modulation, self.eirp,
-                                                   self.bitrate, self.frequency)
+                self.radio.set_config_packet_data(current_path.current_knobs['Modulation'],
+                                                  current_path.current_knobs['EIRP'],
+                                                  current_path.current_knobs['Rs'])
+                self.radio.set_state('reconfigure')
+                while not self.reconfig_flag:
+                    time.sleep(0.1)
+                else:
+                    self.radio.set_current_location(self.current_location)
+                    self.radio.set_radio_configuration(current_path.current_knobs['Modulation'],
+                                                       current_path.current_knobs['EIRP'],
+                                                       current_path.current_knobs['Rs'],
+                                                       self.frequency)
                 
                 self.motion.set_direction(current_path.direction)
                 self.motion.set_speed(25)
-
 
                 fsm_state = 'traverse_path'
                 continue
@@ -233,8 +240,7 @@ class Controller(object):
                     self.motion.set_state('stop')
                     self.radio.set_state('stop')
                     toc = time.time()
-                    x, y = self.tracker.tally_results()
-                    self.tracker.reset()
+
                     fsm_state = 'after_traverse'
                     continue
             ###################################################################
@@ -243,6 +249,10 @@ class Controller(object):
             ###################################################################
             if fsm_state == 'after_traverse':
                 current_path.has_been_explored = True
+                self.path.update_meters()
+
+                x, y = self.tracker.tally_results()
+                self.tracker.reset()
                 current_path.current_meters['X'] = x
                 current_path.current_meters['Y'] = y
                 current_path.solution_as_observed['T'] = toc - tic
@@ -252,7 +262,13 @@ class Controller(object):
                     time.sleep(0.1)
                 else:
                     current_path.current_meters['RSSI'] = self.rssi
-                    current_path.solution_as_observed[
+                    current_path.solution_as_observed['G'] = self.rx_packets
+                    current_path.solution_as_observed['Z'] = self.cognition.calculate_z(x, y)
+                    current_path.solution_as_observed['B'] = self.cognition.estimate_ber(self.tx_packets,
+                                                                                         self.rx_packets)
+
+                    # TODO: add the part where we determine if the
+                    # solution we used wasn any good
                 
 
                 fsm_state = 'go_to_beginning'

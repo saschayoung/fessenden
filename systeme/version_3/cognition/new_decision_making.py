@@ -124,8 +124,12 @@ class DecisionMaker(object):
 
         scaled_z = solution_space[0] / max_z
         scaled_t = solution_space[1] / max_t
-        scaled_b = solution_space[2] / max_b
         scaled_g = solution_space[3] / max_g
+        
+        if max_b <= 1.0e-16:    # ber may be functionally zero, don't divide by 0
+            scaled_b = solution_space[2]
+        else:
+            scaled_b = solution_space[2] / max_b
 
         unified_solution = (z_weight*scaled_z - t_weight*scaled_t
                             - b_weight*scaled_b + g_weight* scaled_g)
@@ -330,6 +334,21 @@ class DecisionMaker(object):
         return Pb
 
 
+    def estimate_ber(self, tx_packets, rx_packets):
+        """
+        Approximate actual BER.
+
+        Parameters
+        ----------
+        tx_packets : int
+            Number of packets sent by Node A
+        rx_packets : int
+            Number of packets received by Node B
+
+        """
+        # TODO: add actual algorithm
+        return 0.5
+
 
     def calculate_goodput(self, Rs, t):
         """
@@ -337,6 +356,18 @@ class DecisionMaker(object):
 
         Maximum number of packets in time t.
 
+        Parameters
+        ----------
+        Rs : float
+            bitrate
+        t : float
+            time
+
+        Returns
+        -------
+        goodput : int
+            Maximum numbet of packets in time `t`.
+        
         """
         propogation_distance = 10.0
         speed_of_light = 3.0e8
@@ -344,7 +375,7 @@ class DecisionMaker(object):
 
         goodput = t / (0.3 + (propogation_distance / speed_of_light) + (packet_size / Rs))
         
-        return goodput
+        return int(np.floor(goodput))
 
 
 
