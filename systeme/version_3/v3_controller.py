@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import argparse
 import logging
 import time
 
@@ -70,7 +71,7 @@ class Controller(object):
         self.radio_update_flag = flag
 
 
-    def radio_update_data(self, tx_packets=0, rx_packets=0, rssi=0):
+    def radio_update_data(self, tx_packets=0, rx_packets=0, signal_strength=0):
         """
         Callback for radio subsystem.
 
@@ -88,7 +89,7 @@ class Controller(object):
         """
         self.tx_packets = tx_packets
         self.rx_packets = rx_packets
-        self.rssi = rssi
+        self.rssi = signal_strength
         
 
     def radio_reconfig_flag(self, flag=False):
@@ -144,10 +145,17 @@ class Controller(object):
         self.eirp = args.power
         self.bitrate = args.bitrate
 
+        print "using default_settings"
+
+        print "building route"
         self.build_route()
+        print "starting location module"
         self.location.start()
+        print "starting motion module"
         self.motion.start()
+        print "starting radio module"
         self.radio.start()
+        print "starting central fsm"
         self.fsm()
  
 
@@ -199,7 +207,9 @@ class Controller(object):
 
             ###################################################################
             if fsm_state == 'before_traverse':
-                self.path.update_meters()
+                for p in self.paths:
+                    p.update_knobs()
+                # self.path.update_meters()
                 
                 i = self.cognition.choose_path(self.paths)
                 current_path = self.paths[i]
@@ -218,7 +228,7 @@ class Controller(object):
                                                        self.frequency)
                 
                 self.motion.set_direction(current_path.direction)
-                self.motion.set_speed(25)
+                self.motion.set_speed(current_path.current_knobs['Speed'])
 
                 fsm_state = 'traverse_path'
                 continue
@@ -249,6 +259,8 @@ class Controller(object):
             ###################################################################
             if fsm_state == 'after_traverse':
                 current_path.has_been_explored = True
+                for p in self.paths:
+                    p.update_meters()
                 self.path.update_meters()
 
                 x, y = self.tracker.tally_results()
@@ -304,9 +316,10 @@ if __name__ == '__main__':
     try:
         main.run()
     except KeyboardInterrupt:
-        pass
-    finally:
         main.shutdown()
+
+    #     pass
+    # finally:
 
 
 

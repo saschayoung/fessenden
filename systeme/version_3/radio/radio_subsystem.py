@@ -147,13 +147,13 @@ class RadioSubsystem(threading.Thread):
                     pkt_num, loc, flags, data = self._receive_packet()
                     packets_received = self.data.unpack_data(data)
 
-                    logging.info("radio_subsystem::packets received by Node B = %d", %(packets_received,))
-                    logging.info("radio_subsystem::packets sent by Node A = %d", %(index,))
+                    logging.info("radio_subsystem::packets received by Node B = %d" %(packets_received,))
+                    logging.info("radio_subsystem::packets sent by Node A = %d" %(index,))
 
                     rssi = np.array(rssi)
                     rssi = np.mean(rssi)
 
-                    self.update_data(tx_packets=index, rx_packets=packets_received, rssi)
+                    self.update_data(tx_packets=index, rx_packets=packets_received, signal_strength=rssi)
                     self.update_flag(flag=True)
 
                     index = 0
@@ -175,7 +175,7 @@ class RadioSubsystem(threading.Thread):
                 if self.last_state == 'stop':
                     self.last_state = 'reconfigure'
                     logging.info("radio_subsystem::run: reconfigure")
-                    self.radio.configure(self.eirp, self.frequency, self.bitrate, self.modulation)
+                    self.radio.configure_radio(self.eirp, self.frequency, self.bitrate, self.modulation)
                     self._send_packet('send_reconfig_command', self.reconfig_mod,
                                       self.reconfig_eirp, self.reconfig_bitrate)
                     # index += 1
@@ -192,7 +192,7 @@ class RadioSubsystem(threading.Thread):
                         logging.debug("radio_subsystem::flagse = 0x%x" %(flags,))
                         continue
 
-                 else:
+                else:
                     logging.debug("radio_subsystem::Error 4 in RadioSubsystem.run()")
                     logging.debug("radio_subsystem::self.current_state == %s" %(self.current_state,))
                     logging.debug("radio_subsystem::last state == %s" %(self.last_state,))
@@ -251,7 +251,7 @@ class RadioSubsystem(threading.Thread):
         tx_packet = self.packet.make_packet(self.tx_packet_number, self.current_location, payload)
         self.tx_packet_number += 1
         self.radio.transmit(tx_packet)
-        logging.info "packet sent"
+        logging.info("packet sent")
 
 
     def _receive_packet(self):
