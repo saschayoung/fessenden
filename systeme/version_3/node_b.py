@@ -142,7 +142,7 @@ class NodeB(object):
                 # self.rx_packet_list = []
                 mod, eirp, bitrate = self.data.unpack_data('reconfig', data)
                 print mod, eirp, bitrate
-                time.sleep(0.5)
+                time.sleep(1.0)
                 self._send_packet('ack_command')
                 self.radio.configure_radio(eirp, self.frequency, bitrate, mod)
                 print "reconfigured radio with new waveform, waiting for more packets..."
