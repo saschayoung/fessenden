@@ -6,7 +6,7 @@ import time
 
 
 import utils 
-from cognition.decision_making import DecisionMaker    
+from cognition.new_decision_making import DecisionMaker    
 from location.location import Location
 from motion.motion_subsystem import MotionSubsystem
 from radio.radio_subsystem import RadioSubsystem
