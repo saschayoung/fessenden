@@ -180,6 +180,7 @@ class RadioSubsystem(threading.Thread):
                                       self.reconfig_eirp, self.reconfig_bitrate)
                     # index += 1
                     pkt_num, loc, flags, data = self._receive_packet()
+                    print pkt_num, loc, flags, data
                     if (flags & 0x04) == 0x04:
                         logging.info("radio_subsystem::run: reconfigure acknowledged")
                         self.reconfig_flag(flag=True)
