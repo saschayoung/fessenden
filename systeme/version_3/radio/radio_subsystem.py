@@ -116,7 +116,7 @@ class RadioSubsystem(threading.Thread):
 
             ###################################################################
             elif self.current_state == 'stream':
-                if self.last_state in ['stop', 'stream']
+                if self.last_state in ['stop', 'stream']:
                     self.last_state = 'stream'
                     logging.info("radio_subsystem::run: stream")
 
