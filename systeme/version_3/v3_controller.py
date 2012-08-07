@@ -230,6 +230,9 @@ class Controller(object):
                                                            current_path.current_knobs['Rs'],
                                                            self.frequency)
                         self.motion.set_speed(current_path.current_knobs['Speed'])
+                else:
+                    self.motion.set_speed(25)
+
                 
                 self.motion.set_direction(current_path.direction)
 
