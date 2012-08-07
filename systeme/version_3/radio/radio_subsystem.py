@@ -106,6 +106,19 @@ class RadioSubsystem(threading.Thread):
                     logging.info("radio_subsystem::run: stop")
                     continue
                 
+
+                elif self.last_state == 'update':  
+                    self.last_state = 'stop'
+                    logging.info("radio_subsystem::run: stop")
+                    continue
+
+
+                elif self.last_state == 'reconfigure':  
+                    self.last_state = 'stop'
+                    logging.info("radio_subsystem::run: stop")
+                    continue
+
+
                 else:
                     logging.debug("radio_subsystem::Error 1 in RadioSubsystem.run()")
                     logging.debug("radio_subsystem::self.current_state == %s" %(self.current_state,))

@@ -291,7 +291,6 @@ class Controller(object):
                     # TODO: add the part where we determine if the
                     # solution we used wasn any good
                 
-                self.shutdown()
 
 
                 fsm_state = 'go_to_beginning'

@@ -171,7 +171,7 @@ class Packet(object):
             self.flags = self.flags | 0x40
         if send_stream:
             self.flags = self.flags | 0x80
-        print bin(self.flags)
+        # print bin(self.flags)
 
         
 
