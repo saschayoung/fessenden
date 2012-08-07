@@ -265,8 +265,8 @@ class MotionAPI(object):
        
     def shutdown(self):
         # self.stop_flag = True
-        # self.halt_motion('coast')
-        self.nxt.kill_light_sensor()
+        self.halt_motion('coast')
+        self.kill_light_sensor()
 
 
 
