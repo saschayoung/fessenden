@@ -214,6 +214,12 @@ class Controller(object):
                 i = self.cognition.choose_path(self.paths)
                 current_path = self.paths[i]
 
+                print "modulation: ", current_path.current_knobs['Modulation']
+                print "eirp: ", current_path.current_knobs['EIRP']
+                print "Rs: ", current_path.current_knobs['Rs']
+
+                raise KeyboardInterrupt
+
                 self.radio.set_config_packet_data(current_path.current_knobs['Modulation'],
                                                   current_path.current_knobs['EIRP'],
                                                   current_path.current_knobs['Rs'])
@@ -230,7 +236,6 @@ class Controller(object):
                 self.motion.set_direction(current_path.direction)
                 print "speed: ", current_path.current_knobs['Speed']
                 print "type(speed): ", type(current_path.current_knobs['Speed'])
-                raise KeyboardInterrupt
                 self.motion.set_speed(current_path.current_knobs['Speed'])
 
                 fsm_state = 'traverse_path'
