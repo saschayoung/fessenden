@@ -266,7 +266,7 @@ class Controller(object):
                 current_path.has_been_explored = True
                 for p in self.paths:
                     p.update_meters()
-                self.path.update_meters()
+                # self.path.update_meters()
 
                 x, y = self.tracker.tally_results()
                 self.tracker.reset()
