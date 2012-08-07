@@ -277,7 +277,14 @@ if __name__=='__main__':
     brick = nxt.locator.find_one_brick()
 
     motion = MotionAPI(brick)
-    motion.go_forward_n(5)
-    while motion.motors_busy():
-        time.sleep(0.01)
-    motion.turn_in_place(-90)
+
+    try:
+        while True:
+            motion.find_line()
+            motion.go_forward(25)
+    except KeyboardInterrupt:
+        
+    # motion.go_forward_n(5)
+    # while motion.motors_busy():
+    #     time.sleep(0.01)
+    # motion.turn_in_place(-90)
