@@ -40,14 +40,14 @@ class BasicMotion(object):
 
     def run(self):
         
-        self.turn_in_place(180)
+        # self.turn_in_place(180)
         # time.sleep(
         # self.turn_in_place(90)
         # self.go_backward_n(10, 75)
         
-        # while True:
-        #     self.follow_line()
-        #     self.find_line()
+        while True:
+            self.follow_line()
+            self.find_line()
 
         # self.follow_line()
         # for i in range (10):
