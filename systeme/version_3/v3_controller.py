@@ -252,9 +252,12 @@ class Controller(object):
                     self.tracker.run()
                     time.sleep(0.1)
                 else:
+                    print "stop motion"
                     self.motion.set_state('stop')
+                    print "stop radio"
                     self.radio.set_state('stop')
                     toc = time.time()
+                    time.sleep(1)
                     x, y = self.tracker.tally_results()
                     self.tracker.reset()
                     current_path.current_meters['X'] = x
