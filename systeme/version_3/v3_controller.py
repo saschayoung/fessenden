@@ -183,6 +183,7 @@ class Controller(object):
         while True:
             ###################################################################
             if fsm_state == 'first_time':
+                logging.info("v3_controller::fsm: first_time")
                 
                 self.motion.set_direction('straight')
                 self.motion.set_speed(25)
@@ -207,6 +208,7 @@ class Controller(object):
 
             ###################################################################
             if fsm_state == 'before_traverse':
+                logging.info("v3_controller::fsm: before_traverse")
                 for p in self.paths:
                     p.update_knobs()
                 # self.path.update_meters()
@@ -238,6 +240,8 @@ class Controller(object):
 
             ###################################################################
             if fsm_state == 'traverse_path':
+                logging.info("v3_controller::fsm: traverse_path")
+
                 logging.info("v3_controller::fsm: motion.set_State('go')")
 
                 self.radio.set_state('stream')
