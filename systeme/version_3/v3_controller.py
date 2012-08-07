@@ -216,7 +216,7 @@ class Controller(object):
                 i = self.cognition.choose_path(self.paths)
                 current_path = self.paths[i]
 
-                if i.has_been_explored:
+                if current_path.has_been_explored:
                     self.radio.set_config_packet_data(current_path.current_knobs['Modulation'],
                                                       current_path.current_knobs['EIRP'],
                                                       current_path.current_knobs['Rs'])
