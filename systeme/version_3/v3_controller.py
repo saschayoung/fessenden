@@ -21,7 +21,7 @@ from sensor.target_tracker import TargetTracker
 class Controller(object):
 
     def __init__(self):
-        logging.basicConfig(filename='example.log',level=logging.DEBUG)
+        logging.basicConfig(filename='example.log', filemode='w', level=logging.DEBUG)
 
         self.current_location = 0
         brick = utils.connect_to_brick()
@@ -212,35 +212,24 @@ class Controller(object):
                 # self.path.update_meters()
                 
                 i = self.cognition.choose_path(self.paths)
-                raise KeyboardInterrupt
-
-                print "i: ", i
                 current_path = self.paths[i]
-                print current_path.solution_parameters
 
-
-                print "modulation: ", current_path.current_knobs['Modulation']
-                print "eirp: ", current_path.current_knobs['EIRP']
-                print "Rs: ", current_path.current_knobs['Rs']
-
-
-                self.radio.set_config_packet_data(current_path.current_knobs['Modulation'],
-                                                  current_path.current_knobs['EIRP'],
-                                                  current_path.current_knobs['Rs'])
-                self.radio.set_state('reconfigure')
-                while not self.reconfig_flag:
-                    time.sleep(0.1)
-                else:
-                    self.radio.set_current_location(self.current_location)
-                    self.radio.set_radio_configuration(current_path.current_knobs['Modulation'],
-                                                       current_path.current_knobs['EIRP'],
-                                                       current_path.current_knobs['Rs'],
-                                                       self.frequency)
+                if i.has_been_explored:
+                    self.radio.set_config_packet_data(current_path.current_knobs['Modulation'],
+                                                      current_path.current_knobs['EIRP'],
+                                                      current_path.current_knobs['Rs'])
+                    self.radio.set_state('reconfigure')
+                    while not self.reconfig_flag:
+                        time.sleep(0.1)
+                    else:
+                        self.radio.set_current_location(self.current_location)
+                        self.radio.set_radio_configuration(current_path.current_knobs['Modulation'],
+                                                           current_path.current_knobs['EIRP'],
+                                                           current_path.current_knobs['Rs'],
+                                                           self.frequency)
+                        self.motion.set_speed(current_path.current_knobs['Speed'])
                 
                 self.motion.set_direction(current_path.direction)
-                print "speed: ", current_path.current_knobs['Speed']
-                print "type(speed): ", type(current_path.current_knobs['Speed'])
-                self.motion.set_speed(current_path.current_knobs['Speed'])
 
                 fsm_state = 'traverse_path'
                 continue
