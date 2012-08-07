@@ -120,7 +120,7 @@ class RadioSubsystem(threading.Thread):
                     self.last_state = 'stream'
                     logging.info("radio_subsystem::run: stream")
 
-                    self.radio.configure(self.eirp, self.frequency, self.bitrate, self.modulation)
+                    self.radio.configure_radio(self.eirp, self.frequency, self.bitrate, self.modulation)
                     rssi.append(self.radio.get_rssi_dBm())
                     self._send_packet('stream_data')
 
@@ -141,7 +141,7 @@ class RadioSubsystem(threading.Thread):
                     self.last_state = 'update'
                     logging.info("radio_subsystem::run: update")
 
-                    self.radio.configure(self.eirp, self.frequency, self.bitrate, self.modulation)
+                    self.radio.configure_radio(self.eirp, self.frequency, self.bitrate, self.modulation)
                     self._send_packet('request_data')
 
                     pkt_num, loc, flags, data = self._receive_packet()
