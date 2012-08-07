@@ -124,7 +124,7 @@ class NodeB(object):
             pkt_num, loc, flags, data = self._receive_packet()
         
             if (flags & 0x80) == 0x80:  # receive stream of packets
-                print "receiving stream of packets"
+                print "receiving stream of packets, pkt_num = ", pkt_num
                 self.rx_packet_list.append(pkt_num)
                 # print "received data stream packet"
                 continue
