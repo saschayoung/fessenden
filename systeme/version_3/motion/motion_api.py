@@ -263,10 +263,10 @@ class MotionAPI(object):
                         return
     
        
-     # def shutdown(self):
-     #    # self.stop_flag = True
-     #    # self.halt_motion('coast')
-     #    self.nxt.kill_light_sensor()
+     def shutdown(self):
+        # self.stop_flag = True
+        # self.halt_motion('coast')
+        self.nxt.kill_light_sensor()
 
 
 
@@ -283,7 +283,7 @@ if __name__=='__main__':
             motion.find_line()
             motion.go_forward(25)
     except KeyboardInterrupt:
-        
+        motion.shutdown()
     # motion.go_forward_n(5)
     # while motion.motors_busy():
     #     time.sleep(0.01)
