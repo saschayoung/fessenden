@@ -212,10 +212,11 @@ class Controller(object):
                 # self.path.update_meters()
                 
                 i = self.cognition.choose_path(self.paths)
+                raise KeyboardInterrupt
+
                 print "i: ", i
                 current_path = self.paths[i]
                 print current_path.solution_parameters
-                raise KeyboardInterrupt
 
 
                 print "modulation: ", current_path.current_knobs['Modulation']
