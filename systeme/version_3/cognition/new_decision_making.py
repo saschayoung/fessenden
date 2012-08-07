@@ -137,6 +137,10 @@ class DecisionMaker(object):
         solution_rank = np.max(unified_solution)
         solution_index = np.where(unified_solution == solution_rank)[0][0]
 
+        print "solution_rank: ", solution_rank
+        print "solution_index: ", solution_index
+        print "record_of_parameters[solution_index]: ", record_of_parameters[solution_index]
+
         a_solution_set = []
         a_parameter_set = []
         
