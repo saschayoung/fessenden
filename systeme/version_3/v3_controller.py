@@ -262,12 +262,16 @@ class Controller(object):
                     toc = time.time()
                     time.sleep(1)
                     x, y = self.tracker.tally_results()
+                    print "x = ", x
+                    print "y = ", y
                     self.tracker.reset()
                     current_path.current_meters['X'] = x
                     current_path.current_meters['Y'] = y
                     current_path.solution_as_observed['T'] = toc - tic
 
                     fsm_state = 'after_traverse'
+
+                    self.shutdown()
                     continue
             ###################################################################
 
