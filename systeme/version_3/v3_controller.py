@@ -255,6 +255,11 @@ class Controller(object):
                     self.motion.set_state('stop')
                     self.radio.set_state('stop')
                     toc = time.time()
+                    x, y = self.tracker.tally_results()
+                    self.tracker.reset()
+                    current_path.current_meters['X'] = x
+                    current_path.current_meters['Y'] = y
+                    current_path.solution_as_observed['T'] = toc - tic
 
                     fsm_state = 'after_traverse'
                     continue
@@ -263,17 +268,12 @@ class Controller(object):
 
             ###################################################################
             if fsm_state == 'after_traverse':
-                raise KeyboardInterrupt
+                # raise KeyboardInterrupt
                 current_path.has_been_explored = True
                 for p in self.paths:
                     p.update_meters()
                 # self.path.update_meters()
 
-                x, y = self.tracker.tally_results()
-                self.tracker.reset()
-                current_path.current_meters['X'] = x
-                current_path.current_meters['Y'] = y
-                current_path.solution_as_observed['T'] = toc - tic
 
                 self.radio.set_state('update')
                 while not self.radio_update_flag:
@@ -288,6 +288,8 @@ class Controller(object):
                     # TODO: add the part where we determine if the
                     # solution we used wasn any good
                 
+                self.shutdown()
+
 
                 fsm_state = 'go_to_beginning'
                 continue
