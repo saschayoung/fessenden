@@ -8,8 +8,8 @@ from nxt.motor import *
 def spin_around(b):
     m_left = Motor(b, PORT_A)
     m_right = Motor(b, PORT_B)
-    m_left.weak_turn(-75, 360)
-    m_right.weak_turn(-75, 360)
+    m_left.weak_turn(-75, 180)
+    m_right.weak_turn(-75, 180)
 
 b = nxt.locator.find_one_brick()
 

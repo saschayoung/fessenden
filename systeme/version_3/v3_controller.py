@@ -212,13 +212,16 @@ class Controller(object):
                 # self.path.update_meters()
                 
                 i = self.cognition.choose_path(self.paths)
+                print "i: ", i
                 current_path = self.paths[i]
+                print current_path.solution_parameters
+                raise KeyboardInterrupt
+
 
                 print "modulation: ", current_path.current_knobs['Modulation']
                 print "eirp: ", current_path.current_knobs['EIRP']
                 print "Rs: ", current_path.current_knobs['Rs']
 
-                raise KeyboardInterrupt
 
                 self.radio.set_config_packet_data(current_path.current_knobs['Modulation'],
                                                   current_path.current_knobs['EIRP'],
