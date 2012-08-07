@@ -263,6 +263,7 @@ class Controller(object):
 
             ###################################################################
             if fsm_state == 'after_traverse':
+                raise KeyboardInterrupt
                 current_path.has_been_explored = True
                 for p in self.paths:
                     p.update_meters()
