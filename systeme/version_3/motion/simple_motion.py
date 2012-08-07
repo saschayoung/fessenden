@@ -2,7 +2,7 @@
 
 import nxt.locator
 
-from motion.api import MotionAPI
+from motion_api import MotionAPI
 
 brick = nxt.locator.find_one_brick()
 
