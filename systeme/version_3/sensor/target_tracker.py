@@ -112,7 +112,7 @@ class TargetTracker(object):
 
         """
         r = self._get_value()
-        print r
+        # print r
         self.tracking_array.append(r)
         # = np.append(self.tracking_array, self._get_value())
 
@@ -132,7 +132,7 @@ class TargetTracker(object):
             Number of anti_targets tracked.
 
         """
-        print self.tracking_array
+        # print self.tracking_array
         # logging.info("target_tracker::tally_results: tracking_array = %d" %(x,))
         
         a = np.array(self.tracking_array)

@@ -264,7 +264,7 @@ class Controller(object):
                     logging.info("v3_controller::fsm:traverse_path: y = %d" %(y,))
 
 
-                    self.shutdown()
+                    # self.shutdown()
 
                     # print "x = ", x
                     # print "y = ", y
