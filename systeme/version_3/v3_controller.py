@@ -271,7 +271,7 @@ class Controller(object):
 
                     fsm_state = 'after_traverse'
 
-                    self.shutdown()
+                    # self.shutdown()
                     continue
             ###################################################################
 
