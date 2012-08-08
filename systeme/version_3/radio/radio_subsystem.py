@@ -136,6 +136,7 @@ class RadioSubsystem(threading.Thread):
                     self.radio.configure_radio(self.eirp, self.frequency, self.bitrate, self.modulation)
                     rssi.append(self.radio.get_rssi_dBm())
                     self._send_packet('stream_data')
+                    index += 1
 
                     continue
 
@@ -191,7 +192,7 @@ class RadioSubsystem(threading.Thread):
                     self.radio.configure_radio(self.eirp, self.frequency, self.bitrate, self.modulation)
                     self._send_packet('send_reconfig_command', self.reconfig_mod,
                                       self.reconfig_eirp, self.reconfig_bitrate)
-                    # index += 1
+
                     pkt_num, loc, flags, data = self._receive_packet()
                     print pkt_num, loc, flags, data
                     if (flags & 0x04) == 0x04:

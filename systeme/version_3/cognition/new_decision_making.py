@@ -38,7 +38,7 @@ class DecisionMaker(object):
                                 55.0, 60.0, 65.0, 70.0, 75.0, 80.0]
 
         # self.possible_modulations = ['FSK', 'GFSK', 'OOK']
-        self.possible_modulations = ['FSK', 'GFSK']
+        self.possible_modulations = ['fsk', 'gfsk']
 
         self.possible_eirp = [8.0, 11.0, 14.0, 17.0]
         self.possible_Rs = [2.0e3, 2.4e3, 4.8e3, 9.6e3, 19.2e3, 38.4e3, 57.6e3, 125.0e3]

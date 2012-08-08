@@ -396,7 +396,7 @@ class RadioAPI(object):
 
 
 
-    def configure_radio(self, power = 17, frequency = 434e6, data_rate = 4.8e3, modulation = "gfsk"):
+    def configure_radio(self, power = 17, frequency = 434e6, data_rate = 4.8e3, modulation = 'gfsk'):
         """
         Configure radio.
 

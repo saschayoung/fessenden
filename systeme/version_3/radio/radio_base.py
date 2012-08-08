@@ -1227,7 +1227,7 @@ class RadioBase(object):
             settings = self.gfsk_modem_settings[index]
     
         else:
-            print "error, modulation not set properly"
+            print "error in radio_base.use_preset_config(): modulation not set properly"
             raise ValueError
 
 
