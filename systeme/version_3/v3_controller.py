@@ -251,7 +251,7 @@ class Controller(object):
 
                 while not self.current_location == destination:
                     self.tracker.run()
-                    time.sleep(0.5)
+                    time.sleep(0.1)
                 else:
                     print "stop motion"
                     self.motion.set_state('stop')
