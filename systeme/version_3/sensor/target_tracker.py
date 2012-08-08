@@ -11,7 +11,7 @@ class TargetTracker(object):
 
     """
         
-    def __init__(self, brick, X='blue', Y='red'):
+    def __init__(self, brick, X='green', Y='red'):
         """
         Initialize color sensor
 
