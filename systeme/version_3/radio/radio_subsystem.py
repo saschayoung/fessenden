@@ -131,7 +131,7 @@ class RadioSubsystem(threading.Thread):
             elif self.current_state == 'stream':
                 if self.last_state in ['stop', 'stream']:
                     self.last_state = 'stream'
-                    logging.info("radio_subsystem::run: stream")
+                    # logging.info("radio_subsystem::run: stream")
 
                     self.radio.configure_radio(self.eirp, self.frequency, self.bitrate, self.modulation)
                     rssi.append(self.radio.get_rssi_dBm())
@@ -266,7 +266,7 @@ class RadioSubsystem(threading.Thread):
         tx_packet = self.packet.make_packet(self.tx_packet_number, self.current_location, payload)
         self.tx_packet_number += 1
         self.radio.transmit(tx_packet)
-        logging.info("packet sent")
+        # logging.info("packet sent")
 
 
     def _receive_packet(self):
