@@ -112,7 +112,7 @@ class TargetTracker(object):
 
         """
         r = self._get_value()
-        # print r
+        print r
         self.tracking_array.append(r)
         # = np.append(self.tracking_array, self._get_value())
 
