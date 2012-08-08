@@ -245,8 +245,6 @@ class Controller(object):
             if fsm_state == 'traverse_path':
                 logging.info("v3_controller::fsm: traverse_path")
 
-                logging.info("v3_controller::fsm: motion.set_State('go')")
-
                 self.radio.set_state('stream')
                 self.motion.set_state('go')
                 tic = time.time()
@@ -261,9 +259,15 @@ class Controller(object):
                     self.radio.set_state('stop')
                     toc = time.time()
                     time.sleep(1)
-                    x, y = self.tracker.tally_results()
-                    print "x = ", x
-                    print "y = ", y
+                    x, y = self.tracker.tally_results() 
+                    logging.info("v3_controller::fsm:traverse_path: x = %d" %(x,))
+                    logging.info("v3_controller::fsm:traverse_path: y = %d" %(y,))
+
+
+                    self.shutdown()
+
+                    # print "x = ", x
+                    # print "y = ", y
                     self.tracker.reset()
                     current_path.current_meters['X'] = x
                     current_path.current_meters['Y'] = y
