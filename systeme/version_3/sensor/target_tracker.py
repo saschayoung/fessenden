@@ -144,12 +144,12 @@ class TargetTracker(object):
         # print a
         # print b
         x = 0
-        for i in range(len(a)-1):
-            if a[i] == 0 and a[i+1] == self.target_color:
+        for i in range(len(a)-2):
+            if (a[i] == 0) and (a[i+1] == self.target_color)and (a[i+2] == self.target_color):
                 x += 1
         y = 0
-        for i in range(len(b)-1):
-            if b[i] == 0 and b[i+1] == self.anti_target_color:
+        for i in range(len(b)-2):
+            if (b[i] == 0) and (b[i+1] == self.anti_target_color) and (b[i+2] == self.anti_target_color):
                 y += 1
 
 
