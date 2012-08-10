@@ -253,7 +253,7 @@ class Controller(object):
                 logging.info("Iteration %d." %(self.iteration,))
                 for p in self.paths:
                     s += "\n\nPath %s information:\n" %(p.name,)
-                    s += "Path explored yet? %s\n" %(str(p.has_been_explored),))
+                    s += "Path explored yet? %s\n" %(str(p.has_been_explored),)
                     s += "solution_parameters: " + str(p.solution_parameters)) + "\n"
                     s += "solution_as_implemented: " + str(p.solution_as_implemented)) + "\n"
                     s += "previous_meters: " + str(p.previous_meters))  + "\n"
