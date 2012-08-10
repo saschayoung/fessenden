@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import logging
+# import logging
 
 from nxt.sensor import *
 

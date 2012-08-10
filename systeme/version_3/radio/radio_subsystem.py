@@ -6,7 +6,7 @@ Module: radio_uav
 Threaded UAV radio subsystem.
 """
 
-import logging
+# import logging
 import threading
 import time
 
@@ -103,26 +103,26 @@ class RadioSubsystem(threading.Thread):
                 # `update` and `reconfigure` should stop on their own
                 elif self.last_state == 'stream':  
                     self.last_state = 'stop'
-                    logging.info("radio_subsystem::run: stop")
+                    # logging.info("radio_subsystem::run: stop")
                     continue
                 
 
                 elif self.last_state == 'update':  
                     self.last_state = 'stop'
-                    logging.info("radio_subsystem::run: stop")
+                    # logging.info("radio_subsystem::run: stop")
                     continue
 
 
                 elif self.last_state == 'reconfigure':  
                     self.last_state = 'stop'
-                    logging.info("radio_subsystem::run: stop")
+                    # logging.info("radio_subsystem::run: stop")
                     continue
 
 
                 else:
-                    logging.debug("radio_subsystem::Error 1 in RadioSubsystem.run()")
-                    logging.debug("radio_subsystem::self.current_state == %s" %(self.current_state,))
-                    logging.debug("radio_subsystem::last state == %s" %(self.last_state,))
+                    # logging.debug("radio_subsystem::Error 1 in RadioSubsystem.run()")
+                    # logging.debug("radio_subsystem::self.current_state == %s" %(self.current_state,))
+                    # logging.debug("radio_subsystem::last state == %s" %(self.last_state,))
                     continue
             ###################################################################
 
@@ -141,9 +141,9 @@ class RadioSubsystem(threading.Thread):
                     continue
 
                 else:
-                    logging.debug("radio_subsystem::Error 2 in RadioSubsystem.run()")
-                    logging.debug("radio_subsystem::self.current_state == %s" %(self.current_state,))
-                    logging.debug("radio_subsystem::last state == %s" %(self.last_state,))
+                    # logging.debug("radio_subsystem::Error 2 in RadioSubsystem.run()")
+                    # logging.debug("radio_subsystem::self.current_state == %s" %(self.current_state,))
+                    # logging.debug("radio_subsystem::last state == %s" %(self.last_state,))
                     continue
             ###################################################################
                 
@@ -153,7 +153,7 @@ class RadioSubsystem(threading.Thread):
             elif self.current_state == 'update':
                 if self.last_state == 'stop':
                     self.last_state = 'update'
-                    logging.info("radio_subsystem::run: update")
+                    # logging.info("radio_subsystem::run: update")
 
                     self.radio.configure_radio(self.eirp, self.frequency, self.bitrate, self.modulation)
                     self._send_packet('request_data')
@@ -161,8 +161,8 @@ class RadioSubsystem(threading.Thread):
                     pkt_num, loc, flags, data = self._receive_packet()
                     packets_received = self.data.unpack_data(data)
 
-                    logging.info("radio_subsystem::packets received by Node B = %d" %(packets_received,))
-                    logging.info("radio_subsystem::packets sent by Node A = %d" %(index,))
+                    # logging.info("radio_subsystem::packets received by Node B = %d" %(packets_received,))
+                    # logging.info("radio_subsystem::packets sent by Node A = %d" %(index,))
 
                     rssi = np.array(rssi)
                     rssi = np.mean(rssi)
@@ -177,9 +177,9 @@ class RadioSubsystem(threading.Thread):
                     continue
 
                 else:
-                    logging.debug("radio_subsystem::Error 3 in RadioSubsystem.run()")
-                    logging.debug("radio_subsystem::self.current_state == %s" %(self.current_state,))
-                    logging.debug("radio_subsystem::last state == %s" %(self.last_state,))
+                    # logging.debug("radio_subsystem::Error 3 in RadioSubsystem.run()")
+                    # logging.debug("radio_subsystem::self.current_state == %s" %(self.current_state,))
+                    # logging.debug("radio_subsystem::last state == %s" %(self.last_state,))
                     continue
             ###################################################################
                     
@@ -188,7 +188,7 @@ class RadioSubsystem(threading.Thread):
             elif self.current_state == 'reconfigure':
                 if self.last_state == 'stop':
                     self.last_state = 'reconfigure'
-                    logging.info("radio_subsystem::run: reconfigure")
+                    # logging.info("radio_subsystem::run: reconfigure")
                     self.radio.configure_radio(self.eirp, self.frequency, self.bitrate, self.modulation)
                     self._send_packet('send_reconfig_command', self.reconfig_mod,
                                       self.reconfig_eirp, self.reconfig_bitrate)
@@ -196,30 +196,30 @@ class RadioSubsystem(threading.Thread):
                     pkt_num, loc, flags, data = self._receive_packet()
                     # print pkt_num, loc, flags, data
                     if (flags & 0x04) == 0x04:
-                        logging.info("radio_subsystem::run: reconfigure acknowledged")
+                        # logging.info("radio_subsystem::run: reconfigure acknowledged")
                         self.reconfig_flag(flag=True)
                         self.current_state = 'stop'
                         continue
 
                     else:
-                        logging.debug("radio_subsystem::Warning 1 in RadioSubsystem.run()")
-                        logging.debug("radio_subsystem::reconfig request not acknolwedged")
-                        logging.debug("radio_subsystem::flagse = 0x%x" %(flags,))
+                        # logging.debug("radio_subsystem::Warning 1 in RadioSubsystem.run()")
+                        # logging.debug("radio_subsystem::reconfig request not acknolwedged")
+                        # logging.debug("radio_subsystem::flagse = 0x%x" %(flags,))
                         continue
 
                 else:
-                    logging.debug("radio_subsystem::Error 4 in RadioSubsystem.run()")
-                    logging.debug("radio_subsystem::self.current_state == %s" %(self.current_state,))
-                    logging.debug("radio_subsystem::last state == %s" %(self.last_state,))
+                    # logging.debug("radio_subsystem::Error 4 in RadioSubsystem.run()")
+                    # logging.debug("radio_subsystem::self.current_state == %s" %(self.current_state,))
+                    # logging.debug("radio_subsystem::last state == %s" %(self.last_state,))
                     continue
             ###################################################################
 
 
             ###################################################################
             else:
-                logging.debug("radio_subsystem::Error 5 in RadioSubsystem.run()")
-                logging.debug("radio_subsystem::self.current_state == %s" %(self.current_state,))
-                logging.debug("radio_subsystem::last state == %s" %(self.last_state,))
+                # logging.debug("radio_subsystem::Error 5 in RadioSubsystem.run()")
+                # logging.debug("radio_subsystem::self.current_state == %s" %(self.current_state,))
+                # logging.debug("radio_subsystem::last state == %s" %(self.last_state,))
                 continue
             ###################################################################
                     

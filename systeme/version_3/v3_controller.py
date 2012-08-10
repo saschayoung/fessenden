@@ -22,7 +22,7 @@ class Controller(object):
 
     def __init__(self):
 
-        logging.basicConfig(filename='example.log', filemode='w', level=logging.DEBUG)
+        logging.basicConfig(filename='basic.log', filemode='w', level=logging.DEBUG)
 
         self.current_location = 0
         brick = utils.connect_to_brick()
@@ -37,7 +37,7 @@ class Controller(object):
         self.radio_update_flag = False
         self.reconfig_flag = False
 
-        self.iteration = 0
+        self.iteration = 1
 
 
         self.f = open('track_data', 'w')
@@ -185,7 +185,7 @@ class Controller(object):
         while True:
             ###################################################################
             if fsm_state == 'first_time':
-                logging.info("v3_controller::fsm: first_time")
+                # logging.info("v3_controller::fsm:first_time")
                 
                 self.motion.set_direction('straight')
                 self.motion.set_speed(25)
@@ -210,7 +210,7 @@ class Controller(object):
 
             ###################################################################
             if fsm_state == 'before_traverse':
-                logging.info("v3_controller::fsm: before_traverse")
+                # logging.info("v3_controller::fsm: before_traverse")
 
 
                 for p in self.paths:
@@ -246,17 +246,17 @@ class Controller(object):
                 
                 self.motion.set_direction(current_path.direction)
 
-                self.f.write("Before traverse.\n")
-                self.f.write("Iteration %d.\n" %(self.iteration,))
+                logging.info("Before traverse.\n")
+                logging.info("Iteration %d.\n" %(self.iteration,))
                 for p in self.paths:
-                    self.f.write("Path %s information:\n" %(p.name,))
-                    self.f.write("Path explored yet? %s" %(str(p.has_been_explored),))
-                    self.f.write("solution_parameters: " + str(p.solution_parameters) + "\n")
-                    self.f.write("solution_as_implemented: " + str(p.solution_as_implemented) +"\n")
-                    self.f.write("previous_meters: " + str(p.previous_meters) +"\n")
-                    self.f.write("current_knobs: " + str(p.current_knobs) +"\n")
+                    logging.info("Path %s information:\n" %(p.name,))
+                    logging.info("Path explored yet? %s\n" %(str(p.has_been_explored),))
+                    logging.info("solution_parameters: " + str(p.solution_parameters) + "\n")
+                    logging.info("solution_as_implemented: " + str(p.solution_as_implemented) +"\n")
+                    logging.info("previous_meters: " + str(p.previous_meters) +"\n")
+                    logging.info("current_knobs: " + str(p.current_knobs) +"\n")
                     
-                self.f.write("Chosen path is %s.\n" %(current_path.name,))
+                logging.info("Chosen path is %s.\n" %(current_path.name,))
 
                 fsm_state = 'traverse_path'
                 continue
