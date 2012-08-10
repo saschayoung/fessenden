@@ -40,7 +40,7 @@ class Controller(object):
         self.iteration = 0
 
 
-        f = open('track_data', 'w')
+        self.f = open('track_data', 'w')
 
 
 
@@ -165,7 +165,7 @@ class Controller(object):
         Shutdown subsytems before stopping.
 
         """
-        f.close()
+        self.f.close()
         self.tracker.kill_sensor()
         self.motion.join()
         self.location.join()  # shut this down last
@@ -246,17 +246,17 @@ class Controller(object):
                 
                 self.motion.set_direction(current_path.direction)
 
-                f.write("Before traverse.\n")
-                f.write("Iteration %d.\n" %(self.iteration,))
+                self.f.write("Before traverse.\n")
+                self.f.write("Iteration %d.\n" %(self.iteration,))
                 for p in self.paths:
-                    f.write("Path %s information:\n" %(p.name,))
-                    f.write("Path explored yet? %s" %(str(p.has_been_explored),))
-                    f.write("solution_parameters: " + str(p.solution_parameters) + "\n")
-                    f.write("solution_as_implemented: " + str(p.solution_as_implemented) +"\n")
-                    f.write("previous_meters: " + str(p.previous_meters) +"\n")
-                    f.write("current_knobs: " + str(p.current_knobs) +"\n")
+                    self.f.write("Path %s information:\n" %(p.name,))
+                    self.f.write("Path explored yet? %s" %(str(p.has_been_explored),))
+                    self.f.write("solution_parameters: " + str(p.solution_parameters) + "\n")
+                    self.f.write("solution_as_implemented: " + str(p.solution_as_implemented) +"\n")
+                    self.f.write("previous_meters: " + str(p.previous_meters) +"\n")
+                    self.f.write("current_knobs: " + str(p.current_knobs) +"\n")
                     
-                f.write("Chosen path is %s.\n" %(current_path.name,))
+                self.f.write("Chosen path is %s.\n" %(current_path.name,))
 
                 fsm_state = 'traverse_path'
                 continue
