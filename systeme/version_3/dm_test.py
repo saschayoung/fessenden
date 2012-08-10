@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from cognition.new_decision_making import DecisionMaker
+from cognition.newer_decision_making import DecisionMaker
 from route.new_path import Path
 
 path_a = Path(name='A', distance=62.0, direction='left')
@@ -29,5 +29,12 @@ print choice
 #     print p.name
 #     print p.solution_parameters
 
-print paths[choice].solution_as_implemented
-print paths[choice].current_knobs
+for p in paths:
+    print p.solution_parameters
+    print p.solution_as_implemented
+    print p.current_knobs
+
+
+
+# print paths[choice].solution_as_implemented
+# print paths[choice].current_knobs

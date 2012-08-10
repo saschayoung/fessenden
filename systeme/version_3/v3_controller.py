@@ -6,7 +6,7 @@ import time
 
 
 import utils 
-from cognition.new_decision_making import DecisionMaker    
+from cognition.newer_decision_making import DecisionMaker    
 from location.location import Location
 from motion.motion_subsystem import MotionSubsystem
 from radio.radio_subsystem import RadioSubsystem
@@ -21,6 +21,7 @@ from sensor.target_tracker import TargetTracker
 class Controller(object):
 
     def __init__(self):
+
         logging.basicConfig(filename='example.log', filemode='w', level=logging.DEBUG)
 
         self.current_location = 0
@@ -35,6 +36,13 @@ class Controller(object):
 
         self.radio_update_flag = False
         self.reconfig_flag = False
+
+        self.iteration = 0
+
+
+        f = open('track_data', 'w')
+
+
 
 
     def location_callback(self, current_location):
@@ -145,17 +153,10 @@ class Controller(object):
         self.eirp = args.power
         self.bitrate = args.bitrate
 
-        print "using default_settings"
-
-        print "building route"
         self.build_route()
-        print "starting location module"
         self.location.start()
-        print "starting motion module"
         self.motion.start()
-        print "starting radio module"
         self.radio.start()
-        print "starting central fsm"
         self.fsm()
  
 
@@ -164,6 +165,7 @@ class Controller(object):
         Shutdown subsytems before stopping.
 
         """
+        f.close()
         self.tracker.kill_sensor()
         self.motion.join()
         self.location.join()  # shut this down last
@@ -209,12 +211,15 @@ class Controller(object):
             ###################################################################
             if fsm_state == 'before_traverse':
                 logging.info("v3_controller::fsm: before_traverse")
+
+
                 for p in self.paths:
                     p.update_knobs()
-                # self.path.update_meters()
+
                 
                 i = self.cognition.choose_path(self.paths)
                 current_path = self.paths[i]
+                            
 
                 if current_path.has_been_explored:
                     self.radio.set_config_packet_data(current_path.current_knobs['Modulation'],
@@ -231,10 +236,27 @@ class Controller(object):
                                                            self.frequency)
                         self.motion.set_speed(current_path.current_knobs['Speed'])
                 else:
+                    current_path.current_knobs['Modulation'] = self.modulation
+                    current_path.current_knobs['Rs'] = self.bitrate
+                    current_path.current_knobs['EIRP'] = self.eirp
+                    current_path.current_knobs['Speed'] = 25
+
                     self.motion.set_speed(25)
 
                 
                 self.motion.set_direction(current_path.direction)
+
+                f.write("Before traverse.\n")
+                f.write("Iteration %d.\n" %(self.iteration,))
+                for p in self.paths:
+                    f.write("Path %s information:\n" %(p.name,))
+                    f.write("Path explored yet? %s" %(str(p.has_been_explored),))
+                    f.write("solution_parameters: " + str(p.solution_parameters) + "\n")
+                    f.write("solution_as_implemented: " + str(p.solution_as_implemented) +"\n")
+                    f.write("previous_meters: " + str(p.previous_meters) +"\n")
+                    f.write("current_knobs: " + str(p.current_knobs) +"\n")
+                    
+                f.write("Chosen path is %s.\n" %(current_path.name,))
 
                 fsm_state = 'traverse_path'
                 continue
@@ -253,9 +275,7 @@ class Controller(object):
                     self.tracker.run()
                     time.sleep(0.1)
                 else:
-                    print "stop motion"
                     self.motion.set_state('stop')
-                    print "stop radio"
                     self.radio.set_state('stop')
                     toc = time.time()
                     time.sleep(1)
@@ -282,11 +302,11 @@ class Controller(object):
 
             ###################################################################
             if fsm_state == 'after_traverse':
-                # raise KeyboardInterrupt
+                self.iteration += 1
+
                 current_path.has_been_explored = True
                 for p in self.paths:
                     p.update_meters()
-                # self.path.update_meters()
 
 
                 self.radio.set_state('update')
@@ -301,6 +321,8 @@ class Controller(object):
 
                     # TODO: add the part where we determine if the
                     # solution we used wasn any good
+                
+
                 
 
 
