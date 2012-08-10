@@ -246,19 +246,23 @@ class Controller(object):
                 
                 self.motion.set_direction(current_path.direction)
 
-                logging.info("Before traverse.")
-                logging.info("==================================================")
+                s = "\n\n"
+                s += "Before traverse.\n"
+                s += "==================================================\n"
+                s += "Iteration %d.\n" %(self.iteration,)
                 logging.info("Iteration %d." %(self.iteration,))
                 for p in self.paths:
-                    logging.info("\n\nPath %s information:" %(p.name,))
-                    logging.info("Path explored yet? %s" %(str(p.has_been_explored),))
-                    logging.info("solution_parameters: " + str(p.solution_parameters))
-                    logging.info("solution_as_implemented: " + str(p.solution_as_implemented))
-                    logging.info("previous_meters: " + str(p.previous_meters))
-                    logging.info("current_knobs: " + str(p.current_knobs))
-                    
-                logging.info("\n\nChosen path is %s." %(current_path.name,))
-                logging.info("==================================================")
+                    s += "\n\nPath %s information:\n" %(p.name,)
+                    s += "Path explored yet? %s\n" %(str(p.has_been_explored),))
+                    s += "solution_parameters: " + str(p.solution_parameters)) + "\n"
+                    s += "solution_as_implemented: " + str(p.solution_as_implemented)) + "\n"
+                    s += "previous_meters: " + str(p.previous_meters))  + "\n"
+                    s += "current_knobs: " + str(p.current_knobs))  + "\n"
+
+                s += "\n\nChosen path is %s.\n" %(current_path.name,)
+                s += "=================================================="
+                # logging.info("\n\nChosen path is %s." %(current_path.name,))
+                # logging.info("==================================================")
 
                 fsm_state = 'traverse_path'
                 continue
