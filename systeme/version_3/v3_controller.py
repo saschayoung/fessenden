@@ -250,10 +250,9 @@ class Controller(object):
                 s += "Before traverse.\n"
                 s += "==================================================\n"
                 s += "Iteration %d.\n" %(self.iteration,)
-                logging.info("Iteration %d." %(self.iteration,))
                 for p in self.paths:
                     s += "\n\nPath %s information:\n" %(p.name,)
-                    s += "Path explored yet? %s\n" %(str(p.has_been_explored),)
+                    s += "Path explored yet? " + str(p.has_been_explored) + "\n"
                     s += "solution_parameters: " + str(p.solution_parameters)) + "\n"
                     s += "solution_as_implemented: " + str(p.solution_as_implemented)) + "\n"
                     s += "previous_meters: " + str(p.previous_meters))  + "\n"
@@ -261,7 +260,9 @@ class Controller(object):
 
                 s += "\n\nChosen path is %s.\n" %(current_path.name,)
                 s += "=================================================="
+                logging.info(s)
                 # logging.info("\n\nChosen path is %s." %(current_path.name,))
+
                 # logging.info("==================================================")
 
                 fsm_state = 'traverse_path'
