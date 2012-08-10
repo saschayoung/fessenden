@@ -253,10 +253,10 @@ class Controller(object):
                 for p in self.paths:
                     s += "\n\nPath %s information:\n" %(p.name,)
                     s += "Path explored yet? " + str(p.has_been_explored) + "\n"
-                    s += "solution_parameters: " + str(p.solution_parameters)) + "\n"
-                    s += "solution_as_implemented: " + str(p.solution_as_implemented)) + "\n"
-                    s += "previous_meters: " + str(p.previous_meters))  + "\n"
-                    s += "current_knobs: " + str(p.current_knobs))  + "\n"
+                    s += "solution_parameters: " + str(p.solution_parameters) + "\n"
+                    s += "solution_as_implemented: " + str(p.solution_as_implemented) + "\n"
+                    s += "previous_meters: " + str(p.previous_meters)  + "\n"
+                    s += "current_knobs: " + str(p.current_knobs)  + "\n"
 
                 s += "\n\nChosen path is %s.\n" %(current_path.name,)
                 s += "=================================================="
