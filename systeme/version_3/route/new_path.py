@@ -43,6 +43,8 @@ class Path(object):
         # then `True` thereafter
         self.has_been_explored = False
 
+        self.iteration = 0
+
         self.solution_parameters = {}
 
         

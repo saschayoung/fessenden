@@ -165,7 +165,8 @@ class Controller(object):
         Shutdown subsytems before stopping.
 
         """
-        self.f.close()
+        # self.f.close()
+        logging.close()
         self.tracker.kill_sensor()
         self.motion.join()
         self.location.join()  # shut this down last
@@ -210,41 +211,49 @@ class Controller(object):
 
             ###################################################################
             if fsm_state == 'before_traverse':
+                
                 # logging.info("v3_controller::fsm: before_traverse")
 
 
-                for p in self.paths:
-                    p.update_knobs()
+                # for p in self.paths:
+                #     p.update_knobs()
 
                 
                 i = self.cognition.choose_path(self.paths)
                 current_path = self.paths[i]
+                current_path.iteration = self.iteration
                             
+                if not current_path.has_been_explored:
+                    # use default values
+                    current_path.current_knobs['Modulation'] = self.modulation
+                    current_path.current_knobs['Rs'] = self.bitrate
+                    current_path.current_knobs['EIRP'] = self.eirp
+                    current_path.current_knobs['Speed'] = 25
+                    self.motion.set_speed(25)
 
-                if current_path.has_been_explored:
+                else:
+                    # notify base station of new configuration
                     self.radio.set_config_packet_data(current_path.current_knobs['Modulation'],
                                                       current_path.current_knobs['EIRP'],
                                                       current_path.current_knobs['Rs'])
                     self.radio.set_state('reconfigure')
+
                     while not self.reconfig_flag:
+                        # wait for acknowledgment
                         time.sleep(0.1)
                     else:
+                        # use new configuration
                         self.radio.set_current_location(self.current_location)
                         self.radio.set_radio_configuration(current_path.current_knobs['Modulation'],
                                                            current_path.current_knobs['EIRP'],
                                                            current_path.current_knobs['Rs'],
                                                            self.frequency)
                         self.motion.set_speed(current_path.current_knobs['Speed'])
-                else:
-                    current_path.current_knobs['Modulation'] = self.modulation
-                    current_path.current_knobs['Rs'] = self.bitrate
-                    current_path.current_knobs['EIRP'] = self.eirp
-                    current_path.current_knobs['Speed'] = 25
-
-                    self.motion.set_speed(25)
 
                 
                 self.motion.set_direction(current_path.direction)
+
+
 
                 s = "\n\n"
                 s += "Before traverse.\n"
@@ -440,3 +449,31 @@ if __name__ == '__main__':
 
     #             break
         
+
+
+
+                # if current_path.has_been_explored:
+                #     self.radio.set_config_packet_data(current_path.current_knobs['Modulation'],
+                #                                       current_path.current_knobs['EIRP'],
+                #                                       current_path.current_knobs['Rs'])
+                #     self.radio.set_state('reconfigure')
+                #     while not self.reconfig_flag:
+                #         time.sleep(0.1)
+                #     else:
+                #         self.radio.set_current_location(self.current_location)
+                #         self.radio.set_radio_configuration(current_path.current_knobs['Modulation'],
+                #                                            current_path.current_knobs['EIRP'],
+                #                                            current_path.current_knobs['Rs'],
+                #                                            self.frequency)
+                #         self.motion.set_speed(current_path.current_knobs['Speed'])
+                # else:
+                #     current_path.current_knobs['Modulation'] = self.modulation
+                #     current_path.current_knobs['Rs'] = self.bitrate
+                #     current_path.current_knobs['EIRP'] = self.eirp
+                #     current_path.current_knobs['Speed'] = 25
+
+                #     self.motion.set_speed(25)
+
+                
+                # self.motion.set_direction(current_path.direction)
+
