@@ -13,7 +13,7 @@ data_rate(rate, DEBUG=False)
 __all__ = ['fb_select', 'carrier_freq', 'data_rate']
 
 
-def fb_select(freq, DEBUG=False):
+def fb_select(freq, DEBUG=True):
     """
     Determine the Frequency Band and High Band or Low Band.
 

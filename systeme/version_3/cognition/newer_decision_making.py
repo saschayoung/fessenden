@@ -180,18 +180,18 @@ class DecisionMaker(object):
                 parameters[i]['BER_scaled'] = parameters[i]['BER'] / max_b
 
 
-        for i in range(len(paths)):
-            paths[i].solution_parameters = parameters[i]
+        # for i in range(len(paths)):
+        #     paths[i].solution_parameters = parameters[i]
 
-            paths[i].solution_as_implemented['Z'] = parameters[i]['Z']
-            paths[i].solution_as_implemented['T'] = parameters[i]['T']
-            paths[i].solution_as_implemented['B'] = parameters[i]['BER']
-            paths[i].solution_as_implemented['G'] = parameters[i]['goodput']
+        #     paths[i].solution_as_implemented['Z'] = parameters[i]['Z']
+        #     paths[i].solution_as_implemented['T'] = parameters[i]['T']
+        #     paths[i].solution_as_implemented['B'] = parameters[i]['BER']
+        #     paths[i].solution_as_implemented['G'] = parameters[i]['goodput']
 
-            paths[i].current_knobs['Modulation'] = parameters[i]['mod']
-            paths[i].current_knobs['Rs'] = parameters[i]['bitrate']
-            paths[i].current_knobs['EIRP'] = parameters[i]['EIRP']
-            paths[i].current_knobs['Speed'] = parameters[i]['speed']
+        #     paths[i].current_knobs['Modulation'] = parameters[i]['mod']
+        #     paths[i].current_knobs['Rs'] = parameters[i]['bitrate']
+        #     paths[i].current_knobs['EIRP'] = parameters[i]['EIRP']
+        #     paths[i].current_knobs['Speed'] = parameters[i]['speed']
         
 
         return winner
