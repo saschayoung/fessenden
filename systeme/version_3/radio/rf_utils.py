@@ -246,7 +246,7 @@ def carrier_freq(freq, DEBUG=False):
 
     """
    
-    hbsel, fb = fb_select(freq)
+    hbsel, fb = fb_select(float(freq))
 
     fc = int(round(((freq / (10e6 *(hbsel+1))) - fb - 24) * 64000.0))
     
