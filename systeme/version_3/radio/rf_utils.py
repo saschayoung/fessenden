@@ -247,6 +247,8 @@ def carrier_freq(freq, DEBUG=False):
     .. [RFM22] RFM22 Data sheet, pg 22.
 
     """
+    print "freq: ", freq
+    print "type(freq): ", type(freq)
    
     hbsel, fb = fb_select(float(freq))
 
