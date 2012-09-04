@@ -465,3 +465,8 @@ class RadioAPI(object):
         """
         rssi = self.get_rssi_raw()
         return ((rssi - 125.0)/2.0) - 60.0
+
+
+
+    def set_ready_mode(self):
+        self.rfm22.set_op_mode('ready')

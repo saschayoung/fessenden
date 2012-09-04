@@ -90,12 +90,16 @@ class StandAloneRadioA(object):
                             dest='run_sweep', help="Set sweep mode (default: %(default)s)")
 
 
+        parser.add_argument("-i", type=bool, default=False, metavar='interactive',
+                            dest='interactive', help="Use interactive sweep (default: %(default)s)")
+
         args = parser.parse_args()
 
         
         self.radio.startup()
 
         run_sweep = args.run_sweep
+        interactive = args.interactive
         frequency = args.frequency
         modulation = args.modulation
         power = args.power
@@ -107,8 +111,37 @@ class StandAloneRadioA(object):
             while True:
                 self._send_packet()
         else:
-            
-            pass
+            f = 295e6
+            freqs = []
+
+            while f < 930e6:
+                freqs.append(f)
+                f += 10e6 
+            for i in freqs:
+                if modulation == 'cw':
+                    self._configure_radio(power, frequency, data_rate, modulation)
+                    print "changing to freq: ", i
+                    self._send_packet()
+
+                    if interactive == True:
+                        s = raw_input('Press enter for next frequency')
+                        self.radio.set_ready_mode()
+
+                    else:
+                        time.sleep(0.1)
+
+           #      fc, hbsel, fb = freq_utils.carrier_freq(i)
+           #      for j in range(10):
+           #          self.setup_rf(fc, hbsel, fb)
+           #          self.tx_data()
+           #          print "transmitted packet"
+           #          time.sleep(0.01)
+ 
+
+
+           # pass
+
+
 
 
 
@@ -117,21 +150,7 @@ class StandAloneRadioA(object):
 
 
     # def sweep(self):
-    #     f = 295e6
-    #     freqs = []
 
-    #     while f < 930e6:
-    #         freqs.append(f)
-    #         f += 10e6
-
-    #     for i in freqs:
-    #         fc, hbsel, fb = freq_utils.carrier_freq(i)
-    #         print "changing to freq: ", i
-    #         for j in range(10):
-    #             self.setup_rf(fc, hbsel, fb)
-    #             self.tx_data()
-    #             print "transmitted packet"
-    #             time.sleep(0.01)
 
 
 
