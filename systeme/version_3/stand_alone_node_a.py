@@ -2,6 +2,7 @@
 
 import argparse
 import time
+import sys
 
 from radio.packet import Packet
 from radio.radio_api import RadioAPI
@@ -103,6 +104,13 @@ class StandAloneRadioA(object):
         data_rate = args.bitrate
 
 
+        print "frequency: ", frequency
+        print "modulation: ", modulation
+        print "power: ", power
+        print "data_rate: ", data_rate
+
+
+        self.shutdown()
 
         self._configure_radio(power, frequency, data_rate, modulation)
 
