@@ -106,13 +106,13 @@ class StandAloneRadioA(object):
         data_rate = args.bitrate
 
 
-        print "frequency: ", frequency
-        print "modulation: ", modulation
-        print "power: ", power
-        print "data_rate: ", data_rate
+        # print "frequency: ", frequency
+        # print "modulation: ", modulation
+        # print "power: ", power
+        # print "data_rate: ", data_rate
 
-        sys.exit(1)
-        self.shutdown()
+        # sys.exit(1)
+        # self.shutdown()
 
         self._configure_radio(power, frequency, data_rate, modulation)
 
