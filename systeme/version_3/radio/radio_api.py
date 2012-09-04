@@ -204,6 +204,8 @@ class RadioAPI(object):
         This helper function cleans up and shuts down any open
         processes.
         """
+        self.set_op_mode('ready')
+        time.sleep(0.1)
         self._kill_io()
 
 
