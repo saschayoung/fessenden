@@ -52,6 +52,8 @@ def fb_select(freq, DEBUG=True):
 
     if freq < 240.0e6 or freq > 930.0e6:
         if DEBUG:
+            print "freq: ", freq
+            print "type(freq): ", type(freq)
             print "\nError: frequency %f out of range" %(freq,)
             print "240.0e6 <= freq <= 930.0e6\n" 
         raise ValueError
