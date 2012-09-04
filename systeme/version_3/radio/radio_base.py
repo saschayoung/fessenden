@@ -1221,7 +1221,7 @@ class RadioBase(object):
             One of {2e3|2.4e3|4.8e3|9.6e3|19.2e3|38.4e3|57.6e3|125e3}.
 
         """
-        if modulation = 'cw':
+        if modulation == 'cw':
             settings = self.cw_modem_settings
 
         elif modulation == 'fsk':
