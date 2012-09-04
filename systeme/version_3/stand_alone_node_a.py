@@ -78,49 +78,79 @@ class StandAloneRadioA(object):
         parser.add_argument("-f", type=float, default=434e6, metavar='frequency', dest='frequency', 
                             help="Transmit frequency (default: %(default)s)")
         parser.add_argument("-m", type=str, default='gfsk', metavar='modulation', dest='modulation',
-                            choices=['gfsk', 'fsk', 'ask'],
+                            choices=['gfsk', 'fsk', 'ask', 'cw'],
                             help="Select modulation from [%(choices)s] (default: %(default)s)")
         parser.add_argument("-p" "--power", type=int, default=17, metavar='power', dest='power',
                             choices=[8, 11, 14, 17],
                             help="Select transmit power from [%(choices)s] (default: %(default)s)")
         parser.add_argument("-r" "--bitrate", type=float, default=4.8e3, metavar='bitrate',
                             dest='bitrate', help="Set bitrate (default: %(default)s)")
+
+        parser.add_argument("-s", type=bool, default=False, metavar='run_sweep',
+                            dest='run_sweep', help="Set sweep mode (default: %(default)s)")
+
+
         args = parser.parse_args()
 
         
         self.radio.startup()
 
-        # default_radio_profile = {'power': 14,
-        #                          'frequency' : 434e6,
-        #                          'data_rate' : 4.8e3,
-        #                          'modulation' : "gfsk"}
-
-        # frequency = default_radio_profile['frequency']
-        # modulation = default_radio_profile['modulation']
-        # power = default_radio_profile['power']
-        # data_rate = default_radio_profile['data_rate']
-
+        run_sweep = args.run_sweep
         frequency = args.frequency
         modulation = args.modulation
         power = args.power
         data_rate = args.bitrate
 
-
-        # print "frequency: ", frequency
-        # print "modulation: ", modulation
-        # print "power: ", power
-        # print "data_rate: ", data_rate
-
-        # sys.exit(1)
-        # self.shutdown()
-
-        self._configure_radio(power, frequency, data_rate, modulation)
-
-        state = "listen"
+        if run_sweep == False:
+            self._configure_radio(power, frequency, data_rate, modulation)
+            state = "listen"
+            while True:
+                self._send_packet()
+        else:
+            
+            pass
 
 
-        while True:
-            self._send_packet()
+
+
+
+
+
+    # def sweep(self):
+    #     f = 295e6
+    #     freqs = []
+
+    #     while f < 930e6:
+    #         freqs.append(f)
+    #         f += 10e6
+
+    #     for i in freqs:
+    #         fc, hbsel, fb = freq_utils.carrier_freq(i)
+    #         print "changing to freq: ", i
+    #         for j in range(10):
+    #             self.setup_rf(fc, hbsel, fb)
+    #             self.tx_data()
+    #             print "transmitted packet"
+    #             time.sleep(0.01)
+
+
+
+
+    def shutdown(self):
+        self.radio.shutdown()
+
+
+if __name__=='__main__':
+
+    node_a = StandAloneRadioA()
+    try:
+        node_a.run()
+    except KeyboardInterrupt:
+        node_a.shutdown()
+
+
+
+
 
         # while True:
         #     if state == "listen":
@@ -143,16 +173,3 @@ class StandAloneRadioA(object):
         #         print "+++ Melon melon melon +++"
         #         state = "listen"
 
-
-
-    def shutdown(self):
-        self.radio.shutdown()
-
-
-if __name__=='__main__':
-
-    node_a = StandAloneRadioA()
-    try:
-        node_a.run()
-    except KeyboardInterrupt:
-        node_a.shutdown()
