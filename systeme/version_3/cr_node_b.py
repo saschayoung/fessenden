@@ -104,9 +104,13 @@ class StandAloneRadioB(object):
         self.i = 0
 
         while True:
-            self._receive_packet()
-            print "received packet"
-            self.i += 1
+            rssi = self.radio.get_rssi_raw()
+            RSSI = self.radio.get_rssi_dBm()
+            print "RSSI (raw) : %f  RSSI (dBm) : %f" %(rssi, RSSI)
+
+            # self._receive_packet()
+            # print "received packet"
+            # self.i += 1
 
             
 
