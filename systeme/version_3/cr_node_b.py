@@ -123,7 +123,7 @@ class StandAloneRadioB(object):
 
 if __name__=='__main__':
 
-    node_a = StandAloneRadioA()
+    node_a = StandAloneRadioB()
     try:
         node_a.run()
     except KeyboardInterrupt:
