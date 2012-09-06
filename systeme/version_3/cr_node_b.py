@@ -20,6 +20,7 @@ class StandAloneRadioB(object):
         for i in range(50):
             self.data.append(0xff)
         self.tx_packet_number = 1
+        self.rssi_level = 0
 
     def _configure_radio(self, power, frequency, data_rate, modulation):
         """
@@ -47,13 +48,13 @@ class StandAloneRadioB(object):
         Receive packet.
 
         """
-        rx_packet = self.radio.receive(rx_fifo_threshold=63, timeout=None)
+        self.rssi_level, rx_packet = self.radio.receive(rx_fifo_threshold=63, timeout=None)
         if rx_packet == []: # this occurs when timeout has been exceeded
             return
         else:
             packet_number, time_stamp, location, flags, data = self.packet.parse_packet(rx_packet)
-            print "packet_number=%d  time_stamp=%f  location=%d  flags=0x%x" %(packet_number, time_stamp,
-                                                                               location, flags)
+            # print "packet_number=%d  time_stamp=%f  location=%d  flags=0x%x" %(packet_number, time_stamp,
+            #                                                                    location, flags)
                                                                                
 
 
@@ -112,9 +113,9 @@ class StandAloneRadioB(object):
 
         for i in range(100):
         # while True:
-            self.rssi_list.append(self.radio.get_rssi_dBm())
+            # self.rssi_list.append(self.radio.get_rssi_dBm())
             self._receive_packet()
-
+            self.rssi_list.append(self.rssi_level)
             print "received packet"
             # self.i += 1
             # print "RSSI (raw) : %f  RSSI (dBm) : %f" %(rssi, RSSI)

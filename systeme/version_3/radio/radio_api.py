@@ -360,8 +360,11 @@ class RadioAPI(object):
             if DEBUG:
                 print "waiting for packet..."
             r = self.irq.read()
+            rssi_level = float('{0:d}'.format(spi.read(0x26)))
+
             while (int(r) == 1): # interrupt is driven low when packet arrives
                 r = self.irq.read()
+                rssi_level = float('{0:d}'.format(spi.read(0x26)))
 
             rx_buffer = []
             for i in range(rx_fifo_threshold):
@@ -389,7 +392,7 @@ class RadioAPI(object):
             rx_buffer = []
             for i in range(rx_fifo_threshold):
                 rx_buffer.append(spi.read(0x7F))
-            return rx_buffer
+            return rssi_level, rx_buffer
 
 
 
