@@ -121,7 +121,7 @@ class StandAloneRadioB(object):
 
             
 
-        print rssi_list
+        print self.rssi_list
 
 
 
