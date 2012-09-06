@@ -105,20 +105,21 @@ class StandAloneRadioB(object):
         
         rssi_list = []
 
-        for i in range(100):
+        # for i in range(100):
+        #     rssi_list.append(self.radio.get_rssi_dBm())
+
+
+
+        while True:
             rssi_list.append(self.radio.get_rssi_dBm())
+            self._receive_packet()
 
-
-        print rssi_list
-
-        # while True:
-        #     self._receive_packet()
-
-            # print "received packet"
-            # self.i += 1
+            print "received packet"
+            self.i += 1
             # print "RSSI (raw) : %f  RSSI (dBm) : %f" %(rssi, RSSI)
 
             
+        print rssi_list
 
 
 
