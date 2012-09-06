@@ -392,7 +392,7 @@ class RadioAPI(object):
             rx_buffer = []
             for i in range(rx_fifo_threshold):
                 rx_buffer.append(spi.read(0x7F))
-            return rssi_level, rx_buffer
+            return (rssi_level, rx_buffer)
 
 
 
