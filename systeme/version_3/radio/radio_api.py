@@ -360,15 +360,16 @@ class RadioAPI(object):
             if DEBUG:
                 print "waiting for packet..."
             r = self.irq.read()
-            rssi_level = float('{0:d}'.format(spi.read(0x26)))
+            rssi = float('{0:d}'.format(spi.read(0x26)))
 
             while (int(r) == 1): # interrupt is driven low when packet arrives
                 r = self.irq.read()
-                rssi_level = float('{0:d}'.format(spi.read(0x26)))
+                rssi = float('{0:d}'.format(spi.read(0x26)))
 
             rx_buffer = []
             for i in range(rx_fifo_threshold):
                 rx_buffer.append(spi.read(0x7F))
+            rssi_level = (rssi - 125.0)/2.0) - 60.0
             return (rssi_level, rx_buffer)
 
         else:
@@ -377,7 +378,7 @@ class RadioAPI(object):
             if DEBUG:
                 print "waiting for packet..."
             r = self.irq.read()
-            rssi_level = float('{0:d}'.format(spi.read(0x26)))
+            rssi = float('{0:d}'.format(spi.read(0x26)))
             while (int(r) == 1): # interrupt is driven low when packet arrives
                 if timer.flag.isSet():
                     timer.join()
@@ -387,13 +388,14 @@ class RadioAPI(object):
                     return []
                 else:
                     r = self.irq.read()
-                    rssi_level = float('{0:d}'.format(spi.read(0x26)))
+                    rssi = float('{0:d}'.format(spi.read(0x26)))
             # timer.join() # this doesn't seem necessary, and it takes
                            # a long time to execute BigO(1 sec) 
             # del(timer)
             rx_buffer = []
             for i in range(rx_fifo_threshold):
                 rx_buffer.append(spi.read(0x7F))
+            rssi_level = (rssi - 125.0)/2.0) - 60.0
             return (rssi_level, rx_buffer)
 
 
