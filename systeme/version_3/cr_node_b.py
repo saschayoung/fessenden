@@ -116,7 +116,7 @@ class StandAloneRadioB(object):
     def shutdown(self):
         self.radio.shutdown()
         print "\n\n\n"
-        print "%%d packets received." %(self.i,)
+        print "%d packets received." %(self.i,)
 
 
 
