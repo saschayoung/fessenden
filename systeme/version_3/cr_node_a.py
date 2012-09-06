@@ -103,11 +103,12 @@ class StandAloneRadioA(object):
         i = 0
         for i in range(num_packets):
             self._send_packet()
+            print "packet sent"
             i += 1
 
         toc = time.time()
 
-
+        print "\n\n\n"
         print "%d packets sent." %(i,)
         print "Total time (seconds) = %f" %(toc-tic,)
 
