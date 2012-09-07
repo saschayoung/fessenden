@@ -944,9 +944,58 @@ class RadioBase(object):
         self._set_reg_modulation_mode_1(val | 0x20)
 
 
+    # def set_output_power(self, power):
+    #     """
+    #     Set output power.
+
+    #     This function sets the output (transmit) power, by setting
+    #     the txpow[1:0] bits in register 0x6D. The value for output
+    #     power must be one of {8 | 11 | 14 | 17}, corresponding to
+    #     {0x00 | 0x01 | 0x10 | 0x11}. See [RFM22].
+
+    #     Parameters
+    #     ----------
+    #     power : int
+    #         Output power in dBm, one of {5 | 8 | 11 | 15 | 19}.
+
+    #     Raises
+    #     ------
+    #     ValueError
+    #         If `power` is not one of {5 | 8 | 11 | 15 | 19}.
+
+    #     References
+    #     ----------
+    #     .. [RFM22] pg 35, RFM22 Data sheet.
+
+    #     """
+
+
+    #     if power not in [5, 8, 11, 15, 9]:
+    #         print "power must be one of {5 | 8 | 11 | 15 | 19}."
+    #         raise ValueError
+    #     if power == 1:
+    #         txpow = 0x08
+    #     if power == 2:
+    #         txpow = 0x09
+    #     if power == 5:
+    #         txpow = 0x0A
+    #     if power == 8:
+    #         txpow = 0x0B
+    #     elif power == 11:
+    #         txpow = 0x0C
+    #     elif power == 14:
+    #         txpow = 0x0D
+    #     elif power == 17:
+    #         txpow = 0x0E
+    #     else: # power == 20
+    #         txpow = 0x0F
+    #     self._set_reg_tx_power(txpow)
+
+
     def set_output_power(self, power):
         """
-        Set output power.
+        Set output power. This is the old function, kept for
+        reference.
 
         This function sets the output (transmit) power, by setting
         the txpow[1:0] bits in register 0x6D. The value for output
