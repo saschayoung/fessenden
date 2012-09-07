@@ -1020,7 +1020,7 @@ class RadioBase(object):
 
 
         if power not in [1, 2, 5, 8, 11, 14, 17, 20]:
-            print "power must be one of {1 | 2 | 5 | 8 | 11 | 14 | 17}."
+            print "power must be one of {1 | 2 | 5 | 8 | 11 | 14 | 17 | 20}."
             raise ValueError
         if power == 1:
             txpow = 0x08

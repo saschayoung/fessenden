@@ -81,7 +81,7 @@ class StandAloneRadioA(object):
                             choices=['gfsk', 'fsk', 'ask', 'cw'],
                             help="Select modulation from [%(choices)s] (default: %(default)s)")
         parser.add_argument("-p" "--power", type=int, default=17, metavar='power', dest='power',
-                            choices=[5, 8, 11, 15, 19],
+                            choices=[1, 2, 5, 8, 11, 14, 17, 20],
                             help="Select transmit power from [%(choices)s] (default: %(default)s)")
         parser.add_argument("-r" "--bitrate", type=float, default=4.8e3, metavar='bitrate',
                             dest='bitrate', help="Set bitrate (default: %(default)s)")
