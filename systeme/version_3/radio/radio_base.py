@@ -956,37 +956,39 @@ class RadioBase(object):
         Parameters
         ----------
         power : int
-            Output power in dBm, one of {8 | 11 | 14 | 17}.
+            Output power in dBm, one of {1 | 2 | 5 | 8 | 11 | 14 | 17}.
 
         Raises
         ------
         ValueError
-            If `power` is not one of {8 | 11 | 14 | 17}.
+            If `power` is not one of {1 | 2 | 5 | 8 | 11 | 14 | 17}.
 
         References
         ----------
         .. [RFM22] pg 35, RFM22 Data sheet.
 
         """
+
+
         if power not in [1, 2, 5, 8, 11, 14, 17, 20]:
-            print "power must be one of {8 | 11 | 14 | 17}."
+            print "power must be one of {1 | 2 | 5 | 8 | 11 | 14 | 17}."
             raise ValueError
         if power == 1:
-            txpow = 0x00
+            txpow = 0x08
         if power == 2:
-            txpow = 0x01
+            txpow = 0x09
         if power == 5:
-            txpow = 0x02
+            txpow = 0x0A
         if power == 8:
-            txpow = 0x03
+            txpow = 0x0B
         elif power == 11:
-            txpow = 0x04
+            txpow = 0x0C
         elif power == 14:
-            txpow = 0x05
+            txpow = 0x0D
         elif power == 17:
-            txpow = 0x06
+            txpow = 0x0E
         else: # power == 20
-            txpow = 0x07
+            txpow = 0x0F
         self._set_reg_tx_power(txpow)
         
 
