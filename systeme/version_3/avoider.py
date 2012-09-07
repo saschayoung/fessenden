@@ -63,8 +63,9 @@ class StandAloneRadioA(object):
 
         """
         status = self.radio.listen(rssi_threshold=100, timeout=1.0)
-        if status == 'clear':
-            print "channel clear"
+        # if status == 'clear':
+        #     print "channel clear"
+        return status
 
 
     def run(self):
@@ -94,7 +95,59 @@ class StandAloneRadioA(object):
         self.radio.configure_radio(power, frequency, data_rate, modulation)
 
         while True:
+            self._listen()
             self._send_packet()
+
+
+
+
+#         packet_counter = 1
+#         state = "listen"
+#         # f = 434e6
+#         f = [431e6, 432e6, 433e6, 434e6, 435e6, 436e6, 437e6, 438e6, 439e6]
+#         g = 0
+
+
+#         while True:
+#             print "set frequency to %d" %(f[g],)
+#             if packet_counter % 30 == 0:
+#                 self.flag_node_a_freq_change_req = True
+                
+#             if state == "listen":
+#                 self._listen(f[g])
+#                 state = "transmit"
+
+#             elif state == "transmit":
+#                 self._transmit(f[g])
+#                 packet_counter += 1
+#                 state = "receive"
+
+#             elif state == "receive":
+#                 self._receive(f[g])
+#                 state = "listen"
+
+#             else:
+#                 print "+++ Melon melon melon +++"
+#                 state = "listen"
+
+#             if ((self.flag_node_a_freq_change_req == True)  
+#                 and (self.flag_node_a_freq_change_ack == True)):
+                
+#                 self.flag_node_a_freq_change_req = False
+#                 self.flag_node_a_freq_change_ack = False
+#                 g += 1
+#                 if (g == 9):
+#                     g = 0
+
+
+
+
+
+
+
+
+
+
 
 
     def shutdown(self):
