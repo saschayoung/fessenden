@@ -421,7 +421,7 @@ class RadioAPI(object):
         Parameters
         ----------
         power : int
-            Output power in dBm, one of {8 | 11 | 14 | 17}.
+            Output power in dBm, one of {1 | 2 | 5 | 8 | 11 | 14 | 17 | 20}.
         frequency : float
             Center frequency, this should be between 240.0e6 and 930.0e6.
         data_rate : float

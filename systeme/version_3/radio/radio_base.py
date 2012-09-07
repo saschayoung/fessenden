@@ -968,17 +968,25 @@ class RadioBase(object):
         .. [RFM22] pg 35, RFM22 Data sheet.
 
         """
-        if power not in [8, 11, 14, 17]:
+        if power not in [1, 2, 5, 8, 11, 14, 17, 20]:
             print "power must be one of {8 | 11 | 14 | 17}."
             raise ValueError
-        if power == 8:
+        if power == 1:
             txpow = 0x00
-        elif power == 11:
+        if power == 2:
             txpow = 0x01
-        elif power == 14:
+        if power == 5:
             txpow = 0x02
-        else: # power == 17
+        if power == 8:
             txpow = 0x03
+        elif power == 11:
+            txpow = 0x04
+        elif power == 14:
+            txpow = 0x05
+        elif power == 17:
+            txpow = 0x06
+        else: # power == 20
+            txpow = 0x07
         self._set_reg_tx_power(txpow)
         
 
