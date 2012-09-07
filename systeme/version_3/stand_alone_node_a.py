@@ -119,7 +119,7 @@ class StandAloneRadioA(object):
                 f += 10e6 
             for i in freqs:
                 if modulation == 'cw':
-                    self._configure_radio(power, frequency, data_rate, modulation)
+                    self._configure_radio(power, i, data_rate, modulation)
                     print "changing to freq: ", i
                     self._send_packet()
 
@@ -131,9 +131,9 @@ class StandAloneRadioA(object):
                         time.sleep(0.1)
 
                 else:
-                    self._configure_radio(power, frequency, data_rate, modulation)
+                    self._configure_radio(power, i, data_rate, modulation)
                     print "changing to freq: ", i
-                    for i in range(5):
+                    for j in range(5):
                         self._send_packet()
                     
 
