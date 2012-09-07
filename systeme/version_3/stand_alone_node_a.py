@@ -130,6 +130,13 @@ class StandAloneRadioA(object):
                     else:
                         time.sleep(0.1)
 
+                else:
+                    self._configure_radio(power, frequency, data_rate, modulation)
+                    print "changing to freq: ", i
+                    for i in range(5):
+                        self._send_packet()
+                    
+
            #      fc, hbsel, fb = freq_utils.carrier_freq(i)
            #      for j in range(10):
            #          self.setup_rf(fc, hbsel, fb)
