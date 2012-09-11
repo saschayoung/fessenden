@@ -101,7 +101,7 @@ class RssiTx(object):
                 time.sleep(1)
         else:
             while True:
-                self.send_packet()
+                self._send_packet()
 
 
 
