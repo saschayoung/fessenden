@@ -9,7 +9,7 @@ from radio.packet import Packet
 from radio.radio_api import RadioAPI
 
 
-class StandAloneRadioA(object):
+class Avoider(object):
     def __init__(self):
 
         self.radio = RadioAPI()
@@ -56,13 +56,12 @@ class StandAloneRadioA(object):
                                                                                location, flags)
                                                                                
 
-
     def _listen(self):
         """
         Listen before talk.
 
         """
-        status = self.radio.listen(rssi_threshold=100, timeout=1.0)
+        status = self.radio.listen(rssi_threshold=100, timeout=0.2)
         # if status == 'clear':
         #     print "channel clear"
         return status
@@ -95,8 +94,37 @@ class StandAloneRadioA(object):
         self.radio.configure_radio(power, frequency, data_rate, modulation)
 
         while True:
-            # self._listen()
-            self._send_packet()
+            status = self.listen()
+            if status == 'clear':
+                self._send_packet()
+            else:
+                frequency = frequency + 1e6
+                self.radio.configure_radio(power, frequency, data_rate, modulation)
+
+
+
+    def shutdown(self):
+        self.radio.shutdown()
+
+
+
+
+if __name__=='__main__':
+
+    main = Avoider()
+    try:
+        main.run()
+    except KeyboardInterrupt:
+        main.shutdown()
+
+
+
+
+        
+
+
+            # # self._listen()
+            # self._send_packet()
 
 
 
@@ -150,18 +178,3 @@ class StandAloneRadioA(object):
 
 
 
-    def shutdown(self):
-        self.radio.shutdown()
-
-
-
-
-if __name__=='__main__':
-
-    node_a = StandAloneRadioA()
-    try:
-        node_a.run()
-    except KeyboardInterrupt:
-        node_a.shutdown()
-
-        
