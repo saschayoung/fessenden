@@ -96,9 +96,10 @@ class RssiTx(object):
 
         self._configure_radio(power, frequency, data_rate, modulation)
 
-        # while True:
         self._send_packet()
-                    
+
+        while True:
+            time.sleep(1)
 
     def shutdown(self):
         self.radio.shutdown()
