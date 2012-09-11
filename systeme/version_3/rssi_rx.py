@@ -101,7 +101,7 @@ class StandAloneRadioB(object):
 
         self.rssi_list = []
 
-        for i in range(1000):
+        for i in range(100):
             rssi = self.radio.get_rssi_raw()
             self.rssi_list.append(rssi)
 
