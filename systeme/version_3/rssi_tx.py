@@ -93,13 +93,17 @@ class RssiTx(object):
         power = args.power
         data_rate = args.bitrate
 
-
         self._configure_radio(power, frequency, data_rate, modulation)
 
-        self._send_packet()
+        if modulation == 'cw':
+            self._send_packet()
+            while True:
+                time.sleep(1)
+        else:
+            while True:
+                self.send_packet()
 
-        while True:
-            time.sleep(1)
+
 
     def shutdown(self):
         self.radio.shutdown()
