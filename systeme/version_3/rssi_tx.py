@@ -8,7 +8,7 @@ from radio.packet import Packet
 from radio.radio_api import RadioAPI
 
 
-class StandAloneRadioA(object):
+class RssiTx(object):
     def __init__(self):
 
         self.radio = RadioAPI()
@@ -72,9 +72,6 @@ class StandAloneRadioA(object):
 
         """
         parser = argparse.ArgumentParser()
-        # parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-        # parser.add_argument("-f", type=float, default=434e6, metavar='frequency', dest='frequency', 
-        #                     nargs=1, help="Transmit frequency (default: %(default)s)")
         parser.add_argument("-f", type=float, default=434e6, metavar='frequency', dest='frequency', 
                             help="Transmit frequency (default: %(default)s)")
         parser.add_argument("-m", type=str, default='gfsk', metavar='modulation', dest='modulation',
@@ -86,20 +83,11 @@ class StandAloneRadioA(object):
         parser.add_argument("-r" "--bitrate", type=float, default=4.8e3, metavar='bitrate',
                             dest='bitrate', help="Set bitrate (default: %(default)s)")
 
-        # parser.add_argument("-s", type=bool, default=False, metavar='run_sweep',
-        #                     dest='run_sweep', help="Set sweep mode (default: %(default)s)")
-
-
-        # parser.add_argument("-i", type=bool, default=False, metavar='interactive',
-        #                     dest='interactive', help="Use interactive sweep (default: %(default)s)")
-
         args = parser.parse_args()
 
         
         self.radio.startup()
 
-        run_sweep = args.run_sweep
-        interactive = args.interactive
         frequency = args.frequency
         modulation = args.modulation
         power = args.power
@@ -118,15 +106,24 @@ class StandAloneRadioA(object):
 
 if __name__=='__main__':
 
-    node_a = StandAloneRadioA()
+    tx = RssiTx()
     try:
-        node_a.run()
+        tx.run()
     except KeyboardInterrupt:
-        node_a.shutdown()
+        tx.shutdown()
+
+
+        # parser.add_argument("-s", type=bool, default=False, metavar='run_sweep',
+        #                     dest='run_sweep', help="Set sweep mode (default: %(default)s)")
+
+
+        # parser.add_argument("-i", type=bool, default=False, metavar='interactive',
+        #                     dest='interactive', help="Use interactive sweep (default: %(default)s)")
 
 
 
-
+        # run_sweep = args.run_sweep
+        # interactive = args.interactive
 
         # while True:
         #     if state == "listen":
