@@ -19,6 +19,7 @@ class StandAloneRadioB(object):
         for i in range(50):
             self.data.append(0xff)
         self.tx_packet_number = 1
+        self.rssi_level = 0
 
     def _configure_radio(self, power, frequency, data_rate, modulation):
         """
@@ -46,7 +47,7 @@ class StandAloneRadioB(object):
         Receive packet.
 
         """
-        rx_packet = self.radio.receive(rx_fifo_threshold=63, timeout=None)
+        (self.rssi_level, rx_packet) = self.radio.receive(rx_fifo_threshold=63, timeout=None)
         if rx_packet == []: # this occurs when timeout has been exceeded
             return
         else:
@@ -97,30 +98,19 @@ class StandAloneRadioB(object):
 
         state = "listen"
 
-        # time.sleep(1)
-        while True:
+
+        self.rssi_list = []
+
+        for i in range(1000):
             rssi = self.radio.get_rssi_raw()
+            self.rssi_list.append(rssi)
+
             RSSI = ((rssi - 125.0)/2.0) - 60.0
             print "RSSI (raw) : %f  RSSI (dBm) : %f" %(rssi, RSSI)
-            # time.sleep(0.1)
 
 
-        # while True:
-        #     if state == "listen":
-        #         self._listen()
-        #         state = "receive"
 
-        #     elif state == "receive":
-        #         self._receive_packet()
-        #         state = "send"
-
-        #     elif state == "send":
-        #         self._send_packet()
-        #         state = "listen"
-
-        #     else:
-        #         print "+++ Melon melon melon +++"
-        #         state = "listen"
+        print self.rssi_list
 
 
     def shutdown(self):
@@ -133,3 +123,12 @@ if __name__=='__main__':
         node_b.run()
     except KeyboardInterrupt:
         node_b.shutdown()
+
+
+
+
+        # while True:
+        #     rssi = self.radio.get_rssi_raw()
+        #     RSSI = ((rssi - 125.0)/2.0) - 60.0
+        #     print "RSSI (raw) : %f  RSSI (dBm) : %f" %(rssi, RSSI)
+        #     # time.sleep(0.1)
