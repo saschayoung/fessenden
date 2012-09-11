@@ -94,7 +94,7 @@ class Avoider(object):
         self.radio.configure_radio(power, frequency, data_rate, modulation)
 
         while True:
-            status = self.listen()
+            status = self._listen()
             if status == 'clear':
                 self._send_packet()
             else:
