@@ -105,8 +105,8 @@ class StandAloneRadioB(object):
             rssi = self.radio.get_rssi_raw()
             self.rssi_list.append(rssi)
 
-            RSSI = ((rssi - 125.0)/2.0) - 60.0
-            print "RSSI (raw) : %f  RSSI (dBm) : %f" %(rssi, RSSI)
+            # RSSI = ((rssi - 125.0)/2.0) - 60.0
+            # print "RSSI (raw) : %f  RSSI (dBm) : %f" %(rssi, RSSI)
 
 
 
