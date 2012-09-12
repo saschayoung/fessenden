@@ -97,8 +97,12 @@ class Avoider(object):
         self.radio.configure_radio(power, frequency, data_rate, modulation)
 
         while True:
-            status = self._listen(threshold)
-            if status == 'clear':
+            status_list = []
+            for i in range(3):
+                status_list.append(self._listen(threshold))
+                time.sleep(0.1)
+            if status_list.count('clear') >= 2:
+            # if status == 'clear':
                 self._send_packet()
             else:
                 frequency += 2e6
