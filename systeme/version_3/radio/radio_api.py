@@ -303,7 +303,7 @@ class RadioAPI(object):
 
         rssi_level = float('{0:d}'.format(spi.read(0x26)))
 
-        while (rssi_level >= 100):
+        while (rssi_level >= rssi_threshold):
             b = self.backoff.run()
             if (b == "continue"):
                 rssi_level = float('{0:d}'.format(spi.read(0x26)))
