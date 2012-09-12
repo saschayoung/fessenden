@@ -302,7 +302,7 @@ class RadioAPI(object):
         time.sleep(0.01) # need a bit of time before we read rssi values
 
         rssi_level = float('{0:d}'.format(spi.read(0x26)))
-        print rssi_level
+        # print rssi_level
 
         while (rssi_level >= rssi_threshold):
             b = self.backoff.run()
