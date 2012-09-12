@@ -8,7 +8,7 @@ from radio.packet import Packet
 from radio.radio_api import RadioAPI
 
 
-class StandAloneRadioB(object):
+class RssiRx(object):
     def __init__(self):
         # self.kb = KnowledgeBase()
 
@@ -118,11 +118,11 @@ class StandAloneRadioB(object):
 
 
 if __name__=='__main__':
-    node_b = StandAloneRadioB()
+    rx = RssiRx()
     try:
-        node_b.run()
+        rx.run()
     except KeyboardInterrupt:
-        node_b.shutdown()
+        rx.shutdown()
 
 
 
