@@ -134,18 +134,18 @@ class RxNPackets(object):
 
 if __name__=='__main__':
     rx = RxNPackets()
-    rx.run()
-    s = raw_input("Press any key to cancel")
-    rx.shutdown()
+    # rx.run()
+    # s = raw_input("Press any key to cancel")
+    # rx.shutdown()
     
 
 
-    # try:
-    #     rx.run()
-    # except KeyboardInterrupt:
-    #     pass
-    # finally:
-    #     rx.shutdown()
+    try:
+        rx.run()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        rx.shutdown()
 
 
 
