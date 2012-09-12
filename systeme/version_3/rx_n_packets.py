@@ -137,6 +137,8 @@ if __name__=='__main__':
     try:
         rx.run()
     except KeyboardInterrupt:
+        pass
+    finally:
         rx.shutdown()
 
 
