@@ -56,12 +56,12 @@ class Avoider(object):
                                                                                location, flags)
                                                                                
 
-    def _listen(self):
+    def _listen(self, threshold):
         """
         Listen before talk.
 
         """
-        status = self.radio.listen(rssi_threshold=150, timeout=1.0)
+        status = self.radio.listen(threshold, timeout=1.0)
         # if status == 'clear':
         #     print "channel clear"
         return status
@@ -83,18 +83,21 @@ class Avoider(object):
                             help="Select transmit power from [%(choices)s] (default: %(default)s)")
         parser.add_argument("-r", type=float, default=4.8e3, metavar='bitrate',
                             dest='bitrate', help="Set bitrate (default: %(default)s)")
+        parser.add_argument("-t", type=int, default=150, metavar='threshold',
+                            dest='threshold', help="Set rssi threshold (default: %(default)s)")
 
         args = parser.parse_args()
         frequency = args.frequency
         modulation = args.modulation
         power = args.power
         data_rate = args.bitrate
+        threshold = args.threshold
 
         self.radio.startup()
         self.radio.configure_radio(power, frequency, data_rate, modulation)
 
         while True:
-            status = self._listen()
+            status = self._listen(threshold)
             if status == 'clear':
                 self._send_packet()
             else:
