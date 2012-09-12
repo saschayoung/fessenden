@@ -23,13 +23,19 @@ class TxOnePacket(object):
         self.tx_packet_number = 1
 
 
+    def _configure_radio(self, power, frequency, data_rate, modulation):
+        """
+        Configure radio for operation.
+
+        """
+        self.radio.configure_radio(power, frequency, data_rate, modulation)
+
+
     def _listen(self):
         status = self.radio.listen(rssi_threshold=100, timeout=0.1)
         if status == 'clear':
             pass
             # print "channel clear"
-
-
 
 
     def _receive_packet(self):

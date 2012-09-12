@@ -25,6 +25,14 @@ class RxOnePacket(object):
         self.rssi_level = 0
 
 
+    def _configure_radio(self, power, frequency, data_rate, modulation):
+        """
+        Configure radio for operation.
+
+        """
+        self.radio.configure_radio(power, frequency, data_rate, modulation)
+
+
 
     def _receive_packet(self):
         """
