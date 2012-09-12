@@ -113,18 +113,18 @@ class RxNPackets(object):
         self.radio.startup()
         self.radio.configure_radio(power, self.frequency, data_rate, modulation)
 
-        pkts_received = 0
+        self.pkts_received = 0
         while True:
             pkt_num, loc, flags, data = self._receive_packet()
             self.rx_packet_list.append(pkt_num)
-            pkts_received += 1
+            self.pkts_received += 1
 
         # print "packet number %d received" %(pkt_num)
 
 
 
     def shutdown(self):
-        print "% d packets received" %(pkts_received,)
+        print "% d packets received" %(self.pkts_received,)
         print self.rx_packet_list
         time.sleep(1)
         self.radio.shutdown()
