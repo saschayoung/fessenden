@@ -102,6 +102,9 @@ class Avoider(object):
             #     status_list.append(self._listen(threshold))
             #     time.sleep(0.1)
             # if status_list.count('clear') >= 2:
+
+            status = self._listen(threshold)
+
             if status == 'clear':
                 self._send_packet()
             else:
