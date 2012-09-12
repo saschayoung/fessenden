@@ -116,6 +116,8 @@ class StandAloneRadioA(object):
         state = "listen"
 
         while True:
+            print "state: " state
+
             if state == "listen":
                 self._listen()
                 state = "send"

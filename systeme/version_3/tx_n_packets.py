@@ -122,6 +122,7 @@ class TxNPackets(object):
 
         for i in range(num_pkts):
             self._send_packet('stream_data')
+            time.sleep(1)
         
 
 
