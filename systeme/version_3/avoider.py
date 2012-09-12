@@ -61,7 +61,7 @@ class Avoider(object):
         Listen before talk.
 
         """
-        status = self.radio.listen(rssi_threshold=100, timeout=0.2)
+        status = self.radio.listen(rssi_threshold=150, timeout=0.2)
         # if status == 'clear':
         #     print "channel clear"
         return status
