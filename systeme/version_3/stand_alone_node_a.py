@@ -113,7 +113,7 @@ class StandAloneRadioA(object):
         power = args.power
         data_rate = args.bitrate
 
-        state = "send"
+        state = "listen"
 
         while True:
             if state == "listen":
