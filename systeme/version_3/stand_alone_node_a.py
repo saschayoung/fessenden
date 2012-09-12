@@ -105,36 +105,59 @@ class StandAloneRadioA(object):
         power = args.power
         data_rate = args.bitrate
 
-        if run_sweep == False:
-            self._configure_radio(power, frequency, data_rate, modulation)
-            state = "listen"
-            while True:
+        while True:
+            if state == "listen":
+                self._listen()
+                state = "send"
+                time.sleep(0.1)
+
+            elif state == "send":
                 self._send_packet()
-        else:
-            f = 295e6
-            freqs = []
+                state = "receive"
+                # state = "receive"
+                time.sleep(0.1)
 
-            while f < 930e6:
-                freqs.append(f)
-                f += 1e6 
-            for i in freqs:
-                if modulation == 'cw':
-                    self._configure_radio(power, i, data_rate, modulation)
-                    print "changing to freq: ", i
-                    self._send_packet()
+            elif state == "receive":
+                self._receive_packet()
+                state = "listen"
+                time.sleep(0.1)
 
-                    if interactive == True:
-                        s = raw_input('Press enter for next frequency')
-                        self.radio.set_ready_mode()
+            else:
+                print "+++ Melon melon melon +++"
+                state = "listen"
 
-                    else:
-                        time.sleep(0.1)
 
-                else:
-                    self._configure_radio(power, i, data_rate, modulation)
-                    print "changing to freq: ", i
-                    for j in range(2):
-                        self._send_packet()
+
+        # if run_sweep == False:
+        #     self._configure_radio(power, frequency, data_rate, modulation)
+        #     state = "listen"
+        #     while True:
+        #         self._send_packet()
+        # else:
+        #     f = 295e6
+        #     freqs = []
+
+        #     while f < 930e6:
+        #         freqs.append(f)
+        #         f += 1e6 
+        #     for i in freqs:
+        #         if modulation == 'cw':
+        #             self._configure_radio(power, i, data_rate, modulation)
+        #             print "changing to freq: ", i
+        #             self._send_packet()
+
+        #             if interactive == True:
+        #                 s = raw_input('Press enter for next frequency')
+        #                 self.radio.set_ready_mode()
+
+        #             else:
+        #                 time.sleep(0.1)
+
+        #         else:
+        #             self._configure_radio(power, i, data_rate, modulation)
+        #             print "changing to freq: ", i
+        #             for j in range(2):
+        #                 self._send_packet()
                     
 
            #      fc, hbsel, fb = freq_utils.carrier_freq(i)

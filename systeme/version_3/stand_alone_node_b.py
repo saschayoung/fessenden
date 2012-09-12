@@ -98,29 +98,29 @@ class StandAloneRadioB(object):
         state = "listen"
 
         # time.sleep(1)
-        while True:
-            rssi = self.radio.get_rssi_raw()
-            RSSI = ((rssi - 125.0)/2.0) - 60.0
-            print "RSSI (raw) : %f  RSSI (dBm) : %f" %(rssi, RSSI)
-            # time.sleep(0.1)
-
-
         # while True:
-        #     if state == "listen":
-        #         self._listen()
-        #         state = "receive"
+        #     rssi = self.radio.get_rssi_raw()
+        #     RSSI = ((rssi - 125.0)/2.0) - 60.0
+        #     print "RSSI (raw) : %f  RSSI (dBm) : %f" %(rssi, RSSI)
+        #     # time.sleep(0.1)
 
-        #     elif state == "receive":
-        #         self._receive_packet()
-        #         state = "send"
 
-        #     elif state == "send":
-        #         self._send_packet()
-        #         state = "listen"
+        while True:
+            if state == "listen":
+                self._listen()
+                state = "receive"
 
-        #     else:
-        #         print "+++ Melon melon melon +++"
-        #         state = "listen"
+            elif state == "receive":
+                self._receive_packet()
+                state = "send"
+
+            elif state == "send":
+                self._send_packet()
+                state = "listen"
+
+            else:
+                print "+++ Melon melon melon +++"
+                state = "listen"
 
 
     def shutdown(self):
