@@ -125,6 +125,13 @@ class TxNPackets(object):
             time.sleep(0.5)
         
 
+    def shutdown(self):
+        # print "\n\n\n\n"
+        # print "% d packets received" %(self.pkts_received,)
+        # print self.rx_packet_list
+        # print "\n\n\n\n"
+        # time.sleep(1)
+        self.radio.shutdown()
 
 
 
