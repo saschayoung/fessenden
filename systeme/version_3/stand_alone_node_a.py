@@ -46,6 +46,14 @@ class StandAloneRadioA(object):
         Receive packet.
 
         """
+        (self.rssi_level, rx_packet) = self.radio.receive(rx_fifo_threshold=64, timeout=None)
+        if rx_packet == []: # this occurs when timeout has been exceeded
+            return
+        else:
+            pkt_num, t, loc, flags, data = self.packet.parse_packet(rx_packet)
+            print "packet_received: %d" %(pkt_num,)
+
+
         rx_packet = self.radio.receive(rx_fifo_threshold=63, timeout=1.0)
         if rx_packet == []: # this occurs when timeout has been exceeded
             return
