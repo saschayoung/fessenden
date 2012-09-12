@@ -98,7 +98,7 @@ class Avoider(object):
             if status == 'clear':
                 self._send_packet()
             else:
-                frequency += 1e6
+                frequency += 2e6
                 print "changing to new center frequency: %f" %(frequency,)
                 self.radio.configure_radio(power, frequency, data_rate, modulation)
 
