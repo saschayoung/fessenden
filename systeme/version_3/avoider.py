@@ -73,7 +73,7 @@ class Avoider(object):
 
         """
         parser = argparse.ArgumentParser()
-        parser.add_argument("-f", type=float, default=434e6, metavar='frequency', dest='frequency', 
+        parser.add_argument("-f", type=float, default=432e6, metavar='frequency', dest='frequency', 
                             help="Transmit frequency (default: %(default)s)")
         parser.add_argument("-m", type=str, default='gfsk', metavar='modulation', dest='modulation',
                             choices=['gfsk', 'fsk', 'ask', 'cw'],
