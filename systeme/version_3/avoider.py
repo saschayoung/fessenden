@@ -96,6 +96,8 @@ class Avoider(object):
         self.radio.startup()
         self.radio.configure_radio(power, frequency, data_rate, modulation)
 
+        hop = False
+
         while True:
             # status_list = []
             # for i in range(3):
@@ -106,8 +108,12 @@ class Avoider(object):
             status = self._listen(threshold)
 
             if status == 'clear':
+                if hop = True:
+                    toc = time.time()
                 self._send_packet()
             else:
+                hop = True
+                tic = time.time()
                 frequency += 2e6
                 print "changing to new center frequency: %f" %(frequency,)
                 self.radio.configure_radio(power, frequency, data_rate, modulation)
@@ -115,6 +121,10 @@ class Avoider(object):
 
 
     def shutdown(self):
+        print "\n\n\n\n"
+        print "reconfiguration time: ", toc - tic
+        print "\n\n\n\n"
+
         self.radio.shutdown()
 
 
