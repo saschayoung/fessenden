@@ -125,6 +125,7 @@ class Avoider(object):
         print "reconfiguration time: ", self.toc - self.tic
         print "\n\n\n\n"
 
+        time.sleep(1)
         self.radio.shutdown()
 
 
@@ -136,6 +137,8 @@ if __name__=='__main__':
     try:
         main.run()
     except KeyboardInterrupt:
+        pass
+    finally:
         main.shutdown()
 
 
