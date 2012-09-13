@@ -108,7 +108,7 @@ class Avoider(object):
             status = self._listen(threshold)
 
             if status == 'clear':
-                if hop = True:
+                if hop == True:
                     toc = time.time()
                 self._send_packet()
             else:
