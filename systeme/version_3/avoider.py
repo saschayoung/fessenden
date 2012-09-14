@@ -111,6 +111,7 @@ class Avoider(object):
                 if hop == True:
                     self.toc = time.time()
                     print "arrived at final destination, time to find new channel: ", self.toc - self.tic
+                    hop = False
 
                 self._send_packet()
             else:
