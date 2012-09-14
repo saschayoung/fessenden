@@ -85,7 +85,7 @@ class Avoider(object):
                             dest='bitrate', help="Set bitrate (default: %(default)s)")
         parser.add_argument("-t", type=int, default=150, metavar='threshold',
                             dest='threshold', help="Set rssi threshold (default: %(default)s)")
-        parser.add_argument("-d", type=int, default="data_file.txt", metavar='data_file',
+        parser.add_argument("-d", type=str, default="data_file.txt", metavar='data_file',
                             dest='data_file', help="Data file to store results (default: %(default)s)")
 
         args = parser.parse_args()
@@ -96,6 +96,7 @@ class Avoider(object):
         threshold = args.threshold
         data_file = args.data_file
 
+        print "data_file", data_file
         f = open(data_file, 'r+')
         
         
@@ -170,6 +171,7 @@ if __name__=='__main__':
     try:
         main.run()
     except KeyboardInterrupt:
+        
         pass
     finally:
         main.shutdown()
