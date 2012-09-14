@@ -99,7 +99,7 @@ class Avoider(object):
 
         print "data_file", data_file
         f = open(data_file, 'r+')
-        
+        print "opened file"
         
         
         if f.readlines() == []:
