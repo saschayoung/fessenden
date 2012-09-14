@@ -101,12 +101,13 @@ class Avoider(object):
         f = open(data_file, 'r+')
         print "opened file"
         
-        
-        if f.readlines() == []:
+        l = f.readlines()
+        if l == []:
+            print "blahh"
             self.first_time = True
         else:
             self.first_time = False
-            l = f.readlines()
+            # l = f.readlines()
             jump_freq = float(l[0].strip('\n'))
             f.close()
             
