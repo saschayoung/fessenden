@@ -114,9 +114,10 @@ class Avoider(object):
 
                 self._send_packet()
             else:
-                print "reconfiguring radio, starting timer"
-                hop = True
-                self.tic = time.time()
+                if hop == False:
+                    print "reconfiguring radio, starting timer"
+                    hop = True
+                    self.tic = time.time()
                 frequency += 2e6
                 print "changing to new center frequency: %f" %(frequency,)
                 self.radio.configure_radio(power, frequency, data_rate, modulation)
