@@ -85,41 +85,80 @@ class Avoider(object):
                             dest='bitrate', help="Set bitrate (default: %(default)s)")
         parser.add_argument("-t", type=int, default=150, metavar='threshold',
                             dest='threshold', help="Set rssi threshold (default: %(default)s)")
+        parser.add_argument("-d", type=int, default="data_file.txt", metavar='data_file',
+                            dest='data_file', help="Data file to store results (default: %(default)s)")
 
         args = parser.parse_args()
         frequency = args.frequency
         modulation = args.modulation
         power = args.power
-        data_rate = args.bitrate
+        bitrate = args.bitrate
         threshold = args.threshold
+        data_file = args.data_file
+
+        f = open(data_file, 'r+')
+        
+        
+        
+        if f.readlines() == []:
+            self.first_time = True
+        else:
+            self.first_time = False
+            l = f.readlines()
+            jump_freq = float(l[0].strip('\n'))
+            
+        
 
         self.radio.startup()
-        self.radio.configure_radio(power, frequency, data_rate, modulation)
+        self.radio.configure_radio(power, frequency, bitrate, modulation)
 
         hop = False
 
         while True:
             status = self._listen(threshold)
+            if first_time == True:
 
-            if status == 'clear':
-                if hop == True:
-                    self.toc = time.time()
-                    print "arrived at final destination, time to find new channel: ", self.toc - self.tic
-                    hop = False
+                if status == 'clear':
+                    if hop == True:
+                        self.toc = time.time()
+                        print "arrived at final destination, time to find new channel: ", self.toc - self.tic
+                        hop = False
 
-                self._send_packet()
+                        s = str(frequency) + "\n"
+                        f.write(s)
+                        f.close()
+
+
+                    self._send_packet()
+                else:
+                    if hop == False:
+                        print "reconfiguring radio, starting timer"
+                        hop = True
+                        self.tic = time.time()
+                    frequency += 2e6
+                    print "changing to new center frequency: %f" %(frequency,)
+                    self.radio.configure_radio(power, frequency, bitrate, modulation)
+
             else:
-                if hop == False:
-                    print "reconfiguring radio, starting timer"
-                    hop = True
-                    self.tic = time.time()
-                frequency += 2e6
-                print "changing to new center frequency: %f" %(frequency,)
-                self.radio.configure_radio(power, frequency, data_rate, modulation)
+                if status == 'clear':
+                    if hop == True:
+                        self.toc = time.time()
+                        print "arrived at final destination, time to find new channel: ", self.toc - self.tic
+                        hop = False
 
+                    self._send_packet()
+                else:
+                    if hop == False:
+                        print "reconfiguring radio, starting timer"
+                        hop = True
+                        self.tic = time.time()
+                    frequency = jump_freq
+                    print "changing to new center frequency: %f" %(frequency,)
+                    self.radio.configure_radio(power, frequency, bitrate, modulation)
 
 
     def shutdown(self):
+            
         self.radio.shutdown()
 
 
