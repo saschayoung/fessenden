@@ -107,6 +107,7 @@ class Avoider(object):
             self.first_time = False
             l = f.readlines()
             jump_freq = float(l[0].strip('\n'))
+            f.close()
             
         
 
