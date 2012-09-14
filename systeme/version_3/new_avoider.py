@@ -88,6 +88,7 @@ class Avoider(object):
         parser.add_argument("-d", type=str, default="data_file.txt", metavar='data_file',
                             dest='data_file', help="Data file to store results (default: %(default)s)")
 
+        print "parsing args"
         args = parser.parse_args()
         frequency = args.frequency
         modulation = args.modulation
