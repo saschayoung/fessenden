@@ -110,8 +110,11 @@ class Avoider(object):
             if status == 'clear':
                 if hop == True:
                     self.toc = time.time()
+                    print "arrived at final destination, time to find new channel: ", self.toc - self.tic
+
                 self._send_packet()
             else:
+                print "reconfiguring radio, starting timer"
                 hop = True
                 self.tic = time.time()
                 frequency += 2e6
@@ -121,11 +124,11 @@ class Avoider(object):
 
 
     def shutdown(self):
-        print "\n\n\n\n"
-        print "reconfiguration time: ", self.toc - self.tic
-        print "\n\n\n\n"
+        # print "\n\n\n\n"
+        # print "reconfiguration time: ", self.toc - self.tic
+        # print "\n\n\n\n"
 
-        time.sleep(1)
+        # time.sleep(1)
         self.radio.shutdown()
 
 
