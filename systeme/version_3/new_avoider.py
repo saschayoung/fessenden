@@ -117,7 +117,7 @@ class Avoider(object):
 
         while True:
             status = self._listen(threshold)
-            if first_time == True:
+            if self.first_time == True:
 
                 if status == 'clear':
                     if hop == True:
