@@ -103,11 +103,9 @@ class Avoider(object):
         
         l = f.readlines()
         if l == []:
-            print "blahh"
             self.first_time = True
         else:
             self.first_time = False
-            # l = f.readlines()
             jump_freq = float(l[0].strip('\n'))
             f.close()
             
