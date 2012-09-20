@@ -301,6 +301,7 @@ class Controller(object):
                     x, y = self.tracker.tally_results() 
                     logging.info("v3_controller::fsm:traverse_path: x = %d" %(x,))
                     logging.info("v3_controller::fsm:traverse_path: y = %d" %(y,))
+                    logging.info("v3_controller::fsm:traverse_path: time = %f" %(toc-tic,))
 
 
                     # self.shutdown()
