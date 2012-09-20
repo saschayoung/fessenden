@@ -330,6 +330,7 @@ class Controller(object):
                 if not current_path.has_been_explored:
                     print "marking current path as explored"
                     current_path.has_been_explored = True
+                    fsm_state = 'go_to_beginning'
                     continue
                 else:
 
