@@ -323,10 +323,12 @@ class Controller(object):
             if fsm_state == 'after_traverse':
                 self.iteration += 1
 
+                print "updating meters"
                 for p in self.paths:
                     p.update_meters()
 
                 if not current_path.has_been_explored:
+                print "marking current path as explored"
                     current_path.has_been_explored = True
                     continue
                 else:
