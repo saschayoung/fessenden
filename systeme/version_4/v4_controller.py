@@ -282,8 +282,11 @@ class Controller(object):
             ###################################################################
             if fsm_state == 'traverse_path':
                 logging.info("v3_controller::fsm: traverse_path")
+                if not current_path.has_been_explored:
+                    self.radio.set_state('listen')
+                else:
+                    self.radio.set_state('stream')
 
-                self.radio.set_state('stream')
                 self.motion.set_state('go')
                 tic = time.time()
 

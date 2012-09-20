@@ -56,6 +56,9 @@ class RadioSubsystem(threading.Thread):
         
         self.tx_packet_number = 1
 
+        self.cw_rssi = []
+
+
 
     def set_state(self, current_state):
         """
@@ -67,12 +70,12 @@ class RadioSubsystem(threading.Thread):
         Parameters
         ----------
         state : str
-            One of {`stop` | `stream` | `update` | `reconfigure`}
+            One of {`stop` | `stream` | `update` | `reconfigure` | `listen`}
 
         """
-        if current_state not in ['stop', 'stream', 'update', 'reconfigure']:
+        if current_state not in ['stop', 'stream', 'update', 'reconfigure', 'listen']:
             print "State error: `current_state` must be one of"
-            print "{`stop` | `stream` | `update` | `reconfigure`}."
+            print "{`stop` | `stream` | `update` | `reconfigure` | `listen`}."
             raise ValueError
         self.current_state = current_state
 
@@ -115,6 +118,17 @@ class RadioSubsystem(threading.Thread):
 
                 elif self.last_state == 'reconfigure':  
                     self.last_state = 'stop'
+                    # logging.info("radio_subsystem::run: stop")
+                    continue
+
+
+
+                elif self.last_state == 'listen':  
+                    self.last_state = 'stop'
+                    print "\n\n\n"
+                    print self.cw_rssi
+                    print "\n\n\n"
+                    self.cw_rssi = []
                     # logging.info("radio_subsystem::run: stop")
                     continue
 
@@ -212,6 +226,16 @@ class RadioSubsystem(threading.Thread):
                     # logging.debug("radio_subsystem::self.current_state == %s" %(self.current_state,))
                     # logging.debug("radio_subsystem::last state == %s" %(self.last_state,))
                     continue
+            ###################################################################
+
+
+            ###################################################################
+            elif self.current_state == 'listen':
+                self.last_state = 'listen'
+
+                self.radio.configure_radio(self.eirp, self.frequency, self.bitrate, self.modulation)
+                self.cw_rssi.append(self.radio.get_rssi_raw())
+                continue
             ###################################################################
 
 
