@@ -328,7 +328,7 @@ class Controller(object):
                     p.update_meters()
 
                 if not current_path.has_been_explored:
-                print "marking current path as explored"
+                    print "marking current path as explored"
                     current_path.has_been_explored = True
                     continue
                 else:
