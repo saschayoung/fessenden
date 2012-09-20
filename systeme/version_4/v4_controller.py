@@ -323,20 +323,23 @@ class Controller(object):
             if fsm_state == 'after_traverse':
                 self.iteration += 1
 
-                current_path.has_been_explored = True
                 for p in self.paths:
                     p.update_meters()
 
-
-                self.radio.set_state('update')
-                while not self.radio_update_flag:
-                    time.sleep(0.1)
+                if not current_path.has_been_explored:
+                    current_path.has_been_explored = True
+                    continue
                 else:
-                    current_path.current_meters['RSSI'] = self.rssi
-                    current_path.solution_as_observed['G'] = self.rx_packets
-                    current_path.solution_as_observed['Z'] = self.cognition.calculate_z(x, y)
-                    current_path.solution_as_observed['B'] = self.cognition.estimate_ber(self.tx_packets,
-                                                                                         self.rx_packets)
+
+                    self.radio.set_state('update')
+                    while not self.radio_update_flag:
+                        time.sleep(0.1)
+                    else:
+                        current_path.current_meters['RSSI'] = self.rssi
+                        current_path.solution_as_observed['G'] = self.rx_packets
+                        current_path.solution_as_observed['Z'] = self.cognition.calculate_z(x, y)
+                        current_path.solution_as_observed['B'] = self.cognition.estimate_ber(self.tx_packets,
+                                                                                             self.rx_packets)
 
                     # TODO: add the part where we determine if the
                     # solution we used wasn any good
