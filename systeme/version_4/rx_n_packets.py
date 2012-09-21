@@ -94,7 +94,7 @@ class RxNPackets(object):
         """
         parser = argparse.ArgumentParser()
         parser.add_argument("-f", type=float, default=434e6, metavar='frequency', dest='frequency', 
-                            nargs=1, help="Transmit frequency (default: %(default)s)")
+                            help="Transmit frequency (default: %(default)s)")
         parser.add_argument("-m", type=str, default='gfsk', metavar='modulation', dest='modulation',
                             choices=['gfsk', 'fsk', 'ask'],
                             help="Select modulation from [%(choices)s] (default: %(default)s)")
