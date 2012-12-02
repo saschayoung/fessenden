@@ -218,7 +218,7 @@ class Controller(object):
 
         iteration = 1
 
-        while iteration < 10:
+        while iteration < 11:
 
 
             if fsm_state == 'first_time':
