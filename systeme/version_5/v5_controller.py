@@ -351,10 +351,11 @@ class Controller(object):
 
             ###################################################################
             if fsm_state == 'go_to_beginning':
-                s = raw_input("AVEP has completed an iteration, press Y/y to continue")
+                s = raw_input("AVEP has completed an iteration, press Y/y to continue ")
                 
                 fsm_state = 'before_traverse'
-                              
+                continue
+                
 
 
 
