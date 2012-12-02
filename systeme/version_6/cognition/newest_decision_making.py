@@ -100,7 +100,7 @@ class DecisionMaker(object):
             raise ValueError
 
         if WRITE_FILES:
-            self.write_files(iteration, soln_space, param_space)
+            self.write_files(iteration, soln_space, param_space, front)
 
         if len(front) == 1:
             return param_space[front[0]], soln_space[front[0]]
@@ -118,7 +118,7 @@ class DecisionMaker(object):
             return solution_score, param_space[idx], soln_space[idx], idx
 
 
-    def write_files(self, iteration, soln_space, param_space):
+    def write_files(self, iteration, soln_space, param_space, front):
         """
         Write solution data to files.
 
