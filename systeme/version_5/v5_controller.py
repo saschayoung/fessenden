@@ -462,10 +462,10 @@ class Controller(object):
                         time.sleep(0.1)
                     else:
                         current_path.current_meters['RSSI'] = self.rssi
-                        current_path.solution_as_observed['G'] = self.rx_packets
-                        current_path.solution_as_observed['Z'] = self.cognition.calculate_z(x, y)
-                        current_path.solution_as_observed['B'] = self.cognition.estimate_ber(self.tx_packets,
-                                                                                             self.rx_packets)
+                        # current_path.solution_as_observed['G'] = self.rx_packets
+                        # current_path.solution_as_observed['Z'] = self.cognition.calculate_z(x, y)
+                        # current_path.solution_as_observed['B'] = self.cognition.estimate_ber(self.tx_packets,
+                        #                                                                      self.rx_packets)
 
                         name = current_path[name]
                         self.current_m[name] = current_path.current_meters
