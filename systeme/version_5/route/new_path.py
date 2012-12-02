@@ -43,43 +43,20 @@ class Path(object):
         # then `True` thereafter
         self.has_been_explored = False
 
-        self.iteration = 0
 
-        self.solution_parameters = {}
+        self.Lp = 90
+        self.d_prop = 10
 
-        
-        self.solution_as_implemented = {'Z' : 0,
-                                        'T' : 0,
-                                        'B' : 0,
-                                        'G' : 0}
 
-        self.solution_as_observed = {'Z' : 0,
-                                     'T' : 0,
-                                     'B' : 0,
-                                     'G' : 0}
-
-        self.solution_effectiveness = 0
-
-        self.previous_meters = {'X' : 0,
-                                'Y' : 0,
-                                'RSSI' : 0}
-
-        
-        self.current_meters = {'X' : 0,
-                               'Y' : 0,
-                               'RSSI' : 0}
-                               
-        self.previous_knobs = {'Modulation' : '',
-                               'Rs' : 0,
-                               'EIRP' : 0,
-                               'Speed' : 0}
+        self.meters = {}
 
         self.current_knobs = {'Modulation' : 'fsk',
                               'Rs' : 0,
                               'EIRP' : 0,
                               'Speed' : 0}
 
-    
+
+
         
 
 
@@ -111,3 +88,60 @@ class Path(object):
         self.current_meters = {'X' : 0,
                                'Y' : 0,
                                'RSSI' : 0}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        # self.iteration = 0
+
+        # self.solution_parameters = {}
+
+        
+        # self.solution_as_implemented = {'Z' : 0,
+        #                                 'T' : 0,
+        #                                 'B' : 0,
+        #                                 'G' : 0}
+
+        # self.solution_as_observed = {'Z' : 0,
+        #                              'T' : 0,
+        #                              'B' : 0,
+        #                              'G' : 0}
+
+        # self.solution_effectiveness = 0
+
+        # self.previous_meters = {'X' : 0,
+        #                         'Y' : 0,
+        #                         'RSSI' : 0}
+
+        
+        # self.current_meters = {'X' : 0,
+        #                        'Y' : 0,
+        #                        'RSSI' : 0}
+                               
+        # self.previous_knobs = {'Modulation' : '',
+        #                        'Rs' : 0,
+        #                        'EIRP' : 0,
+        #                        'Speed' : 0}
+
+        # self.current_knobs = {'Modulation' : 'fsk',
+        #                       'Rs' : 0,
+        #                       'EIRP' : 0,
+        #                       'Speed' : 0}

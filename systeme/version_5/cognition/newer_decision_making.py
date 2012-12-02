@@ -240,93 +240,97 @@ class DecisionMaker(object):
 
     def calculate_z(self, X, Y):
         """
-        Calculate Z.
+        Calculate target/anti-target score.
 
-        Calculate the paramter called Z, a function of X and Y, where
-        X is targets and Y is anti-targets.
+        This is a piecewise-defined function that describes a Z score
+        for a path that is based on the number of targets (objects to
+        find) and anti-targets (objects to avoid) along the path.
 
         Parameters
         ----------
-        X : int
-            Targets along path
-        Y : int
-            Anti-targets along path.
+        x : int
+            Number of targets on path (x >= 0).
+        y : int
+            Number of anti-targets on path (y >= 0).
+
+        Returns
+        -------
+        z : float
+            Combined target/anti-target score (0 <= z <= 1).
 
         """
-        if X < Y:
-            Z = 0
+        if (x == 0) or (x < y):
+            z = 0
+        elif (x == 1) and (y == 0):
+            z = 0.2
+        elif ((1 < x) and (x <= 3)) and (y <= x-2):
+            z = 0.2 * (x - y)
 
-        if X == 0:
-            Z = 0
-
-        if X in [1, 2, 3]:
-            if Y in [0, 1]:
-                Z = 0.2*(X-Y)
+        elif ((4 < x) and (x <= 6)) and (y <= x-3):
+            z = 0.15 * (x - y)
+        elif ((4 < x) and (x <= 6)) and (y <= x-2):
+            z = 0.2 * (x - y)
+                        
+        elif (x > 6) and (y <= x-4):
+            if ((0.2 * (x - y)) > 1.0):
+                z = 1.0
             else:
-                Z = 0
+                z = 0.2 * (x - y)
 
-        if X in [4, 5, 6]:
-            if Y in [0, 1, 2]:
-                Z = 0.15*(X-Y)
-            elif Y in [3, 4, 5]:
-                Z = 0.1*(X-Y)
-            else:
-                Z = 0
+        elif (x > 6) and (y <= x-3):
+            z =  0.15 * (x - y)
+        elif (x > 6) and (y <= x-2):
+            z = 0.1 * (x - y)
 
-        if X > 6:
-            if Y <= X-5:
-                if 0.15*(X-Y) > 1.0:
-                    Z = 1.0
-                else:
-                    Z = 0.15*(X-Y)
-            else:
-                Z = 0
+        else:
+            z = 0
 
-        return Z
+        return z
 
 
 
 
     def calculate_ber(self, rssi, EIRP, modulation, Rs):
         """
-        Calculate BER.
+        Calculate probability of bit error.
+
+        This function calculates the probability of bit error for
+        non-coherent FSK.
 
         Parameters
         ----------
-        rssi : int
-            Received signal strength indicator, as determined by RFIC.
-        EIRP : int
-            Transmit power in dBm.
-        modulation : str
-            One of {`gfsk` | `fsk`}.
+        EIRP : float
+            Transmit power (dBm).
         Rs : float
-            Data rate in bits per second.
+            Data rate (bits/sec).
+        Noise : float
+            Noise power (dBm).
+        Lp : float
+            Path loss (dB).
 
         Returns
         -------
         Pb : float
-            Probability of bit error.
-            
+            Probability of bit error
+
         """
-        if modulation not in ['fsk', 'gfsk']:
-            print "Modulation not recognized, must be one of {`gfsk` | `fsk`}"
-            raise ValueError
+
+        rate_list = [2e3, 2.4e3, 4.8e3, 9.6e3, 19.2e3, 38.4e3, 57.6e3, 125e3]
+        idx = rate_list.index(Rs)
+
+        fd_list = [2e3, 2.4e3, 4.8e3, 9.6e3, 19.2e3, 38.4e3, 57.6e3, 125e3]
+        fd = fd_list[idx]
+
+        # Bw = 2*(fd + Rs/2) # per T. Pratt and http://www.edaboard.com/thread24570.html
+        Bw = 100e3
         
-        SNR = self._snr(rssi, EIRP)
-
-        Bw = 620.0e3
+        SNR = EIRP - Lp - Noise
         snr = 10.0**(SNR/10.0)
-        EbN0 = snr*Bw/Rs
-        # print EbN0, Bw, Rs
-        # ebn0 = 10.0**(EbN0/10.0)
-
-        if modulation == 'fsk':
-            Pb = (0.5)*np.exp((-0.5*EbN0))
-        if modulation in ['gfsk', 'ook']:
-            x = np.sqrt(EbN0)
-            Pb = (0.5)-(0.5)*self._erf(x/np.sqrt(2.0))
-
+        ebn0 = snr*Bw/Rs
+        Pb = (0.5)*np.exp((-0.5*ebn0))
         return Pb
+
+
 
 
     def estimate_ber(self, tx_packets, rx_packets):
@@ -457,3 +461,77 @@ if __name__=='__main__':
 
 
 
+
+
+
+        # """
+        # Calculate BER.
+
+        # Parameters
+        # ----------
+        # rssi : int
+        #     Received signal strength indicator, as determined by RFIC.
+        # EIRP : int
+        #     Transmit power in dBm.
+        # modulation : str
+        #     One of {`gfsk` | `fsk`}.
+        # Rs : float
+        #     Data rate in bits per second.
+
+        # Returns
+        # -------
+        # Pb : float
+        #     Probability of bit error.
+            
+        # """
+        # if modulation not in ['fsk', 'gfsk']:
+        #     print "Modulation not recognized, must be one of {`gfsk` | `fsk`}"
+        #     raise ValueError
+        
+        # SNR = self._snr(rssi, EIRP)
+
+        # Bw = 620.0e3
+        # snr = 10.0**(SNR/10.0)
+        # EbN0 = snr*Bw/Rs
+        # # print EbN0, Bw, Rs
+        # # ebn0 = 10.0**(EbN0/10.0)
+
+        # if modulation == 'fsk':
+        #     Pb = (0.5)*np.exp((-0.5*EbN0))
+        # if modulation in ['gfsk', 'ook']:
+        #     x = np.sqrt(EbN0)
+        #     Pb = (0.5)-(0.5)*self._erf(x/np.sqrt(2.0))
+
+        # return Pb
+
+
+        # if X < Y:
+        #     Z = 0
+
+        # if X == 0:
+        #     Z = 0
+
+        # if X in [1, 2, 3]:
+        #     if Y in [0, 1]:
+        #         Z = 0.2*(X-Y)
+        #     else:
+        #         Z = 0
+
+        # if X in [4, 5, 6]:
+        #     if Y in [0, 1, 2]:
+        #         Z = 0.15*(X-Y)
+        #     elif Y in [3, 4, 5]:
+        #         Z = 0.1*(X-Y)
+        #     else:
+        #         Z = 0
+
+        # if X > 6:
+        #     if Y <= X-5:
+        #         if 0.15*(X-Y) > 1.0:
+        #             Z = 1.0
+        #         else:
+        #             Z = 0.15*(X-Y)
+        #     else:
+        #         Z = 0
+
+        # return Z
