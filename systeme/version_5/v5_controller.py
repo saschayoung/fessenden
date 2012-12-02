@@ -330,7 +330,7 @@ class Controller(object):
                     #     current_path.solution_as_observed['G'] = self.rx_packets
                     #     current_path.solution_as_observed['Z'] = self.cognition.calculate_z(x, y)
                     #     current_path.solution_as_observed['B'] = self.cognition.estimate_ber(self.tx_packets,
-                                                                                             self.rx_packets)
+                    #                                                                          self.rx_packets)
 
 
 
