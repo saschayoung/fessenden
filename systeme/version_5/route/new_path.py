@@ -55,6 +55,9 @@ class Path(object):
                               'EIRP' : 0,
                               'Speed' : 0}
 
+        self.previous_meters = {'X' : 0,
+                                'Y' : 0,
+                                'RSSI' : 0}
 
 
         

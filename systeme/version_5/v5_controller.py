@@ -321,15 +321,15 @@ class Controller(object):
                     fsm_state = 'go_to_beginning'
                     continue
                 else:
-
-                    self.radio.set_state('update')
-                    while not self.radio_update_flag:
-                        time.sleep(0.1)
-                    else:
-                        current_path.current_meters['RSSI'] = self.rssi
-                        current_path.solution_as_observed['G'] = self.rx_packets
-                        current_path.solution_as_observed['Z'] = self.cognition.calculate_z(x, y)
-                        current_path.solution_as_observed['B'] = self.cognition.estimate_ber(self.tx_packets,
+                    pass
+                    # self.radio.set_state('update')
+                    # while not self.radio_update_flag:
+                    #     time.sleep(0.1)
+                    # else:
+                    #     current_path.current_meters['RSSI'] = self.rssi
+                    #     current_path.solution_as_observed['G'] = self.rx_packets
+                    #     current_path.solution_as_observed['Z'] = self.cognition.calculate_z(x, y)
+                    #     current_path.solution_as_observed['B'] = self.cognition.estimate_ber(self.tx_packets,
                                                                                              self.rx_packets)
 
 
