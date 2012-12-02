@@ -11,7 +11,7 @@ from obj_func import ObjectiveFunctions
 from rank import nondominated_sort, score_solution
 
 
-WRITE_FILES = True
+WRITE_FILES = False
 
 
 class DecisionMaker(object):
@@ -73,7 +73,7 @@ class DecisionMaker(object):
                         G = self.objfunc.calculate_packet_delivery(Rs, T, d_prop[i])
 
                         soln = [Z, T, B, G]
-                        soln_space.append(ref_soln)
+                        soln_space.append(soln)
                         
                         params = {'name' : name,
                                   'dist' : d,
@@ -92,7 +92,7 @@ class DecisionMaker(object):
 
                         param_space.append(params)
 
-        front = nondominated_sort(ref_soln_space)
+        front = nondominated_sort(soln_space)
 
         if len(front) == 0:
             print "No nondominated values, throwing error."
@@ -102,7 +102,7 @@ class DecisionMaker(object):
             self.write_files(iteration, soln_space, param_space)
 
         if len(front) == 1:
-            return param_space[front[0]], ref_soln_space[front[0]]
+            return param_space[front[0]], soln_space[front[0]]
         else:
             rand_idx = random.randint(0,len(front)-1)
             idx = front[rand_idx]
@@ -113,8 +113,8 @@ class DecisionMaker(object):
                 counter += 1
                 if counter == 100:
                     break
-            solution_score = score_solution(idx, ref_soln_space)
-            return solution_score, param_space[idx], ref_soln_space[idx], idx
+            solution_score = score_solution(idx, soln_space)
+            return solution_score, param_space[idx], soln_space[idx], idx
 
 
     def write_files(self, iteration, soln_space, param_space):
@@ -123,7 +123,7 @@ class DecisionMaker(object):
 
         """
         f = open('../data_files/full_soln_space_' + str(iteration), 'wt')
-        for s in ref_soln_space:
+        for s in soln_space:
             f.write(str(s) + "\n")
         f.close()
 
