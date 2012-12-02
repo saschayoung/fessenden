@@ -60,7 +60,25 @@ class Path(object):
                                'RSSI' : 0}
 
 
+        self.solution_as_observed = {'Z' : 0,
+                                     'T' : 0,
+                                     'B' : 0,
+                                     'G' : 0}
+
+        self.solution_as_implemented = {'Z' : 0,
+                                        'T' : 0,
+                                        'B' : 0,
+                                        'G' : 0}
         
+        self.previous_knobs = {'Modulation' : '',
+                               'Rs' : 0,
+                               'EIRP' : 0,
+                               'Speed' : 0}
+
+        self.previous_meters = {'X' : 0,
+                                'Y' : 0,
+                                'RSSI' : 0}
+
 
 
     def update_knobs(self):
