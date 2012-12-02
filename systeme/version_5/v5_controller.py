@@ -226,7 +226,8 @@ class Controller(object):
             if fsm_state == 'before_traverse':
             ###################################################################
                 choice = self.cognition.choose_path(self.paths)
-                if choice == -1:
+
+                if choice != -1:
                     current_path = self.paths[choice]
                     self.soln_idx.append('Explore')
 
