@@ -55,6 +55,8 @@ class StandAloneRadioB(object):
             packet_number, time_stamp, location, flags, data = self.packet.parse_packet(rx_packet)
             print "packet_number=%d  time_stamp=%f  location=%d  flags=0x%x" %(packet_number, time_stamp,
                                                                                location, flags)
+        return pkt_num, loc, flags, data
+
                                                                                
 
 
@@ -114,7 +116,10 @@ class StandAloneRadioB(object):
         for i in range(100):
         # while True:
             # self.rssi_list.append(self.radio.get_rssi_dBm())
-            self._receive_packet()
+            # self._receive_packet()
+            pkt_num, loc, flags, data = self._receive_packet()
+            print bin(flags)
+
             self.rssi_list.append(self.rssi_level)
             print "received packet"
             # self.i += 1
