@@ -123,17 +123,18 @@ class DecisionMaker(object):
         Write solution data to files.
 
         """
-        f = open('../data_files/full_soln_space_' + str(iteration), 'wt')
+        # f = open('../data_files/full_soln_space_' + str(iteration), 'wt')
+        f = open('full_soln_space_' + str(iteration), 'wt')
         for s in soln_space:
             f.write(str(s) + "\n")
         f.close()
 
-        f = open('../data_files/full_param_space_' + str(iteration), 'wt')
+        f = open('full_param_space_' + str(iteration), 'wt')
         for p in param_space:
             f.write(str(p) + "\n")
         f.close()
 
-        f = open('../data_files/nondom_sort_results_' + str(iteration), 'wt')
+        f = open('nondom_sort_results_' + str(iteration), 'wt')
         f.write(str(front) + "\n")
         f.close()
 
