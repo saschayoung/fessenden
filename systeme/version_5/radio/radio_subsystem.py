@@ -298,7 +298,8 @@ class RadioSubsystem(threading.Thread):
         Receive packet
 
         """
-        rx_packet = self.radio.receive(rx_fifo_threshold=64, timeout=None)
+        (self.rssi_level, rx_packet) = self.radio.receive(rx_fifo_threshold=63, timeout=None)
+        # rx_packet = self.radio.receive(rx_fifo_threshold=64, timeout=None)
         pkt_num, t, loc, flags, data = self.packet.parse_packet(rx_packet)
 
         return pkt_num, loc, flags, data

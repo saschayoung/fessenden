@@ -55,7 +55,7 @@ class StandAloneRadioB(object):
             packet_number, time_stamp, location, flags, data = self.packet.parse_packet(rx_packet)
             print "packet_number=%d  time_stamp=%f  location=%d  flags=0x%x" %(packet_number, time_stamp,
                                                                                location, flags)
-        return pkt_num, loc, flags, data
+        return packet_number, loc, flags, data
 
                                                                                
 
