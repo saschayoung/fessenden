@@ -144,6 +144,9 @@ class Controller(object):
         path_c.current_meters['Y'] = 0
         path_c.current_meters['RSSI'] = 64
 
+        self.path_names = ['A', 'B', 'C'] # this is a hack
+
+
         self.paths = [path_a, path_b, path_c]
 
 
