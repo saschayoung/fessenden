@@ -467,7 +467,7 @@ class Controller(object):
                         # current_path.solution_as_observed['B'] = self.cognition.estimate_ber(self.tx_packets,
                         #                                                                      self.rx_packets)
 
-                        name = current_path[name]
+                        name = current_path.name
                         self.current_m[name] = current_path.current_meters
 
 
