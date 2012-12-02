@@ -320,9 +320,9 @@ class Controller(object):
                             self.choice_history.append(current_path.name)
 
                             current_path.current_knobs['Modulation'] = 'fsk'
-                            current_path.current_knobs['EIRP'] = prev_param['EIRP']
-                            current_path.current_knobs['Rs'] = prev_param['Rs']
-                            current_path.current_knobs['Speed'] = prev_param['rotor_power']
+                            current_path.current_knobs['EIRP'] = self.prev_param['EIRP']
+                            current_path.current_knobs['Rs'] = self.prev_param['Rs']
+                            current_path.current_knobs['Speed'] = self.prev_param['rotor_power']
 
                             self.radio.set_config_packet_data(current_path.current_knobs['Modulation'],
                                                               current_path.current_knobs['EIRP'],
