@@ -179,7 +179,14 @@ class Controller(object):
         self.motion.start()
         self.radio.start()
         self.fsm()
- 
+        print self.path_history
+        print self.choice_history
+        print self.score_history
+        print self.soln_idx
+        print self.current_m
+        print self.previous_m
+        self.shutdown()
+
 
     def shutdown(self):
         """
@@ -214,7 +221,7 @@ class Controller(object):
 
         iteration = 1
 
-        while True:
+        while iteration < 10:
 
 
             if fsm_state == 'first_time':
@@ -308,7 +315,7 @@ class Controller(object):
                         if comparison == True:
                             print "prev solution is better and old environment is unchanged"
                             convergence_iterator += 1
-                            if convergence_iterator == 5:
+                            if convergence_iterator == 3:
                                 convergence_iterator = 0
                                 self.re_explore = True
 
