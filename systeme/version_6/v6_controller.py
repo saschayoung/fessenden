@@ -134,14 +134,14 @@ class Controller(object):
         path_c = Path(name='C', distance=87.5, direction='right')
 
         # preload values for path, bypass initial exploration
-        path_a.current_meters['X'] = 1
+        path_a.current_meters['X'] = 5
         path_a.current_meters['Y'] = 1
         path_a.current_meters['RSSI'] = 64
         path_b.current_meters['X'] = 3
-        path_b.current_meters['Y'] = 1
+        path_b.current_meters['Y'] = 0
         path_b.current_meters['RSSI'] = 64
-        path_c.current_meters['X'] = 3
-        path_c.current_meters['Y'] = 0
+        path_c.current_meters['X'] = 5
+        path_c.current_meters['Y'] = 3
         path_c.current_meters['RSSI'] = 64
 
         self.path_names = ['A', 'B', 'C'] # this is a hack
