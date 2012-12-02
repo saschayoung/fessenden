@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import random
 import time
 
 import numpy as np
