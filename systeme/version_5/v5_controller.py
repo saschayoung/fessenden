@@ -251,8 +251,8 @@ class Controller(object):
                     self.motion.set_speed(25)
 
                 else:
-                    score, param, soln, s_i = self.soln.generate(self.paths,
-                                                                 iteration)
+                    score, param, soln, s_i = self.cognition.solution(self.paths,
+                                                                      iteration)
 
                     print "score: ", score
                     print "prev_score: ", self.prev_score
