@@ -46,8 +46,8 @@ class DecisionMaker(object):
             dist.append(p.distance)
             X.append(p.current_meters['X'])
             Y.append(p.current_meters['Y'])
-            noise_val = self._noise(p.current_meters['RSSI'])
-            Noise.append(noise_val)
+            # noise_val = self._noise(p.current_meters['RSSI'])
+            Noise.append(p.current_meters['RSSI'])
             Lp.append(p.Lp)
             d_prop.append(p.d_prop)
 
