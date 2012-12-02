@@ -71,7 +71,7 @@ class NodeB(object):
         This function blocks until it receives a packet.
 
         """
-        rx_packet = self.radio.receive(rx_fifo_threshold=64, timeout=None)
+        rx_packet = self.radio.receive(rx_fifo_threshold=63, timeout=None)
         pkt_num, t, loc, flags, data = self.packet.parse_packet(rx_packet)
         # print "packet received"
         # print pkt_num, loc, flags, data
