@@ -12,7 +12,7 @@ from obj_func import ObjectiveFunctions
 from rank import nondominated_sort, score_solution
 
 
-WRITE_FILES = False
+WRITE_FILES = True
 
 
 class DecisionMaker(object):
