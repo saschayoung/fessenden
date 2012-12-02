@@ -428,7 +428,7 @@ class Controller(object):
                     print "x = %d y = %d" %(x, y)
 
                     self.tracker.reset()
-                    name = current_path['name']
+                    name = current_path.name
                     self.previous_m[name] = current_path.current_meters
 
                     current_path.current_meters['X'] = x
