@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import argparse
-import logging
 import time
 import sys
 
@@ -23,7 +22,6 @@ class Controller(object):
 
     def __init__(self):
 
-        logging.basicConfig(filename='basic.log', filemode='w', level=logging.DEBUG)
 
         self.current_location = 0
         brick = utils.connect_to_brick()
@@ -194,7 +192,6 @@ class Controller(object):
 
         """
         # self.f.close()
-        logging.close()
         self.tracker.kill_sensor()
         self.motion.join()
         self.location.join()  # shut this down last
@@ -690,11 +687,6 @@ if __name__ == '__main__':
 
                 # s += "\n\nChosen path is %s.\n" %(current_path.name,)
                 # s += "=================================================="
-                # logging.info(s)
-                # # logging.info("\n\nChosen path is %s." %(current_path.name,))
-
-                # # logging.info("==================================================")
-
                 # i = self.cognition.choose_path(self.paths)
                 # current_path = self.paths[i]
                 # current_path.iteration = self.iteration
