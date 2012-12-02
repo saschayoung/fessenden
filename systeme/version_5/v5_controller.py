@@ -282,6 +282,7 @@ class Controller(object):
                 else:
                     self.radio.set_state('stream')
 
+                # print "set motion
                 self.motion.set_state('go')
                 tic = time.time()
 
@@ -352,9 +353,19 @@ class Controller(object):
             ###################################################################
             if fsm_state == 'go_to_beginning':
                 s = raw_input("AVEP has completed an iteration, press Y/y to continue ")
+
+                self.motion.set_direction('straight')
+                self.motion.set_speed(25)
+                self.motion.set_state('go')
+
+                while not self.current_location == start:
+                    time.sleep(0.01)
+                else:
+                    self.motion.set_state('stop')
+                    time.sleep(0.1)
+                    fsm_state = 'before_traverse'
+                    continue
                 
-                fsm_state = 'before_traverse'
-                continue
                 
 
 
