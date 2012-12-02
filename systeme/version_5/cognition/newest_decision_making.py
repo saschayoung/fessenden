@@ -43,9 +43,10 @@ class DecisionMaker(object):
 
         for p in paths:
             dist.append(p.distance)
-            X.append(p.meters['X'])
-            Y.append(p.meters['Y'])
-            Noise.append(p.meters['Noise'])
+            X.append(p.current_meters['X'])
+            Y.append(p.current_meters['Y'])
+            noise_val = self._noise(p.current_meters['RSSI'])
+            Noise.append(noise_val)
             Lp.append(p.Lp)
             d_prop.append(p.d_prop)
 
@@ -165,6 +166,27 @@ class DecisionMaker(object):
         else:
             return -1
 
+
+
+
+
+    def _noise(self, rssi):
+        """
+        Calculate SNR.
+
+        Parameters
+        ----------
+        rssi : int
+            Received signal strength indicator, as determined by RFIC.
+
+        Returns
+        -------
+        Noise : float
+            Noise value  in dB.
+            
+        """
+        n = (rssi - 125.0) / 2.0 - 60.0
+        return n
 
 
 

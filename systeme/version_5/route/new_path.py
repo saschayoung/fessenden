@@ -41,8 +41,8 @@ class Path(object):
 
         # this should only be false until the bath has been explored,
         # then `True` thereafter
-        self.has_been_explored = False
-
+        # self.has_been_explored = False
+        self.has_been_explored = True
 
         self.Lp = 90
         self.d_prop = 10

@@ -3,6 +3,7 @@
 import argparse
 import logging
 import time
+import sys
 
 
 import utils 
@@ -38,7 +39,10 @@ class Controller(object):
         self.reconfig_flag = False
 
         # self.iteration = 1
+        self.current_m = {}
+        self.previous_m = {}
 
+        self.re_explore = False
 
         self.f = open('track_data', 'w')
 
@@ -128,6 +132,18 @@ class Controller(object):
         path_a = Path(name='A', distance=62.0, direction='left')
         path_b = Path(name='B', distance=48.0, direction='straight')
         path_c = Path(name='C', distance=87.5, direction='right')
+
+        # preload values for path, bypass initial exploration
+        path_a.current_meters['X'] = 1
+        path_a.current_meters['Y'] = 1
+        path_a.current_meters['RSSI'] = 64
+        path_b.current_meters['X'] = 3
+        path_b.current_meters['Y'] = 1
+        path_b.current_meters['RSSI'] = 64
+        path_c.current_meters['X'] = 3
+        path_c.current_meters['Y'] = 0
+        path_c.current_meters['RSSI'] = 64
+
         self.paths = [path_a, path_b, path_c]
 
 
@@ -200,8 +216,6 @@ class Controller(object):
 
             if fsm_state == 'first_time':
             ###################################################################
-                # logging.info("v3_controller::fsm:first_time")
-                
                 self.motion.set_direction('straight')
                 self.motion.set_speed(25)
                 self.motion.set_state('go')
@@ -215,7 +229,6 @@ class Controller(object):
                     self.radio.set_current_location(self.current_location)
                     self.radio.set_radio_configuration(self.modulation, self.eirp,
                                                        self.bitrate, self.frequency)
-
 
                     fsm_state = 'before_traverse'
                     continue
@@ -238,32 +251,134 @@ class Controller(object):
                     self.motion.set_speed(25)
 
                 else:
-                    self.shutdown()
-                    # score, param, soln, s_i = self.soln.generate(self.paths,
-                    #                                              sim_data.knobs,
-                    #                                              iteration)
+                    score, param, soln, s_i = self.soln.generate(self.paths,
+                                                                 iteration)
 
-                    # current_path.current_knobs['Modulation'] = 'fsk'
-                    # current_path.current_knobs['EIRP'] = param['EIRP']
-                    # current_path.current_knobs['Rs'] = param['Rs']
-                    # current_path.current_knobs['Speed'] = param['rotor_power']
+                    print "score: ", score
+                    print "prev_score: ", self.prev_score
 
-                
-                    # self.radio.set_config_packet_data(current_path.current_knobs['Modulation'],
-                    #                                   current_path.current_knobs['EIRP'],
-                    #                                   current_path.current_knobs['Rs'])
-                    # self.radio.set_state('reconfigure')
+                    if score > self.prev_score:
+                        print "current solution is better"
+                        self.soln_idx.append(s_i)
+                        self.score_history.append(score)
 
-                    # while not self.reconfig_flag:
-                    #     time.sleep(0.1)
+                        self.prev_score = score
+                        self.prev_param = param
+                        self.prev_soln = soln
+                        name_of_chosen_path = param['name']
+                        choice = self.path_names.index(name_of_chosen_path)
+                        current_path = self.paths[choice]
+                        self.choice_history.append(current_path.name)
 
-                    # else:
-                    #     self.radio.set_current_location(self.current_location)
-                    #     self.radio.set_radio_configuration(current_path.current_knobs['Modulation'],
-                    #                                        current_path.current_knobs['EIRP'],
-                    #                                        current_path.current_knobs['Rs'],
-                    #                                        self.frequency)
-                    #     self.motion.set_speed(current_path.current_knobs['Speed'])
+                        current_path.current_knobs['Modulation'] = 'fsk'
+                        current_path.current_knobs['EIRP'] = param['EIRP']
+                        current_path.current_knobs['Rs'] = param['Rs']
+                        current_path.current_knobs['Speed'] = param['rotor_power']
+
+                        self.radio.set_config_packet_data(current_path.current_knobs['Modulation'],
+                                                          current_path.current_knobs['EIRP'],
+                                                          current_path.current_knobs['Rs'])
+                        self.radio.set_state('reconfigure')
+
+                        while not self.reconfig_flag:
+                            time.sleep(0.1)
+
+                        else:
+                            self.radio.set_current_location(self.current_location)
+                            self.radio.set_radio_configuration(current_path.current_knobs['Modulation'],
+                                                               current_path.current_knobs['EIRP'],
+                                                               current_path.current_knobs['Rs'],
+                                                               self.frequency)
+                            self.motion.set_speed(current_path.current_knobs['Speed'])
+
+                    else:
+                        print "previous solution is better"
+
+                        try:
+                            name_of_chosen_path = self.prev_param['name']
+                        except KeyError:
+                            print "KeyError"
+                            print self.prev_param
+                            sys.exit(1)
+
+                        comparison = self.compare(self.prev_param)
+                        if comparison == True:
+                            print "prev solution is better and old environment is unchanged"
+                            convergence_iterator += 1
+                            if convergence_iterator == 5:
+                                convergence_iterator = 0
+                                self.re_explore = True
+
+                            self.soln_idx.append('prev result')
+                            self.score_history.append(self.score_history[-1])
+
+                            choice = self.path_names.index(name_of_chosen_path)
+                            current_path = self.paths[choice]
+                            self.choice_history.append(current_path.name)
+
+                            current_path.current_knobs['Modulation'] = 'fsk'
+                            current_path.current_knobs['EIRP'] = prev_param['EIRP']
+                            current_path.current_knobs['Rs'] = prev_param['Rs']
+                            current_path.current_knobs['Speed'] = prev_param['rotor_power']
+
+                            self.radio.set_config_packet_data(current_path.current_knobs['Modulation'],
+                                                              current_path.current_knobs['EIRP'],
+                                                              current_path.current_knobs['Rs'])
+                            self.radio.set_state('reconfigure')
+
+                            while not self.reconfig_flag:
+                                time.sleep(0.1)
+
+                            else:
+                                self.radio.set_current_location(self.current_location)
+                                self.radio.set_radio_configuration(current_path.current_knobs['Modulation'],
+                                                                   current_path.current_knobs['EIRP'],
+                                                                   current_path.current_knobs['Rs'],
+                                                                   self.frequency)
+                                self.motion.set_speed(current_path.current_knobs['Speed'])
+
+                        else:
+                            print "prev solution is better but old environment has changed"
+                            print "use current solution"
+                            self.soln_idx.append(s_i)
+                            self.score_history.append(score)
+
+                            self.prev_score = score
+                            self.prev_param = param
+                            self.prev_soln = soln
+                            name_of_chosen_path = param['name']
+                            choice = self.path_names.index(name_of_chosen_path)
+                            current_path = self.paths[choice]
+                            self.choice_history.append(current_path.name)
+
+
+                            current_path.current_knobs['Modulation'] = 'fsk'
+                            current_path.current_knobs['EIRP'] = param['EIRP']
+                            current_path.current_knobs['Rs'] = param['Rs']
+                            current_path.current_knobs['Speed'] = param['rotor_power']
+
+                            self.radio.set_config_packet_data(current_path.current_knobs['Modulation'],
+                                                              current_path.current_knobs['EIRP'],
+                                                              current_path.current_knobs['Rs'])
+                            self.radio.set_state('reconfigure')
+
+                            while not self.reconfig_flag:
+                                time.sleep(0.1)
+
+                            else:
+                                self.radio.set_current_location(self.current_location)
+                                self.radio.set_radio_configuration(current_path.current_knobs['Modulation'],
+                                                                   current_path.current_knobs['EIRP'],
+                                                                   current_path.current_knobs['Rs'],
+                                                                   self.frequency)
+                                self.motion.set_speed(current_path.current_knobs['Speed'])
+
+
+
+
+
+
+
 
                 self.motion.set_direction(current_path.direction)
 
@@ -273,16 +388,27 @@ class Controller(object):
             ###################################################################
                 
 
+
+
+
+
             if fsm_state == 'traverse_path':
             ###################################################################
+                if self.re_explore == True:
+                    for p in self.paths:
+                        p.has_been_explored = False
+                    self.re_explore = False
+
+
                 if not current_path.has_been_explored:
-                    self.radio.set_state('listen')
                     print "Exploring path"
+                    self.radio.set_state('listen')
 
                 else:
+                    print "Exploiting path"
                     self.radio.set_state('stream')
 
-                # print "set motion
+
                 self.motion.set_state('go')
                 tic = time.time()
 
@@ -299,6 +425,9 @@ class Controller(object):
                     print "x = %d y = %d" %(x, y)
 
                     self.tracker.reset()
+                    name = current_path[name]
+                    self.previous_m[name] = current_path.current_meters
+
                     current_path.current_meters['X'] = x
                     current_path.current_meters['Y'] = y
                     current_path.solution_as_observed['T'] = toc - tic
@@ -309,9 +438,12 @@ class Controller(object):
             ###################################################################
 
 
-            ###################################################################
-            if fsm_state == 'after_traverse':
 
+
+
+
+            if fsm_state == 'after_traverse':
+            ###################################################################
                 print "updating meters"
                 # for p in self.paths:
                 #     p.update_meters()
@@ -319,39 +451,36 @@ class Controller(object):
                 if not current_path.has_been_explored:
                     print "marking current path as explored"
                     current_path.has_been_explored = True
-                    fsm_state = 'go_to_beginning'
-                    continue
+                    # fsm_state = 'go_to_beginning'
+                    # continue
                 else:
-                    pass
-                    # self.radio.set_state('update')
-                    # while not self.radio_update_flag:
-                    #     time.sleep(0.1)
-                    # else:
-                    #     current_path.current_meters['RSSI'] = self.rssi
-                    #     current_path.solution_as_observed['G'] = self.rx_packets
-                    #     current_path.solution_as_observed['Z'] = self.cognition.calculate_z(x, y)
-                    #     current_path.solution_as_observed['B'] = self.cognition.estimate_ber(self.tx_packets,
-                    #                                                                          self.rx_packets)
+                    self.radio.set_state('update')
+                    while not self.radio_update_flag:
+                        time.sleep(0.1)
+                    else:
+                        current_path.current_meters['RSSI'] = self.rssi
+                        current_path.solution_as_observed['G'] = self.rx_packets
+                        current_path.solution_as_observed['Z'] = self.cognition.calculate_z(x, y)
+                        current_path.solution_as_observed['B'] = self.cognition.estimate_ber(self.tx_packets,
+                                                                                             self.rx_packets)
 
-
+                        name = current_path[name]
+                        self.current_m[name] = current_path.current_meters
 
 
                 iteration += 1
-
-                        # TODO: add the part where we determine if the
-                    # solution we used wasn any good
-                
-
-                
-
-
                 fsm_state = 'go_to_beginning'
                 continue
             ###################################################################
 
 
-            ###################################################################
+
+
+
             if fsm_state == 'go_to_beginning':
+            ###################################################################
+                print "current_m: ", self.current_m
+                print "previous_m: ", self.previous_m
                 s = raw_input("AVEP has completed an iteration, press Y/y to continue ")
 
                 self.motion.set_direction('straight')
@@ -365,25 +494,40 @@ class Controller(object):
                     time.sleep(0.1)
                     fsm_state = 'before_traverse'
                     continue
-                
-                
-
-
-
-                # self.motion.set_direction('straight')
-                # self.motion.set_speed(55)
-                # self.motion.set_state('go')
-
-                # while not self.current_location == start:
-                #     time.sleep(0.01)
-                # else:
-                #     self.motion.set_state('stop')
-                #     time.sleep(0.1)
-                #     fsm_state = 'before_traverse'
-                #     continue
             ###################################################################
 
             
+
+
+
+
+
+
+
+
+
+    def compare(self, param):
+        """
+        Determine if the environment has changed from one iteration to
+        the next.
+
+        """
+        name = param['name']
+        current_meters = self.current_m[name]
+        previous_meters = self.previous_m[name]
+
+        if current_meters['X'] != previous_meters['X']:
+            print "current_meters['X'] != previous_meters['X']"
+            return False
+        elif current_meters['Y'] != previous_meters['Y']:
+            print "current_meters['Y'] != previous_meters['Y']"
+            return False
+        # elif current_meters['RSSI'] == previous_meters['RSSI']:
+        #     print "current_meters['Noise'] == previous_meters['Y']"
+        #     return False
+        else:
+            return True
+
 
 
 
