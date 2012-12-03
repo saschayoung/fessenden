@@ -245,6 +245,8 @@ class Controller(object):
 
             if fsm_state == 'before_traverse':
             ###################################################################
+                if not current_path.current_meters == {}:
+                    self.previous_m[name] = current_path.current_meters
                 choice = self.cognition.choose_path(self.paths)
 
                 if choice != -1:
@@ -433,7 +435,7 @@ class Controller(object):
 
                     self.tracker.reset()
                     name = current_path.name
-                    self.previous_m[name] = current_path.current_meters
+                    # self.previous_m[name] = current_path.current_meters
 
                     current_path.current_meters['X'] = x
                     current_path.current_meters['Y'] = y
