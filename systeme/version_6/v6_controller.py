@@ -245,8 +245,6 @@ class Controller(object):
 
             if fsm_state == 'before_traverse':
             ###################################################################
-                if not current_path.current_meters == {}:
-                    self.previous_m[name] = current_path.current_meters
                 choice = self.cognition.choose_path(self.paths)
 
                 if choice != -1:
@@ -403,6 +401,9 @@ class Controller(object):
 
             if fsm_state == 'traverse_path':
             ###################################################################
+                if not current_path.current_meters == {}:
+                    self.previous_m[name] = current_path.current_meters
+
                 if self.re_explore == True:
                     for p in self.paths:
                         p.has_been_explored = False
