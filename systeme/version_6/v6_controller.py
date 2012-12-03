@@ -406,7 +406,7 @@ class Controller(object):
                 if not current_path.current_meters == {}:
                     print "how about here?"
                     self.previous_m[name] = current_path.current_meters
-                    print "previous_m[name]: ", previous_m[name]
+                    print "previous_m[name]: ", self.previous_m[name]
                 print "maybe here?"
 
 
