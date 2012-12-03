@@ -402,9 +402,12 @@ class Controller(object):
             if fsm_state == 'traverse_path':
             ###################################################################
                 name = current_path.name
-
+                print "is there a problem here?"
                 if not current_path.current_meters == {}:
+                    print "how about here?"
                     self.previous_m[name] = current_path.current_meters
+                print "maybe here?"
+
 
                 if self.re_explore == True:
                     for p in self.paths:
