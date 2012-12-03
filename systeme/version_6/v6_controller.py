@@ -401,6 +401,8 @@ class Controller(object):
 
             if fsm_state == 'traverse_path':
             ###################################################################
+                name = current_path.name
+
                 if not current_path.current_meters == {}:
                     self.previous_m[name] = current_path.current_meters
 
