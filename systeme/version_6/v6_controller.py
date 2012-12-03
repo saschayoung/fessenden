@@ -488,6 +488,8 @@ class Controller(object):
             ###################################################################
                 print "current_m: ", self.current_m
                 print "previous_m: ", self.previous_m
+                print ""
+                print "Iteration %d finished" %(iteration-1,)
                 s = raw_input("AVEP has completed an iteration, press Y/y to continue ")
 
                 self.motion.set_direction('straight')
