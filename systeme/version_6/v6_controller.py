@@ -442,7 +442,6 @@ class Controller(object):
 
                     self.tracker.reset()
                     name = current_path.name
-                    # self.previous_m[name] = current_path.current_meters
 
                     current_path.current_meters['X'] = x
                     current_path.current_meters['Y'] = y
@@ -495,8 +494,9 @@ class Controller(object):
 
             if fsm_state == 'go_to_beginning':
             ###################################################################
-                print "current_m: ", self.current_m
-                print "previous_m: ", self.previous_m
+                name = current_path.name
+                print "current_m: ", self.current_m[name]
+                print "previous_m: ", self.previous_m[name]
                 print ""
                 print "Iteration %d finished" %(iteration-1,)
                 s = raw_input("AVEP has completed an iteration, press Y/y to continue ")
@@ -533,6 +533,7 @@ class Controller(object):
         name = param['name']
         c_meters = self.current_m[name]
         p_meters = self.previous_m[name]
+        
 
         if c_meters['X'] != p_meters['X']:
             print "current_meters['X'] != previous_meters['X']"
