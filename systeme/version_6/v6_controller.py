@@ -134,13 +134,13 @@ class Controller(object):
         # preload values for path, bypass initial exploration
         path_a.current_meters['X'] = 5
         path_a.current_meters['Y'] = 1
-        path_a.current_meters['RSSI'] = -92
+        path_a.current_meters['RSSI'] = -86
         path_b.current_meters['X'] = 3
         path_b.current_meters['Y'] = 0
-        path_b.current_meters['RSSI'] = -92
+        path_b.current_meters['RSSI'] = -86
         path_c.current_meters['X'] = 5
         path_c.current_meters['Y'] = 3
-        path_c.current_meters['RSSI'] = -92
+        path_c.current_meters['RSSI'] = -86
 
         self.path_names = ['A', 'B', 'C'] # this is a hack
 
