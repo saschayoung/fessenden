@@ -388,7 +388,7 @@ class Controller(object):
 
 
                 self.motion.set_direction(current_path.direction)
-
+                self.path_history.append(current_path.name)
 
                 fsm_state = 'traverse_path'
                 continue
