@@ -406,6 +406,7 @@ class Controller(object):
                 if not current_path.current_meters == {}:
                     print "how about here?"
                     self.previous_m[name] = current_path.current_meters
+                    print "previous_m[name]: ", previous_m[name]
                 print "maybe here?"
 
 
@@ -530,13 +531,13 @@ class Controller(object):
 
         """
         name = param['name']
-        current_meters = self.current_m[name]
-        previous_meters = self.previous_m[name]
+        c_meters = self.current_m[name]
+        p_meters = self.previous_m[name]
 
-        if current_meters['X'] != previous_meters['X']:
+        if c_meters['X'] != p_meters['X']:
             print "current_meters['X'] != previous_meters['X']"
             return False
-        elif current_meters['Y'] != previous_meters['Y']:
+        elif c_meters['Y'] != p_meters['Y']:
             print "current_meters['Y'] != previous_meters['Y']"
             return False
         # elif current_meters['RSSI'] == previous_meters['RSSI']:
